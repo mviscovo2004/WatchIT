@@ -1,13 +1,37 @@
 <?php
-    class EEpisodio{
-        protected int $id;
-        protected ESerie $serie;
-        protected int $numeroStagione;
-        protected int $numeroEpisodio;
-        protected string $titolo;
-        protected string $trama;
-        protected int $durataMinuti;
-        protected float $valutazioneMedia;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'episodi')]
+class EEpisodio{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected int $id;
+
+    #[ORM\ManyToOne(targetEntity: ESerie::class, inversedBy: 'episodi')]
+    #[ORM\JoinColumn(nullable: false)]
+    protected ESerie $serie;
+
+    #[ORM\Column]
+    protected int $numeroStagione;
+
+    #[ORM\Column]
+    protected int $numeroEpisodio;
+
+    #[ORM\Column]
+    protected string $titolo;
+
+    #[ORM\Column(type: Types::TEXT)]
+    protected string $trama;
+
+    #[ORM\Column]
+    protected int $durataMinuti;
+
+    #[ORM\Column(type: Types::FLOAT)]
+    protected float $valutazioneMedia;
 
         public function __construct(int $id,ESerie $serie,int $numeroStagione,int $numeroEpisodio,string $titolo,string $trama,int $durataMinuti,float $valutazioneMedia){
             $this->id=$id;

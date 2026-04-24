@@ -1,21 +1,49 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'recensioni')]
 class ERecensione
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
+
+    #[ORM\Column]
     protected string $titolo;
+
+    #[ORM\Column]
     protected int $voto;
+
+    #[ORM\Column(type: Types::TEXT)]
     protected string $descrizione;
-    protected EContenuto|EEpisodio $contenuto;
+
+    #[ORM\ManyToOne(targetEntity: EContenuto::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?EContenuto $contenuto;
+
+    #[ORM\ManyToOne(targetEntity: EEpisodio::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?EEpisodio $episodio;
+
+    #[ORM\ManyToOne(targetEntity: EUtente::class)]
+    #[ORM\JoinColumn(nullable: false)]
     protected EUtente $utente;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected DateTime $dataPubblicazione;
 
-    public function __construct(int $id, string $titolo, int $voto, string $descrizione, EContenuto|EEpisodio $contenuto, EUtente $utente, DateTime $dataPubblicazione)
+    public function __construct(int $id, string $titolo, int $voto, string $descrizione, ?EContenuto $contenuto, ?EEpisodio $episodio, EUtente $utente, DateTime $dataPubblicazione)
     {
         $this->id = $id;
         $this->titolo = $titolo;
         $this->voto = $voto;
         $this->descrizione = $descrizione;
         $this->contenuto = $contenuto;
+        $this->episodio = $episodio;
         $this->utente = $utente;
         $this->dataPubblicazione = $dataPubblicazione;
     }
@@ -50,24 +78,34 @@ class ERecensione
         $this->voto = $voto;
     }
 
-    public function getdescrizione(): string
+    public function getDescrizione(): string
     {
         return $this->descrizione;
     }
 
-    public function setdescrizione(string $descrizione)
+    public function setDescrizione(string $descrizione)
     {
         $this->descrizione = $descrizione;
     }
 
-    public function getContenuto(): EContenuto|EEpisodio
+    public function getContenuto(): ?EContenuto
     {
         return $this->contenuto;
     }
 
-    public function setContenuto(EContenuto|EEpisodio $contenuto)
+    public function setContenuto(?EContenuto $contenuto)
     {
         $this->contenuto = $contenuto;
+    }
+
+    public function getEpisodio(): ?EEpisodio
+    {
+        return $this->episodio;
+    }
+
+    public function setEpisodio(?EEpisodio $episodio)
+    {
+        $this->episodio = $episodio;
     }
 
     public function getUtente(): EUtente

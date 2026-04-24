@@ -1,4 +1,8 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
 enum Genere
 {
     case azione;
@@ -18,16 +22,37 @@ enum Genere
     case cortometraggio;
 }
 
-
+#[ORM\Entity]
+#[ORM\Table(name: 'contenuti')]
+#[ORM\InheritanceType('JOINED')]
+#[ORM\DiscriminatorColumn(name: 'tipo_contenuto', type: 'string')]
+#[ORM\DiscriminatorMap(['film' => EFilm::class, 'serie' => ESerie::class])]
 class EContenuto
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
+
+    #[ORM\Column]
     protected string $titolo;
+
+    #[ORM\Column]
     protected int $anno;
+
+    #[ORM\Column(type: Types::TEXT)]
     protected string $trama;
+
+    #[ORM\Column(type: Types::FLOAT)]
     protected float $valutazioneMedia;
+
+    #[ORM\OneToMany(targetEntity: EPartecipazione::class, mappedBy: 'contenuto')]
     protected array $partecipazioni;
+
+    #[ORM\Column(nullable: true)]
     protected string $locandina;
+
+    #[ORM\Column(type: Types::JSON)]
     protected array $generi;
 
 

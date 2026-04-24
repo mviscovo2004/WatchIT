@@ -1,4 +1,8 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
 enum Privacy
 {
     case pubblico;
@@ -6,13 +10,30 @@ enum Privacy
     case solo_amici;
 }
 
+#[ORM\Entity]
+#[ORM\Table(name: 'watchlist')]
 class EWatchlist
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
+
+    #[ORM\Column]
     protected string $nome;
+
+    #[ORM\Column(type: Types::TEXT)]
     protected string $descrizione;
+
+    #[ORM\ManyToMany(targetEntity: EContenuto::class)]
+    #[ORM\JoinTable(name: 'watchlist_contenuti')]
     protected array $contenutiSalvati;
+
+    #[ORM\Column(type: 'string', enumType: Privacy::class)]
     protected Privacy $visibilita;
+
+    #[ORM\ManyToOne(targetEntity: EUtente::class)]
+    #[ORM\JoinColumn(nullable: false)]
     protected EUtente $utente;
 
     public function __construct(int $id, string $nome, string $descrizione, array $contenutiSalvati, Privacy $visibilita, EUtente $utente)

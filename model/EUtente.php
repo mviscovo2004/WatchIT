@@ -1,16 +1,43 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'utenti')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'tipo', type: 'string')]
+#[ORM\DiscriminatorMap(['utente' => EUtente::class, 'admin' => EAmministratore::class])]
 class EUtente
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
-    protected string $nome;
-    protected string $cognome;
-    protected string $foto;
-    protected string $username;
-    protected string $email;
-    protected string $hashPassword;
-    protected array $seguaci;
-    protected array $seguiti;
 
+    #[ORM\Column]
+    protected string $nome;
+
+    #[ORM\Column]
+    protected string $cognome;
+
+    #[ORM\Column(nullable: true)]
+    protected string $foto;
+
+    #[ORM\Column(unique: true)]
+    protected string $username;
+
+    #[ORM\Column(unique: true)]
+    protected string $email;
+
+    #[ORM\Column]
+    protected string $hashPassword;
+
+    #[ORM\ManyToMany(targetEntity: EUtente::class, mappedBy: 'seguiti')]
+    protected array $seguaci;
+
+    #[ORM\ManyToMany(targetEntity: EUtente::class, inversedBy: 'seguaci')]
+    #[ORM\JoinTable(name: 'utenti_seguiti')]
+    protected array $seguiti;
 
     public function __construct(int $id, string $nome, string $cognome, string $foto, string $username, string $email, string $hashPassword)
     {

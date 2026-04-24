@@ -1,11 +1,32 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'ban')]
 class EBan
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
+
+    #[ORM\ManyToOne(targetEntity: EUtente::class)]
+    #[ORM\JoinColumn(nullable: false)]
     protected EUtente $utente;
+
+    #[ORM\ManyToOne(targetEntity: EAmministratore::class)]
+    #[ORM\JoinColumn(nullable: false)]
     protected EAmministratore $amministratore;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected DateTime $dataBan;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected DateTime $dataScadenza;
+
+    #[ORM\Column(type: Types::TEXT)]
     protected string $motivo;
 
     public function __construct(int $id, EUtente $utente, EAmministratore $amministratore, DateTime $dataBan, DateTime $dataScadenza, string $motivo)

@@ -1,9 +1,25 @@
 <?php
-    class EPartecipazione{
-        protected int $id;
-        protected EPersona $persona;
-        protected EContenuto $contenuto;
-        protected string $ruolo;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'partecipazioni')]
+class EPartecipazione{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected int $id;
+
+    #[ORM\ManyToOne(targetEntity: EPersona::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    protected EPersona $persona;
+
+    #[ORM\ManyToOne(targetEntity: EContenuto::class, inversedBy: 'partecipazioni')]
+    #[ORM\JoinColumn(nullable: false)]
+    protected EContenuto $contenuto;
+
+    #[ORM\Column]
+    protected string $ruolo;
 
         public function __construct(int $id,EPersona $persona,EContenuto $contenuto,string $ruolo){
             $this->id=$id;

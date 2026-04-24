@@ -1,6 +1,12 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'film')]
 class EFilm extends EContenuto
 {
+    #[ORM\Column]
     protected int $durataMinuti;
 
     public function __construct(int $id, string $titolo, int $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $durataMinuti)

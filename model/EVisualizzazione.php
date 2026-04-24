@@ -1,17 +1,42 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'visualizzazioni')]
 class EVisualizzazione
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     protected int $id;
+
+    #[ORM\ManyToOne(targetEntity: EUtente::class)]
+    #[ORM\JoinColumn(nullable: false)]
     protected EUtente $utente;
-    protected EContenuto|EEpisodio $contenuto;
+
+    #[ORM\ManyToOne(targetEntity: EContenuto::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?EContenuto $contenuto;
+
+    #[ORM\ManyToOne(targetEntity: EEpisodio::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?EEpisodio $episodio;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected DateTime $dataVisualizzazione;
+
+    #[ORM\Column]
     protected int $progressioneMinuti;
 
-    public function __construct(int $id, EUtente $utente, EContenuto|EEpisodio $contenuto, DateTime $dataVisualizzazione, int $progressioneMinuti)
+
+    public function __construct(int $id, EUtente $utente, ?EContenuto $contenuto, ?EEpisodio $episodio, DateTime $dataVisualizzazione, int $progressioneMinuti)
     {
         $this->id = $id;
         $this->utente = $utente;
         $this->contenuto = $contenuto;
+        $this->episodio = $episodio;
         $this->dataVisualizzazione = $dataVisualizzazione;
         $this->progressioneMinuti = $progressioneMinuti;
     }
@@ -36,14 +61,24 @@ class EVisualizzazione
         $this->utente = $utente;
     }
 
-    public function getContenuto(): EContenuto|EEpisodio
+    public function getContenuto(): ?EContenuto
     {
         return $this->contenuto;
     }
 
-    public function setContenuto(EContenuto|EEpisodio $contenuto)
+    public function setContenuto(?EContenuto $contenuto)
     {
         $this->contenuto = $contenuto;
+    }
+
+    public function getEpisodio(): ?EEpisodio
+    {
+        return $this->episodio;
+    }
+
+    public function setEpisodio(?EEpisodio $episodio)
+    {
+        $this->episodio = $episodio;
     }
 
     public function getDataVisualizzazione(): DateTime

@@ -1,9 +1,23 @@
 <?php
-    class EPersona{
-        protected int $id;
-        protected string $nome;
-        protected string $cognome;
-        protected string $foto;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'persone')]
+class EPersona{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    protected int $id;
+
+    #[ORM\Column]
+    protected string $nome;
+
+    #[ORM\Column]
+    protected string $cognome;
+
+    #[ORM\Column(nullable: true)]
+    protected string $foto;
         
 
         public function __construct(int $id,string $nome,string $cognome,string $foto)
