@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 
 $paths = [__DIR__ . '/../model'];
-$isDevMode = false;
+$isDevMode = true;
 
 $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
@@ -25,10 +25,9 @@ $entityManager = new EntityManager($connection, $config);
 $smarty = new Smarty\Smarty();
 $smarty->setTemplateDir(__DIR__ . '/../view/templates');
 $smarty->setCompileDir(__DIR__ . '/../view/templates_c');
-$smarty->setCacheDir(__DIR__ . '/../view/templates_c'); // Puoi creare una cartella cache separata se vuoi
-$smarty->setConfigDir(__DIR__ . '/../view/configs');    // Se hai configs
+$smarty->setCacheDir(__DIR__ . '/../view/templates_c');
+$smarty->setConfigDir(__DIR__ . '/../view/configs');
 
-// Oppure restituire un array per includere
 return [
     'entityManager' => $entityManager,
     'smarty' => $smarty,

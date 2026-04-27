@@ -46,6 +46,26 @@ class EWatchlist
         $this->utente = $utente;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getUtente(): EUtente
+    {
+        return $this->utente;
+    }
+
+    public function setUtente(EUtente $utente)
+    {
+        $this->utente = $utente;
+    }
+
     public function getNome(): string
     {
         return $this->nome;
