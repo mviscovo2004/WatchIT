@@ -9,11 +9,11 @@ require_once __DIR__ . "/vendor/autoload.php";
 $controllerName = "Contenuto";
 $actionName = "homepage";
 
-if (isset($_GET['controller'])) {
+if (isset($_GET['controller']) && !empty($_GET['controller'])) {
     $controllerName = ucfirst($_GET['controller']);
 }
 
-if (isset($_GET['action'])) {
+if (isset($_GET['action']) && !empty($_GET['action'])) {
     $actionName = $_GET['action'];
 }
 
