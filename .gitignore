@@ -20,5 +20,8 @@
 # Logs / Temp
 *.log
 
+#Config
+/bin/config.php
+
 #Progettazione
 /progettazione/

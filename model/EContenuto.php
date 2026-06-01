@@ -2,6 +2,7 @@
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\Collection;
 
 enum Genere
 {
@@ -29,6 +30,10 @@ enum Genere
 #[ORM\DiscriminatorMap(['film' => EFilm::class, 'serie' => ESerie::class])]
 class EContenuto
 {
+
+    #[ORM\Column(unique: true, nullable: true)]
+    protected ?int $tmdbId = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -38,7 +43,7 @@ class EContenuto
     protected string $titolo;
 
     #[ORM\Column]
-    protected int $anno;
+    protected string $anno;
 
     #[ORM\Column(type: Types::TEXT)]
     protected string $trama;
@@ -47,7 +52,7 @@ class EContenuto
     protected float $valutazioneMedia;
 
     #[ORM\OneToMany(targetEntity: EPartecipazione::class, mappedBy: 'contenuto')]
-    protected array $partecipazioni;
+    protected Collection|array $partecipazioni;
 
     #[ORM\Column(nullable: true)]
     protected string $locandina;
@@ -56,8 +61,9 @@ class EContenuto
     protected array $generi;
 
 
-    public function __construct(int $id, string $titolo, int $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi)
+    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi)
     {
+        $this->tmdbId = $tmdbId;
         $this->id = $id;
         $this->titolo = $titolo;
         $this->anno = $anno;
@@ -66,6 +72,16 @@ class EContenuto
         $this->partecipazioni = $partecipazioni;
         $this->locandina = $locandina;
         $this->generi = $generi;
+    }
+
+    public function getTmdbId(): ?int
+    {
+        return $this->tmdbId;
+    }
+
+    public function setTmdbId(?int $tmdbId)
+    {
+        $this->tmdbId = $tmdbId;
     }
 
     public function getId(): int
@@ -88,12 +104,12 @@ class EContenuto
         $this->titolo = $titolo;
     }
 
-    public function getAnno(): int
+    public function getAnno(): string
     {
         return $this->anno;
     }
 
-    public function setAnno(int $anno)
+    public function setAnno(string $anno)
     {
         $this->anno = $anno;
     }
@@ -118,12 +134,12 @@ class EContenuto
         $this->valutazioneMedia = $valutazioneMedia;
     }
 
-    public function getPartecipazioni(): array
+    public function getPartecipazioni(): Collection|array
     {
         return $this->partecipazioni;
     }
 
-    public function setPartecipazioni(array $partecipazioni)
+    public function setPartecipazioni(Collection|array $partecipazioni)
     {
         $this->partecipazioni = $partecipazioni;
     }

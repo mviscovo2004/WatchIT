@@ -1,12 +1,13 @@
 <?php
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
-enum Stato
+enum Stato: string
 {
-    case in_corso;
-    case conclusa;
-    case cancellata;
+    case in_corso = 'in_corso';
+    case conclusa = 'conclusa';
+    case cancellata = 'cancellata';
 }
 
 #[ORM\Entity]
@@ -17,14 +18,14 @@ class ESerie extends EContenuto
     protected int $numeroStagioni;
 
     #[ORM\OneToMany(targetEntity: EEpisodio::class, mappedBy: 'serie')]
-    protected array $episodi;
+    protected Collection|array $episodi;
 
     #[ORM\Column(type: 'string', enumType: Stato::class)]
     protected Stato $stato;
 
-    public function __construct(int $id, string $titolo, int $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $numeroStagioni, array $episodi, Stato $stato)
+    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $numeroStagioni, array $episodi, Stato $stato)
     {
-        parent::__construct($id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi);
+        parent::__construct($tmdbId, $id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi);
         $this->numeroStagioni = $numeroStagioni;
         $this->episodi = $episodi;
         $this->stato = $stato;
@@ -40,12 +41,12 @@ class ESerie extends EContenuto
         $this->numeroStagioni = $numeroStagioni;
     }
 
-    public function getEpisodi(): array
+    public function getEpisodi(): Collection|array
     {
         return $this->episodi;
     }
 
-    public function setEpisodi(array $episodi)
+    public function setEpisodi(Collection|array $episodi)
     {
         $this->episodi = $episodi;
     }

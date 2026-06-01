@@ -5,7 +5,12 @@ use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'episodi')]
-class EEpisodio{
+class EEpisodio
+{
+
+    #[ORM\Column(unique: true, nullable: true)]
+    protected ?int $tmdbId = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -33,79 +38,106 @@ class EEpisodio{
     #[ORM\Column(type: Types::FLOAT)]
     protected float $valutazioneMedia;
 
-        public function __construct(int $id,ESerie $serie,int $numeroStagione,int $numeroEpisodio,string $titolo,string $trama,int $durataMinuti,float $valutazioneMedia){
-            $this->id=$id;
-            $this->serie=$serie;
-            $this->numeroStagione=$numeroStagione;
-            $this->numeroEpisodio=$numeroEpisodio;
-            $this->titolo=$titolo;
-            $this->trama=$trama;
-            $this->durataMinuti=$durataMinuti;
-            $this->valutazioneMedia=$valutazioneMedia;  
-        }
-
-        public function getId():int{
-            return $this->id;
-        }
-
-        public function setId(int $id){
-            $this->id=$id;
-        }
-
-        public function getSerie():ESerie{
-            return $this->serie;
-        }
-
-        public function setSerie(ESerie $serie){
-            $this->serie=$serie;
-        }
-
-        public function getNumeroStagione():int{
-            return $this->numeroStagione;
-        }
-
-        public function setNumeroStagione(int $numeroStagione){
-            $this->numeroStagione=$numeroStagione;
-        }
-
-        public function getNumeroEpisodio():int{
-            return $this->numeroEpisodio;
-        }
-
-        public function setNumeroEpisodio(int $numeroEpisodio){
-            $this->numeroEpisodio=$numeroEpisodio;
-        }
-
-        public function getTitolo():string{
-            return $this->titolo;
-        }
-
-        public function setTitolo(string $titolo){
-            $this->titolo=$titolo;
-        }
-
-        public function getTrama():string{
-            return $this->trama;
-        }
-
-        public function setTrama(string $trama){
-            $this->trama=$trama;
-        }
-
-        public function getDurata():int{
-            return $this->durataMinuti;
-        }
-
-        public function setDurata(int $durataMinuti){
-            $this->durataMinuti=$durataMinuti;
-        }
-
-        public function getValutazioneMedia():float{
-            return $this->valutazioneMedia;
-        }
-
-        public function setValutazioneMedia(float $valutazioneMedia){
-            $this->valutazioneMedia=$valutazioneMedia;
-        }
+    public function __construct(?int $tmdbId, int $id, ESerie $serie, int $numeroStagione, int $numeroEpisodio, string $titolo, string $trama, int $durataMinuti, float $valutazioneMedia)
+    {
+        $this->tmdbId = $tmdbId;
+        $this->id = $id;
+        $this->serie = $serie;
+        $this->numeroStagione = $numeroStagione;
+        $this->numeroEpisodio = $numeroEpisodio;
+        $this->titolo = $titolo;
+        $this->trama = $trama;
+        $this->durataMinuti = $durataMinuti;
+        $this->valutazioneMedia = $valutazioneMedia;
     }
-?>
+
+    public function getTmdbId(): ?int
+    {
+        return $this->tmdbId;
+    }
+
+    public function setTmdbId(?int $tmdbId)
+    {
+        $this->tmdbId = $tmdbId;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getSerie(): ESerie
+    {
+        return $this->serie;
+    }
+
+    public function setSerie(ESerie $serie)
+    {
+        $this->serie = $serie;
+    }
+
+    public function getNumeroStagione(): int
+    {
+        return $this->numeroStagione;
+    }
+
+    public function setNumeroStagione(int $numeroStagione)
+    {
+        $this->numeroStagione = $numeroStagione;
+    }
+
+    public function getNumeroEpisodio(): int
+    {
+        return $this->numeroEpisodio;
+    }
+
+    public function setNumeroEpisodio(int $numeroEpisodio)
+    {
+        $this->numeroEpisodio = $numeroEpisodio;
+    }
+
+    public function getTitolo(): string
+    {
+        return $this->titolo;
+    }
+
+    public function setTitolo(string $titolo)
+    {
+        $this->titolo = $titolo;
+    }
+
+    public function getTrama(): string
+    {
+        return $this->trama;
+    }
+
+    public function setTrama(string $trama)
+    {
+        $this->trama = $trama;
+    }
+
+    public function getDurata(): int
+    {
+        return $this->durataMinuti;
+    }
+
+    public function setDurata(int $durataMinuti)
+    {
+        $this->durataMinuti = $durataMinuti;
+    }
+
+    public function getValutazioneMedia(): float
+    {
+        return $this->valutazioneMedia;
+    }
+
+    public function setValutazioneMedia(float $valutazioneMedia)
+    {
+        $this->valutazioneMedia = $valutazioneMedia;
+    }
+}

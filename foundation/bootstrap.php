@@ -12,10 +12,11 @@ $isDevMode = true;
 $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
 $connectionParams = [
-    'host' => 'localhost',
-    'port' => 3306,
-    'dbname' => 'watchit',
-    'user' => 'root',
+    'driver'   => 'pdo_mysql',
+    'host'     => 'localhost',
+    'port'     => 3306,
+    'dbname'   => 'watchit',
+    'user'     => 'root',
     'password' => '',
 ];
 

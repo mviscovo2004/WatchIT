@@ -69,7 +69,7 @@ class FContenuto
         $em = self::getEntityManager();
         $contenuti = $em->getRepository(EContenuto::class)->createQueryBuilder('c')
             ->where('c.generi LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
+            ->setParameter('query', '%"' . $query . '"%')
             ->getQuery()
             ->getResult();
         return $contenuti;
@@ -91,11 +91,13 @@ class FContenuto
     public static function searchByTipo(string $query)
     {
         $em = self::getEntityManager();
-        $contenuti = $em->getRepository(EContenuto::class)->createQueryBuilder('c')
-            ->where('c.tipo LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
+        if (strtolower($query) == "film") {
+            $contenuti = $em->getRepository(EFilm::class)->findAll();
+        } else if (strtolower($query) == "serie" || strtolower($query) == "serie tv") {
+            $contenuti = $em->getRepository(ESerie::class)->findAll();
+        } else {
+            $contenuti = [];
+        }
         return $contenuti;
     }
 }

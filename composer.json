@@ -1,9 +1,18 @@
 {
     "require": {
         "doctrine/orm": "^3.6",
-        "smarty/smarty": "^5.8"
+        "smarty/smarty": "^5.8",
+        "symfony/cache": "^7.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "classmap": [
+            "model/",
+            "foundation/",
+            "controller/",
+            "view/"
+        ]
     }
 }

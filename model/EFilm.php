@@ -9,9 +9,9 @@ class EFilm extends EContenuto
     #[ORM\Column]
     protected int $durataMinuti;
 
-    public function __construct(int $id, string $titolo, int $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $durataMinuti)
+    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $durataMinuti)
     {
-        parent::__construct($id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi);
+        parent::__construct($tmdbId, $id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi);
         $this->durataMinuti = $durataMinuti;
     }
 
