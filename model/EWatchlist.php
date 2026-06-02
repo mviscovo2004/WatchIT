@@ -2,6 +2,7 @@
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\Collection;
 
 enum Privacy
 {
@@ -27,7 +28,7 @@ class EWatchlist
 
     #[ORM\ManyToMany(targetEntity: EContenuto::class)]
     #[ORM\JoinTable(name: 'watchlist_contenuti')]
-    protected array $contenutiSalvati;
+    protected Collection|array $contenutiSalvati;
 
     #[ORM\Column(type: 'string', enumType: Privacy::class)]
     protected Privacy $visibilita;
@@ -36,7 +37,7 @@ class EWatchlist
     #[ORM\JoinColumn(nullable: false)]
     protected EUtente $utente;
 
-    public function __construct(int $id, string $nome, string $descrizione, array $contenutiSalvati, Privacy $visibilita, EUtente $utente)
+    public function __construct(int $id, string $nome, string $descrizione, Collection|array $contenutiSalvati, Privacy $visibilita, EUtente $utente)
     {
         $this->id = $id;
         $this->nome = $nome;
@@ -86,12 +87,12 @@ class EWatchlist
         $this->descrizione = $descrizione;
     }
 
-    public function getContenutiSalvati(): array
+    public function getContenutiSalvati(): Collection|array
     {
         return $this->contenutiSalvati;
     }
 
-    public function setContenutiSalvati(array $contenutiSalvati)
+    public function setContenutiSalvati(Collection|array $contenutiSalvati)
     {
         $this->contenutiSalvati = $contenutiSalvati;
     }

@@ -94,4 +94,29 @@ class FRecensione
         $recensioni = $em->getRepository(ERecensione::class)->findBy(['contenuto' => $idContenuto, 'voto' => 1]);
         return $recensioni;
     }
+
+    public static function aggiungiRecensione(int $idRecensione, string $titolo, int $voto, string $descrizione, EContenuto $contenuto, EUtente $utente)
+    {
+        $em = self::getEntityManager();
+        $recensione = new ERecensione($idRecensione, $titolo, $voto, $descrizione, $contenuto, null, $utente, new DateTime());
+        $em->persist($recensione);
+        $em->flush();
+        return true;
+    }
+
+    public static function aggiungiRecensioneEpisodio(int $idRecensione, string $titolo, int $voto, string $descrizione, EContenuto $contenuto, EEpisodio $episodio, EUtente $utente)
+    {
+        $em = self::getEntityManager();
+        $recensione = new ERecensione($idRecensione, $titolo, $voto, $descrizione, $contenuto, $episodio, $utente, new DateTime());
+        $em->persist($recensione);
+        $em->flush();
+        return true;
+    }
+
+    public static function getUltimeRecensioni(int $limit = 5)
+    {
+        $em = self::getEntityManager();
+        $recensioni = $em->getRepository(ERecensione::class)->findBy([], ['dataRecensione' => 'DESC'], $limit);
+        return $recensioni;
+    }
 }

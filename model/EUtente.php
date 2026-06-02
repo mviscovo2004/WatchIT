@@ -1,6 +1,7 @@
 <?php
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'utenti')]
@@ -33,11 +34,11 @@ class EUtente
     protected string $hashPassword;
 
     #[ORM\ManyToMany(targetEntity: EUtente::class, mappedBy: 'seguiti')]
-    protected array $seguaci;
+    protected Collection|array $seguaci;
 
     #[ORM\ManyToMany(targetEntity: EUtente::class, inversedBy: 'seguaci')]
     #[ORM\JoinTable(name: 'utenti_seguiti')]
-    protected array $seguiti;
+    protected Collection|array $seguiti;
 
     public function __construct(int $id, string $nome, string $cognome, string $foto, string $username, string $email, string $hashPassword)
     {
@@ -122,22 +123,22 @@ class EUtente
         $this->hashPassword = $hashPassword;
     }
 
-    public function getSeguaci(): array
+    public function getSeguaci(): Collection|array
     {
         return $this->seguaci;
     }
 
-    public function setSeguaci(array $seguaci)
+    public function setSeguaci(Collection|array $seguaci)
     {
         $this->seguaci = $seguaci;
     }
 
-    public function getSeguiti(): array
+    public function getSeguiti(): Collection|array
     {
         return $this->seguiti;
     }
 
-    public function setSeguiti(array $seguiti)
+    public function setSeguiti(Collection|array $seguiti)
     {
         $this->seguiti = $seguiti;
     }

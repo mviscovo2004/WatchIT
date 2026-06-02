@@ -146,8 +146,12 @@ class EContenuto
 
     public function getLocandina(): string
     {
+        if ($this->locandina !== '' && strpos($this->locandina, '/') === 0) {
+            return "https://image.tmdb.org/t/p/w500" . $this->locandina;
+        }
         return $this->locandina;
     }
+
 
     public function setLocandina(string $locandina)
     {
@@ -156,8 +160,15 @@ class EContenuto
 
     public function getGeneri(): array
     {
+        if (!empty($this->generi) && is_array($this->generi[0]) && isset($this->generi[0]['name'])) {
+            return array_map(function ($genere) {
+                return $genere['name'];
+            }, $this->generi);
+        }
+
         return $this->generi;
     }
+
 
     public function setGeneri(array $generi)
     {

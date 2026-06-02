@@ -1,166 +1,204 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WatchIT - Il tuo Cinema Personale</title>
-    <!-- Importazione di Tailwind CSS e Google Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden">
-    <!-- Sfondi sfumati decorativi (Aura Premium) -->
-    <div class="absolute w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[150px] -top-80 -left-60 pointer-events-none"></div>
-    <div class="absolute w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[150px] top-[40%] -right-60 pointer-events-none"></div>
+{extends file="main.tpl"}
+{block name="content"}
 
-    <!-- 1. BARRA DI NAVIGAZIONE -->
-    <nav class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-8">
-                <!-- Logo -->
-                <a href="index.php" class="text-2xl font-black tracking-wider bg-gradient-to-r from-red-500 to-indigo-500 text-transparent bg-clip-text">
-                    WatchIT
-                </a>
-                
-                <!-- Voci Navigazione -->
-                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-                    <a href="#" class="hover:text-white transition-colors duration-200">Film</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">Serie TV</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">La mia Watchlist</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">Recensioni</a>
+    <!-- 1. HERO: IL FILM PIÙ POPOLARE IN ASSOLUTO -->
+    {if $filmPopolari && count($filmPopolari) > 0}
+        {assign var="hero" value=$filmPopolari[0]}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div
+                class="relative rounded-2xl overflow-hidden aspect-[21/9] bg-slate-900 border border-slate-800/80 shadow-2xl flex items-end">
+                <div class="absolute inset-0 bg-cover bg-center opacity-40 transition-transform duration-[10s] hover:scale-105"
+                    style="background-image: url('{$hero->getLocandina()}');">
                 </div>
-            </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
 
-            <!-- Ricerca & Bottone Login -->
-            <div class="flex items-center gap-4">
-                <div class="relative hidden sm:block">
-                    <input type="text" placeholder="Cerca un film o una serie..." 
-                           class="w-64 px-4 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all duration-200 placeholder-slate-500">
+                <div class="relative p-6 sm:p-10 md:p-12 max-w-xl z-10">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="px-2.5 py-1 text-xs font-bold bg-purple-600 text-white rounded uppercase tracking-wider">In
+                            Evidenza</span>
+                        <span class="text-sm font-medium text-slate-300">Il film più votato della community</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
+                        {$hero->getTitolo()}
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base mb-6 line-clamp-3 leading-relaxed">
+                        {$hero->getTrama()}
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <a href="index.php?controller=Contenuto&action=dettagli&id={$hero->getId()}"
+                            class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-all duration-200 shadow-lg transform hover:-translate-y-0.5">
+                            Guarda Ora
+                        </a>
+                        {if $isLogged}
+                            <a href="index.php?controller=Watchlist&action=aggiungi&id={$hero->getId()}"
+                                class="px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm">
+                                + Watchlist
+                            </a>
+                        {else}
+                            <a href="index.php?controller=Utente&action=login"
+                                class="px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm">
+                                Accedi...
+                            </a>
+                        {/if}
+                    </div>
                 </div>
-                <a href="index.php?controller=Utente&action=login" 
-                   class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-all duration-200">
-                    Accedi
-                </a>
             </div>
         </div>
-    </nav>
+    {/if}
 
-    <!-- 2. SEZIONE HERO (FILM IN EVIDENZA) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="relative rounded-2xl overflow-hidden aspect-[21/9] bg-slate-900 border border-slate-800/80 shadow-2xl flex items-end">
-            <!-- Immagine di sfondo con overlay sfumato -->
-            <div class="absolute inset-0 bg-cover bg-center opacity-40 transition-transform duration-[10s] hover:scale-105" 
-                 style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80');">
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-            <!-- Dettagli Film -->
-            <div class="relative p-6 sm:p-10 md:p-12 max-w-xl z-10">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="px-2.5 py-1 text-xs font-bold bg-red-600 text-white rounded uppercase tracking-wider">Top 1</span>
-                    <span class="text-sm font-medium text-slate-300">Film del Momento</span>
-                </div>
-                <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
-                    L'Inizio dell'Avventura
-                </h2>
-                <p class="text-slate-300 text-sm sm:text-base mb-6 line-clamp-3 leading-relaxed">
-                    Un viaggio incredibile oltre i confini del tempo e dello spazio. Accompagna i protagonisti alla scoperta di mondi inesplorati in un'opera di fantascienza visivamente sbalorditiva.
-                </p>
-                <div class="flex items-center gap-4">
-                    <a href="#" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-all duration-200 shadow-lg transform hover:-translate-y-0.5">
-                        Guarda Ora
-                    </a>
-                    <a href="#" class="px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm">
-                        + Watchlist
-                    </a>
-                </div>
+        <!-- 2. SEZIONE FILM POPOLARI (TOP 5) -->
+        <div>
+            <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">
+                <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>
+                Film Popolari
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {foreach from=$filmPopolari item=film name=film_loop}
+                    <div class="group cursor-pointer">
+                        <div
+                            class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
+                            <img src="{$film->getLocandina()}" alt="{$film->getTitolo()}"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
+                            {if $isLogged}
+                                <a href="index.php?controller=Watchlist&action=aggiungi&id={$film->getId()}"
+                                    class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-purple-600 hover:border-purple-500 transition-all duration-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
+                                    title="{if $watchlistIds && in_array($film->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
+                                    {if $watchlistIds && in_array($film->getId(), $watchlistIds)}
+                                        <!-- Spunta verde se già in watchlist -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    {else}
+                                        <!-- Icona Più (+) se da aggiungere -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-200" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    {/if}
+                                </a>
+                            {/if}
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
+                                <span class="text-xs font-bold text-purple-500">
+                                    {if $film->getGeneri() && count($film->getGeneri()) > 0}
+                                        Genere: {$film->getGeneri()|join:", "}
+                                    {else}
+                                        Genere: Non specificato
+                                    {/if}
+                                </span>
+
+                            </div>
+                        </div>
+                        <h4
+                            class="font-bold text-white group-hover:text-purple-500 transition-colors duration-200 line-clamp-1">
+                            {$film->getTitolo()}
+                        </h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <p class="text-xs text-slate-500 font-semibold">Anno: {$film->getAnno()}</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-500">★
+                                {$film->getValutazioneMedia()|string_format:"%.1f"}</span>
+                        </div>
+                    </div>
+                {foreachelse}
+                    <p class="text-slate-400 text-sm col-span-full">Nessun film disponibile nel database.</p>
+                {/foreach}
             </div>
+        </div>
+
+        <!-- 3. SEZIONE SERIE TV POPOLARI (TOP 5) -->
+        <div>
+            <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">
+                <span class="w-1.5 h-6 bg-amber-500 rounded-full"></span>
+                Serie TV Popolari
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                {foreach from=$seriePopolari item=serie name=serie_loop}
+                    <div class="group cursor-pointer">
+                        <div
+                            class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
+                            <img src="{$serie->getLocandina()}" alt="{$serie->getTitolo()}"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
+                            {if $isLogged}
+                                <a href="index.php?controller=Watchlist&action=aggiungi&id={$serie->getId()}"
+                                    class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-indigo-600 hover:border-indigo-500 transition-all duration-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
+                                    title="{if $watchlistIds && in_array($serie->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
+                                    {if $watchlistIds && in_array($serie->getId(), $watchlistIds)}
+                                        <!-- Spunta verde se già in watchlist -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    {else}
+                                        <!-- Icona Più (+) se da aggiungere -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-200" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    {/if}
+                                </a>
+                            {/if}
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
+                                <span class="text-xs font-bold text-purple-500">
+                                    {if $serie->getGeneri() && count($serie->getGeneri()) > 0}
+                                        Genere: {$serie->getGeneri()|join:", "}
+                                    {else}
+                                        Genere: Non specificato
+                                    {/if}
+                                </span>
+
+                            </div>
+                        </div>
+                        <h4
+                            class="font-bold text-white group-hover:text-purple-500 transition-colors duration-200 line-clamp-1">
+                            {$serie->getTitolo()}
+                        </h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <p class="text-xs text-slate-500 font-semibold">Anno: {$serie->getAnno()}</p>
+
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-500">★
+                                {$serie->getValutazioneMedia()|string_format:"%.1f"}</span>
+                        </div>
+                    </div>
+                {foreachelse}
+                    <p class="text-slate-400 text-sm col-span-full">Nessuna serie TV disponibile nel database.</p>
+                {/foreach}
+            </div>
+
+        </div>
+        <div>
+            <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">Ultime recensioni
+            </h3>
+            {foreach from=$ultimeRecensioni item=recensione}
+                <div class="group cursor-pointer">
+                    <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
+                        <img src="{$recensione->getContenuto()->getLocandina()}"
+                            alt="{$recensione->getContenuto()->getTitolo()}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
+                    </div>
+                    <h4 class="font-bold text-white group-hover:text-purple-500 transition-colors duration-200 line-clamp-1">
+                        {$recensione->getContenuto()->getTitolo()}
+                    </h4>
+                    <div class="flex items-center justify-between mt-1">
+                        <p class="text-xs text-slate-500 font-semibold">Anno: {$recensione->getContenuto()->getAnno()}</p>
+
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-amber-500">★
+                            {$recensione->getContenuto()->getValutazioneMedia()|string_format:"%.1f"}</span>
+                    </div>
+                </div>
+            {foreachelse}
+                <p class="text-slate-400 text-sm col-span-full">Nessuna recensione disponibile nel database.</p>
+            {/foreach}
         </div>
     </div>
 
-    <!-- 3. GRIGLIA CONTENUTI POPOLARI -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h3 class="text-2xl font-extrabold text-white mb-6 tracking-tight flex items-center gap-2">
-            <span class="w-1.5 h-6 bg-red-500 rounded-full"></span>
-            Titoli più popolari
-        </h3>
-        
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            <!-- Card 1 -->
-            <div class="group cursor-pointer">
-                <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
-                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80" 
-                         alt="Cover" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-                        <span class="text-xs font-bold text-indigo-400">Genere: Fantascienza</span>
-                    </div>
-                </div>
-                <h4 class="font-bold text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">Interstellar Void</h4>
-                <p class="text-xs text-slate-500 font-semibold">Anno: 2025</p>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="group cursor-pointer">
-                <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80" 
-                         alt="Cover" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-                        <span class="text-xs font-bold text-indigo-400">Genere: Thriller</span>
-                    </div>
-                </div>
-                <h4 class="font-bold text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">Midnight Shadow</h4>
-                <p class="text-xs text-slate-500 font-semibold">Anno: 2024</p>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="group cursor-pointer">
-                <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
-                    <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=400&q=80" 
-                         alt="Cover" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-                        <span class="text-xs font-bold text-indigo-400">Genere: Noir</span>
-                    </div>
-                </div>
-                <h4 class="font-bold text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">Classic Memories</h4>
-                <p class="text-xs text-slate-500 font-semibold">Anno: 2023</p>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="group cursor-pointer">
-                <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
-                    <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?auto=format&fit=crop&w=400&q=80" 
-                         alt="Cover" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-                        <span class="text-xs font-bold text-indigo-400">Genere: Commedia</span>
-                    </div>
-                </div>
-                <h4 class="font-bold text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">Laugh Out Loud</h4>
-                <p class="text-xs text-slate-500 font-semibold">Anno: 2026</p>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="group cursor-pointer">
-                <div class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
-                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80" 
-                         alt="Cover" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
-                        <span class="text-xs font-bold text-indigo-400">Genere: Fantasy</span>
-                    </div>
-                </div>
-                <h4 class="font-bold text-white group-hover:text-indigo-400 transition-colors duration-200 line-clamp-1">Magic Woods</h4>
-                <p class="text-xs text-slate-500 font-semibold">Anno: 2025</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+{/block}

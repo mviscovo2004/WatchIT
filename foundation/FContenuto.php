@@ -100,4 +100,26 @@ class FContenuto
         }
         return $contenuti;
     }
+
+    public static function getFilmPopolari(int $limit = 5)
+    {
+        $em = self::getEntityManager();
+        $contenuti = $em->getRepository(EFilm::class)->createQueryBuilder('f')
+            ->orderBy('f.valutazioneMedia', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+        return $contenuti;
+    }
+
+    public static function getSeriePopolari(int $limit = 5)
+    {
+        $em = self::getEntityManager();
+        $contenuti = $em->getRepository(ESerie::class)->createQueryBuilder('s')
+            ->orderBy('s.valutazioneMedia', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+        return $contenuti;
+    }
 }

@@ -195,10 +195,13 @@ class FUtente
     }
 
     //login
-    public static function login(string $email, string $password)
+    public static function login(string $identificativo, string $password)
     {
         $em = self::getEntityManager();
-        $utente = $em->getRepository(EUtente::class)->findOneBy(['email' => $email]);
+        $utente = $em->getRepository(EUtente::class)->findOneBy(['email' => $identificativo]);
+        if ($utente == null) {
+            $utente = $em->getRepository(EUtente::class)->findOneBy(['username' => $identificativo]);
+        }
         if ($utente != null && password_verify($password, $utente->getHashPassword())) {
             return $utente;
         }
@@ -215,4 +218,7 @@ class FUtente
         $em->flush();
         return $utente;
     }
+
+    //recupera password
+    public static function recuperaPassword(string $email) {}
 }
