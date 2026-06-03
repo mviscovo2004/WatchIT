@@ -20,7 +20,7 @@
                  <!-- Mostra nome utente e tasto Esci se loggato -->
                  <span class="text-sm font-semibold text-indigo-400">Ciao, {$currentUser->getUsername()}</span>
                  <a href="index.php?controller=Utente&action=logout"
-                     class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition-all duration-200">
+                     class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition-all duration-200">
                      Esci
                  </a>
              {else}

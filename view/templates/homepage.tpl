@@ -25,7 +25,7 @@
                         {$hero->getTrama()}
                     </p>
                     <div class="flex items-center gap-4">
-                        <a href="index.php?controller=Contenuto&action=dettagli&id={$hero->getId()}"
+                        <a href="index.php?controller=Contenuto&action=mostraFilm&id={$hero->getId()}"
                             class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-all duration-200 shadow-lg transform hover:-translate-y-0.5">
                             Guarda Ora
                         </a>
@@ -56,7 +56,8 @@
             </h3>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {foreach from=$filmPopolari item=film name=film_loop}
-                    <div class="group cursor-pointer">
+                    <div onclick="window.location.href='index.php?controller=Contenuto&action=mostraFilm&id={$film->getId()}'"
+                        class="group cursor-pointer">
                         <div
                             class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
                             <img src="{$film->getLocandina()}" alt="{$film->getTitolo()}"
@@ -118,7 +119,8 @@
             </h3>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {foreach from=$seriePopolari item=serie name=serie_loop}
-                    <div class="group cursor-pointer">
+                    <div onclick="window.location.href='index.php?controller=Contenuto&action=mostraSerie&id={$serie->getId()}'"
+                        class="group cursor-pointer">
                         <div
                             class="aspect-[2/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 relative mb-3">
                             <img src="{$serie->getLocandina()}" alt="{$serie->getTitolo()}"

@@ -91,4 +91,60 @@ class FTMDb
         $result = json_decode($result, true);
         return $result['results'] ?? [];
     }
+
+    //prende i trailer di un film
+    public static function fetchFilmTrailers(int $tmdbId)
+    {
+        $url = self::BASE_URL . "/movie/" . $tmdbId . "/videos?api_key=" . TMDB_API_KEY . "&language=it-IT";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        $result = json_decode($result, true);
+        return $result['results'] ?? [];
+    }
+
+    //prende i trailer di una serie
+    public static function fetchSerieTrailers(int $tmdbId)
+    {
+        $url = self::BASE_URL . "/tv/" . $tmdbId . "/videos?api_key=" . TMDB_API_KEY . "&language=it-IT";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        $result = json_decode($result, true);
+        return $result['results'] ?? [];
+    }
+
+    //prende un episodio di una serie
+    public static function fetchEpisode(int $tmdbId, int $season, int $episode)
+    {
+        $url = self::BASE_URL . "/tv/" . $tmdbId . "/season/" . $season . "/episode/" . $episode . "?api_key=" . TMDB_API_KEY . "&language=it-IT";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        $result = json_decode($result, true);
+        return $result;
+    }
+
+    //prende tutti gli episodi di una serie
+    public static function fetchSeriesEpisodes(int $tmdbId, int $season)
+    {
+        $url = self::BASE_URL . "/tv/" . $tmdbId . "/season/" . $season . "?api_key=" . TMDB_API_KEY . "&language=it-IT";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        $result = json_decode($result, true);
+        return $result;
+    }
 }

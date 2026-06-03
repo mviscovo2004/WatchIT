@@ -23,4 +23,18 @@ class VContenuto extends VView
         $this->assign("ultimeRecensioni", $ultimeRecensioni);
         $this->display("homepage.tpl");
     }
+
+    public function mostraSerie($serie, $watchlistIds = [])
+    {
+        $this->assign("serie", $serie);
+        $this->assign("watchlistIds", $watchlistIds);
+        $this->display("serie.tpl");
+    }
+
+    public function mostraFilm($film, $watchlistIds = [])
+    {
+        $this->assign("film", $film);
+        $this->assign("watchlistIds", $watchlistIds);
+        $this->display("film.tpl");
+    }
 }

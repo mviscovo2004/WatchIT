@@ -14,12 +14,25 @@ class VView
         $this->smarty = self::$smartyInstance;
 
         // --- ASSOCIAZIONE GLOBALE DI SESSIONE A SMARTY ---
-        $this->smarty->assign("isLogged", Session::isLogged());
         if (Session::isLogged()) {
             $userId = Session::get('user_id');
             $utente = FUtente::findById($userId);
-            $this->smarty->assign("currentUser", $utente);
+
+            if ($utente) {
+                $this->smarty->assign("isLogged", true);
+                $this->smarty->assign("currentUser", $utente);
+            } else {
+                // Se l'utente non esiste più nel DB (es. dopo reset del database), 
+                // distruggiamo la sessione orfana ed evitiamo il crash
+                Session::destroy();
+                $this->smarty->assign("isLogged", false);
+                $this->smarty->assign("currentUser", null);
+            }
+        } else {
+            $this->smarty->assign("isLogged", false);
+            $this->smarty->assign("currentUser", null);
         }
+
 
         // Se c'è un errore di login in sessione, lo passiamo a Smarty e lo cancelliamo
         if (Session::exists('login_error')) {

@@ -4,51 +4,45 @@ class CWatchlist
 {
     public function aggiungi()
     {
-        if (!isset($_GET['id']) || empty($_GET['id'])) {
-            header("Location: index.php");
-            exit();
-        }
-        $idContenuto = (int)$_GET['id'];
-
-        $userId = Session::get('user_id');
-
-        if (!$userId) {
-            $utenti = FUtente::findAll();
-            if (!empty($utenti)) {
-                $utente = $utenti[0];
-            } else {
-                $utente = FUtente::register("Mario", "Rossi", "foto.jpg", "mario_rossi", "mario@watchit.it", "password123");
-            }
-            $userId = $utente->getId();
-            Session::set('user_id', $userId);
+        $idContenuto = $_GET['id'];
+        $idUtente = Session::get('user_id');
+        $idWatchlist = $_GET['idWatchlist'] ?? null;
+        $view = new VWatchlist();
+        if ($idContenuto && $idUtente && $idWatchlist) {
+            FWatchlist::addContenuto($idUtente, $idContenuto);
+            $watchlist = FWatchlist::findById($idWatchlist);
+            $contenuti = $watchlist->getContenutiSalvati();
+            $view->mostraWatchlist($watchlist, $contenuti);
         } else {
-            $utente = FUtente::findById($userId);
+            $view->mostraErrore('Errore nel salvataggio ' . $idWatchlist);
         }
+    }
 
-        $watchlists = FWatchlist::findByUtente($userId);
-
-        if (empty($watchlists)) {
-            $watchlist = new EWatchlist(
-                0,
-                "La mia Watchlist",
-                "La mia watchlist personale creata automaticamente.",
-                [],
-                Privacy::privato,
-                $utente
-            );
-            FWatchlist::insert($watchlist);
-            $idWatchlist = $watchlist->getId();
+    public function rimuovi()
+    {
+        $idContenuto = $_GET['id'];
+        $idUtente = Session::get('user_id');
+        $idWatchlist = $_GET['idWatchlist'] ?? null;
+        $view = new VWatchlist();
+        if ($idContenuto && $idUtente && $idWatchlist) {
+            FWatchlist::removeContenuto($idUtente, $idContenuto);
+            $watchlist = FWatchlist::findById($idWatchlist);
+            $contenuti = $watchlist->getContenutiSalvati();
+            $view->mostraWatchlist($watchlist, $contenuti);
         } else {
-            $idWatchlist = $watchlists[0]->getId();
+            $view->mostraErrore('Errore nel salvataggio ' . $idWatchlist);
         }
+    }
 
-        if (FWatchlist::contains($idWatchlist, $idContenuto)) {
-            FWatchlist::removeContenuto($idWatchlist, $idContenuto);
+    public function mostraTutteWatchlist()
+    {
+        $idUtente = Session::get('user_id');
+        $view = new VWatchlist();
+        if ($idUtente) {
+            $watchlists = FWatchlist::findByUtente($idUtente);
+            $view->mostraTutteWatchlist($watchlists);
         } else {
-            FWatchlist::addContenuto($idWatchlist, $idContenuto);
+            $view->mostraErrore('Errore nel salvataggio ');
         }
-
-        header("Location: index.php");
-        exit();
     }
 }

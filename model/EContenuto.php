@@ -74,6 +74,27 @@ class EContenuto
         $this->generi = $generi;
     }
 
+    public function getRegista(): string
+    {
+        foreach ($this->partecipazioni as $partecipazione) {
+            if ($partecipazione->getRuolo() === 'Regista') {
+                return $partecipazione->getPersona()->getNome() . ' ' . $partecipazione->getPersona()->getCognome();
+            }
+        }
+        return 'Non disponibile';
+    }
+
+    public function getAttori(): string
+    {
+        $attori = [];
+        foreach ($this->partecipazioni as $partecipazione) {
+            if ($partecipazione->getRuolo() === 'Attore') {
+                $attori[] = $partecipazione->getPersona()->getNome() . ' ' . $partecipazione->getPersona()->getCognome();
+            }
+        }
+        return implode(', ', $attori);
+    }
+
     public function getTmdbId(): ?int
     {
         return $this->tmdbId;
