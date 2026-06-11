@@ -9,7 +9,7 @@ class FEntityManager
     public static function getInstance()
     {
         if (!isset(self::$conn)) {
-            $config = require_once __DIR__ . '/bootstrap.php';
+            $config = require __DIR__ . '/bootstrap.php';
             self::$conn = $config['entityManager'];
         }
 

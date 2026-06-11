@@ -127,7 +127,7 @@
                                 class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
                             {if $isLogged}
                                 <a href="index.php?controller=Watchlist&action=aggiungi&id={$serie->getId()}"
-                                    class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-indigo-600 hover:border-indigo-500 transition-all duration-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
+                                    class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-purple-600 hover:border-indigo-500 transition-all duration-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
                                     title="{if $watchlistIds && in_array($serie->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
                                     {if $watchlistIds && in_array($serie->getId(), $watchlistIds)}
                                         <!-- Spunta verde se già in watchlist -->

@@ -24,18 +24,18 @@ class EBan
     protected DateTime $dataBan;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    protected DateTime $dataScadenza;
+    protected DateTime $dataFine;
 
     #[ORM\Column(type: Types::TEXT)]
     protected string $motivo;
 
-    public function __construct(int $id, EUtente $utente, EAmministratore $amministratore, DateTime $dataBan, DateTime $dataScadenza, string $motivo)
+    public function __construct(int $id, EUtente $utente, EAmministratore $amministratore, DateTime $dataBan, DateTime $dataFine, string $motivo)
     {
         $this->id = $id;
         $this->utente = $utente;
         $this->amministratore = $amministratore;
         $this->dataBan = $dataBan;
-        $this->dataScadenza = $dataScadenza;
+        $this->dataFine = $dataFine;
         $this->motivo = $motivo;
     }
 
@@ -79,14 +79,14 @@ class EBan
         $this->dataBan = $dataBan;
     }
 
-    public function getDataScadenza(): DateTime
+    public function getDataFine(): DateTime
     {
-        return $this->dataScadenza;
+        return $this->dataFine;
     }
 
-    public function setDataScadenza(DateTime $dataScadenza)
+    public function setDataFine(DateTime $dataFine)
     {
-        $this->dataScadenza = $dataScadenza;
+        $this->dataFine = $dataFine;
     }
 
     public function getMotivo(): string

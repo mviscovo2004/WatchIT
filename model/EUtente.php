@@ -40,6 +40,12 @@ class EUtente
     #[ORM\JoinTable(name: 'utenti_seguiti')]
     protected Collection|array $seguiti;
 
+    #[ORM\Column(nullable: true)]
+    protected ?string $tokenRecupero;
+
+    #[ORM\Column(nullable: true)]
+    protected ?DateTime $dataScadenzaToken;
+
     public function __construct(int $id, string $nome, string $cognome, string $foto, string $username, string $email, string $hashPassword)
     {
         $this->id = $id;
@@ -51,6 +57,8 @@ class EUtente
         $this->hashPassword = $hashPassword;
         $this->seguaci = [];
         $this->seguiti = [];
+        $this->tokenRecupero = null;
+        $this->dataScadenzaToken = null;
     }
 
     public function getId(): int
@@ -141,5 +149,35 @@ class EUtente
     public function setSeguiti(Collection|array $seguiti)
     {
         $this->seguiti = $seguiti;
+    }
+
+    public function getTokenRecupero(): ?string
+    {
+        return $this->tokenRecupero;
+    }
+
+    public function setTokenRecupero(?string $tokenRecupero)
+    {
+        $this->tokenRecupero = $tokenRecupero;
+    }
+
+    public function getDataScadenzaToken(): ?DateTime
+    {
+        return $this->dataScadenzaToken;
+    }
+
+    public function setDataScadenzaToken(?DateTime $dataScadenzaToken)
+    {
+        $this->dataScadenzaToken = $dataScadenzaToken;
+    }
+
+    public function isTokenValido(): bool
+    {
+        return $this->tokenRecupero !== null && $this->dataScadenzaToken > new DateTime();
+    }
+
+    public function isTokenScaduto(): bool
+    {
+        return $this->tokenRecupero !== null && $this->dataScadenzaToken < new DateTime();
     }
 }

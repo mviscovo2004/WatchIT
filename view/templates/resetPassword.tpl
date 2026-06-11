@@ -1,0 +1,51 @@
+{extends file="main.tpl"}
+{block name="content"}
+    <div class="my-16 flex flex-col items-center justify-center">
+        <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">
+            <div class="flex flex-col items-center justify-center">
+                <h4
+                    class="text-2xl mb-6 font-black tracking-wider bg-gradient-to-r from-purple-600 to-amber-500 text-transparent bg-clip-text">
+                    Nuova Password
+                </h4>
+
+                <!-- Box Messaggio Errore o Successo -->
+                {if isset($error)}
+                    {if $error === "Password reimpostata con successo."}
+                        <div
+                            class="w-full p-3 mb-4 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
+                            {$error}
+                        </div>
+                    {else}
+                        <div
+                            class="w-full p-3 mb-4 text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
+                            {$error}
+                        </div>
+                    {/if}
+                {/if}
+
+                <!-- Mostra il form solo se la password non è stata ancora modificata con successo -->
+                {if !isset($error) || $error !== "Password reimpostata con successo."}
+                    <form action="index.php?controller=Utente&action=resetPassword&token={$token}" method="post"
+                        class="flex flex-col items-center justify-center w-full space-y-4">
+                        <input type="password" name="password" placeholder="Nuova Password" required
+                            class="w-full px-6 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all duration-200 placeholder-slate-500 text-white">
+
+                        <input type="password" name="password_confirm" placeholder="Conferma nuova password" required
+                            class="w-full px-6 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all duration-200 placeholder-slate-500 text-white">
+
+                        <button type="submit"
+                            class="w-full py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-purple-600/20">
+                            Reimposta Password
+                        </button>
+                    </form>
+                {else}
+                    <!-- Se il reset ha avuto successo, mostra un tasto rapido per accedere direttamente -->
+                    <button onclick="toggleModal('loginModal', true)"
+                        class="w-full py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-purple-600/20">
+                        Accedi Ora
+                    </button>
+                {/if}
+            </div>
+        </div>
+    </div>
+{/block}

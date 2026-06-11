@@ -35,6 +35,7 @@ for ($i = 1; $i <= 3; $i++) {
                 [], // Array vuoto per Doctrine
                 $ftmdbDetails['poster_path'] ?? '',
                 $ftmdbDetails['genres'] ?? [],
+                $ftmdbDetails['videos']['results'] ?? [],
                 $ftmdbDetails['runtime'] ?? 0
             );
             $em->persist($film);
@@ -144,6 +145,7 @@ for ($i = 1; $i <= 3; $i++) {
                 [], // Array vuoto per Doctrine
                 $ftmdbDetails['poster_path'] ?? '',
                 $ftmdbDetails['genres'] ?? [],
+                $ftmdbDetails['videos']['results'] ?? [],
                 $ftmdbDetails['number_of_seasons'] ?? 1,
                 [], // Episodi vuoti
                 $statoObj

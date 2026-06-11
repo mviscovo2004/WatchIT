@@ -19,6 +19,16 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
 $controllerClass = 'C' . $controllerName;
 
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' &&
+    $controllerName !== 'Utente' &&
+    !in_array($actionName, ['login', 'registrazione', 'logout'])
+) {
+    Session::set('previous_url', $_SERVER['REQUEST_URI']);
+}
+
+
 if (class_exists($controllerClass)) {
     $controllerInstance = new $controllerClass();
     if (method_exists($controllerInstance, $actionName)) {

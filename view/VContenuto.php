@@ -24,17 +24,35 @@ class VContenuto extends VView
         $this->display("homepage.tpl");
     }
 
-    public function mostraSerie($serie, $watchlistIds = [])
+    public function mostraSerie($serie, $watchlistIds = [], $recensioni = [])
     {
         $this->assign("serie", $serie);
         $this->assign("watchlistIds", $watchlistIds);
+        $this->assign("recensioni", $recensioni);
         $this->display("serie.tpl");
     }
 
-    public function mostraFilm($film, $watchlistIds = [])
+    public function mostraFilm($film, $watchlistIds = [], $recensioni = [])
     {
         $this->assign("film", $film);
         $this->assign("watchlistIds", $watchlistIds);
+        $this->assign("recensioni", $recensioni);
         $this->display("film.tpl");
+    }
+
+    public function mostraEpisodio($episodio, $serie, $recensioni = [])
+    {
+        $this->assign("episodio", $episodio);
+        $this->assign("serie", $serie);
+        $this->assign("recensioni", $recensioni);
+        $this->display("episodio.tpl");
+    }
+
+    public function mostraRicerca($film, $serie, $utenti)
+    {
+        $this->assign("film", $film);
+        $this->assign("serie", $serie);
+        $this->assign("utenti", $utenti);
+        $this->display("ricerca.tpl");
     }
 }

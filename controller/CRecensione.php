@@ -1,103 +1,107 @@
 <?php
-
 class CRecensione
 {
 
     public function aggiungiRecensione()
     {
-        if (!Session::isLogged()) {
-            header("Location: index.php?controller=Utente&action=login");
-            exit();
-        }
+        if (isset($_POST['contenuto_id']) && isset($_POST['testo']) && isset($_POST['voto'])) {
+            $contenuto_id = $_POST['contenuto_id'];
+            $testo = $_POST['testo'];
+            $voto = (int)$_POST['voto'];
+            $user_id = Session::get('user_id');
 
-        $idContenuto = $_GET['id'] ?? null;
-        $idUtente = Session::get('user_id');
-        $descrizione = $_POST['descrizione'] ?? null;
-        $voto = $_POST['voto'] ?? null;
-        $titolo = $_POST['titolo'] ?? null;
-        $contenuto = FContenuto::findById($idContenuto);
-        $utente = FUtente::findById($idUtente);
-        $idRecensione = 0;
+            $utente = FUtente::findById($user_id);
+            $contenuto = FContenuto::findById($contenuto_id);
 
-        if ($contenuto && $utente && $titolo && $voto && $descrizione) {
-            FRecensione::aggiungiRecensione($idRecensione, $titolo, $voto, $descrizione, $contenuto, $utente);
-            header("Location: index.php?controller=Contenuto&action=dettagli&id=" . $idContenuto);
-            exit();
-        } else {
-            $error = "Errore durante l'aggiunta della recensione.";
-            $view = new VContenuto();
-            $view->mostraDettagli($contenuto, $error);
-        }
-    }
 
-    public function eliminaRecensione()
-    {
-        if (!Session::isLogged()) {
-            header("Location: index.php?controller=Utente&action=login");
-            exit();
-        }
+            $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
 
-        $idRecensione = $_GET['id'] ?? null;
-        $recensione = FRecensione::findById($idRecensione);
-        $contenuto = $recensione->getContenuto();
-        $idContenuto = $contenuto->getId();
-        $idUtente = Session::get('user_id');
-        $utente = FUtente::findById($idUtente);
-        if ($recensione && $recensione->getUtente() == $utente) {
-            FRecensione::delete($recensione);
-            header("Location: index.php?controller=Contenuto&action=dettagli&id=" . $idContenuto);
-            exit();
-        } else {
-            $error = "Errore durante l'eliminazione della recensione.";
-            $view = new VContenuto();
-            $view->mostraDettagli($contenuto, $error);
+            if ($episodio_id) {
+
+                $episodio = FEpisodio::findById($episodio_id);
+                $successo = FRecensione::aggiungiRecensioneEpisodio(0, "", $voto, $testo, $contenuto, $episodio, $utente);
+
+                if ($successo) {
+                    header("Location: index.php?controller=Contenuto&action=mostraEpisodio&serie=" . $contenuto_id . "&id=" . $episodio_id);
+                    exit();
+                }
+            } else {
+                $successo = FRecensione::aggiungiRecensione(0, "", $voto, $testo, $contenuto, $utente);
+
+                if ($successo) {
+                    if ($contenuto instanceof ESerie) {
+                        header("Location: index.php?controller=Contenuto&action=mostraSerie&id=" . $contenuto_id);
+                    } else {
+                        header("Location: index.php?controller=Contenuto&action=mostraFilm&id=" . $contenuto_id);
+                    }
+                    exit();
+                }
+            }
         }
     }
+
 
     public function modificaRecensione()
     {
-        if (!Session::isLogged()) {
-            header("Location: index.php?controller=Utente&action=login");
-            exit();
-        }
+        if (isset($_POST['recensione_id']) && isset($_POST['testo']) && isset($_POST['voto'])) {
+            $recensione_id = $_POST['recensione_id'];
+            $testo = $_POST['testo'];
+            $voto = (int)$_POST['voto'];
 
-        $idRecensione = $_GET['id'] ?? null;
-        $recensione = FRecensione::findById($idRecensione);
-        $contenuto = $recensione->getContenuto();
-        $idContenuto = $contenuto->getId();
-        $idUtente = Session::get('user_id');
-        $utente = FUtente::findById($idUtente);
-        $descrizione = $_POST['descrizione'] ?? null;
-        $voto = $_POST['voto'] ?? null;
-        $titolo = $_POST['titolo'] ?? null;
-        if ($recensione && $recensione->getUtente() == $utente && $descrizione && $voto && $titolo) {
-            $recensione->setTitolo($titolo);
-            $recensione->setVoto($voto);
-            $recensione->setDescrizione($descrizione);
-            FRecensione::update($recensione);
-            header("Location: index.php?controller=Contenuto&action=dettagli&id=" . $idContenuto);
-            exit();
-        } else {
-            $error = "Errore durante la modifica della recensione.";
-            $view = new VContenuto();
-            $view->mostraDettagli($contenuto, $error);
+
+            $recensione = FRecensione::findById($recensione_id);
+
+            if ($recensione) {
+
+                $recensione->setDescrizione($testo);
+                $recensione->setVoto($voto);
+
+                FRecensione::update($recensione);
+
+                $contenuto_id = $_POST['contenuto_id'];
+                $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
+
+                if ($episodio_id) {
+                    header("Location: index.php?controller=Contenuto&action=mostraEpisodio&serie=" . $contenuto_id . "&id=" . $episodio_id);
+                } else {
+                    $contenuto = FContenuto::findById($contenuto_id);
+                    if ($contenuto instanceof ESerie) {
+                        header("Location: index.php?controller=Contenuto&action=mostraSerie&id=" . $contenuto_id);
+                    } else {
+                        header("Location: index.php?controller=Contenuto&action=mostraFilm&id=" . $contenuto_id);
+                    }
+                }
+                exit();
+            }
         }
     }
 
 
-    public function mostraRecensioni()
+    public function eliminaRecensione()
     {
-        $idContenuto = $_GET['id'] ?? null;
-        $contenuto = FContenuto::findById($idContenuto);
-        $recensioni = FRecensione::findByContenuto($idContenuto);
-        $view = new VContenuto();
-        $view->mostraDettagli($contenuto, $recensioni);
-    }
+        if (isset($_POST['recensione_id'])) {
+            $recensione_id = $_POST['recensione_id'];
 
-    public function mostraUltimeRecensioni(int $limit = 5)
-    {
-        $recensioni = FRecensione::getUltimeRecensioni($limit);
-        $view = new VContenuto();
-        $view->mostraUltimeRecensioni($recensioni, $limit);
+            $recensione = FRecensione::findById($recensione_id);
+
+            if ($recensione) {
+                FRecensione::delete($recensione);
+
+                $contenuto_id = $_POST['contenuto_id'];
+                $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
+
+                if ($episodio_id) {
+                    header("Location: index.php?controller=Contenuto&action=mostraEpisodio&serie=" . $contenuto_id . "&id=" . $episodio_id);
+                } else {
+                    $contenuto = FContenuto::findById($contenuto_id);
+                    if ($contenuto instanceof ESerie) {
+                        header("Location: index.php?controller=Contenuto&action=mostraSerie&id=" . $contenuto_id);
+                    } else {
+                        header("Location: index.php?controller=Contenuto&action=mostraFilm&id=" . $contenuto_id);
+                    }
+                }
+                exit();
+            }
+        }
     }
 }

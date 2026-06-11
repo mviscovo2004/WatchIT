@@ -140,4 +140,24 @@ class EEpisodio
     {
         $this->valutazioneMedia = $valutazioneMedia;
     }
+
+    public function getLocandina(): string
+    {
+        return $this->serie->getLocandina();
+    }
+
+    public function getAnno()
+    {
+        return $this->serie->getAnno();
+    }
+
+    public function getRegista()
+    {
+        return $this->serie->getRegista();
+    }
+
+    public function getGeneri()
+    {
+        return $this->serie->getGeneri();
+    }
 }

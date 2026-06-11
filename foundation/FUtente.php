@@ -80,72 +80,6 @@ class FUtente
         return $utenti;
     }
 
-    //---Filtri ---
-    //find not banned
-    public static function findNotBanned()
-    {
-        $em = self::getEntityManager();
-        $utenti = $em->getRepository(EUtente::class)->createQueryBuilder('u')
-            ->where('u.bannato = false')
-            ->getQuery()
-            ->getResult();
-        return $utenti;
-    }
-
-    //find banned
-    public static function findBanned()
-    {
-        $em = self::getEntityManager();
-        $utenti = $em->getRepository(EUtente::class)->createQueryBuilder('u')
-            ->where('u.bannato = true')
-            ->getQuery()
-            ->getResult();
-        return $utenti;
-    }
-
-
-    //isBanned
-    public static function isBanned(int $id)
-    {
-        $em = self::getEntityManager();
-        $ban = $em->getRepository(EBan::class)->findOneBy(['id' => $id]);
-        if ($ban != null) {
-            $dataCorrente = new DateTime();
-            if ($dataCorrente < $ban->getDataScadenza()) {
-                return $ban;
-            } else {
-                $em->remove($ban);
-                $em->flush();
-                return null;
-            }
-        }
-        return null;
-    }
-
-    //---Operazioni Admin ---
-    //ban
-    public static function ban(int $idUtente, DateTime $dataFine, string $motivo, int $idAmministratore)
-    {
-        $em = self::getEntityManager();
-        $admin = $em->getRepository(EAmministratore::class)->findOneBy(['id' => $idAmministratore]);
-        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
-        $ban = new EBan(0, $utente, $admin, new DateTime(), $dataFine, $motivo);
-        $em->persist($ban);
-        $em->flush();
-        return true;
-    }
-
-    //unban
-    public static function unban(int $idUtente, DateTime $dataFine)
-    {
-        $em = self::getEntityManager();
-        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
-        $ban = $em->getRepository(EBan::class)->findOneBy(['utente' => $utente]);
-        $em->remove($ban);
-        $em->flush();
-        return true;
-    }
-
     //---Operazioni Utente ---
     //follow
     public static function follow(int $idUtente, int $idUtenteSeguito)
@@ -219,6 +153,93 @@ class FUtente
         return $utente;
     }
 
+    //promuoviAdAdmin
+    public static function promuoviAdAdmin(int $idUtente)
+    {
+        $em = self::getEntityManager();
+        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
+        $utente->setAdmin(true);
+        $em->flush();
+        return true;
+    }
+
+    //retrocediAdUtente
+    public static function retrocediAdUtente(int $idUtente)
+    {
+        $em = self::getEntityManager();
+        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
+        $utente->setAdmin(false);
+        $em->flush();
+        return true;
+    }
+
     //recupera password
-    public static function recuperaPassword(string $email) {}
+    public static function forgotPassword(string $email)
+    {
+        $em = self::getEntityManager();
+        $utente = $em->getRepository(EUtente::class)->findOneBy(['email' => $email]);
+        if ($utente != null) {
+            $token = bin2hex(random_bytes(32));
+
+            // Usiamo l'oggetto DateTime per evitare errori di tipo in Doctrine
+            $dataScadenza = new DateTime('+1 hour');
+
+            $utente->setTokenRecupero($token);
+            $utente->setDataScadenzaToken($dataScadenza);
+
+            // Rileviamo l'host corrente per rendere il link dinamico (funziona sia su localhost sia su Altervista)
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+            $dir = dirname($scriptName);
+            $baseDir = ($dir === DIRECTORY_SEPARATOR || $dir === '/' || $dir === '\\') ? '' : $dir;
+
+            $link = 'http://' . $host . $baseDir . '/index.php?controller=Utente&action=resetPassword&token=' . $token;
+
+
+            $mailSent = false;
+
+            // 1. Controlla se la funzione mail() esiste sul server
+            if (function_exists('mail')) {
+                // 2. Controlla il valore di ritorno dell'invio (true/false)
+                $mailSent = @mail(
+                    $email,
+                    'Recupera Password - WatchIT',
+                    "Gentile utente,\n\nAbbiamo ricevuto una richiesta di recupero password per il tuo account WatchIT.\n\nClicca sul link seguente per impostare una nuova password:\n\n"
+                        . $link . "\n\n"
+                        . "Questo link scadrà tra un'ora.\n\nSe non hai richiesto tu questo recupero, puoi ignorare questa email.",
+                    "From: noreply@watchit.altervista.org\r\nContent-Type: text/plain; charset=UTF-8\r\n"
+                );
+            }
+
+            // 3. Se l'invio fallisce o se siamo su localhost, salviamo il link nel file locale per il test
+            if (!$mailSent || in_array($host, ['localhost', '127.0.0.1', '[::1]'])) {
+                file_put_contents(__DIR__ . '/../recupero_link.txt', "Link per $email: " . $link . "\n");
+            }
+
+            $em->flush();
+            return true;
+        }
+        return false;
+    }
+
+    //reset password
+    public static function resetPassword(string $token, string $password)
+    {
+        $em = self::getEntityManager();
+        $utente = $em->getRepository(EUtente::class)->findOneBy(['tokenRecupero' => $token]);
+
+        // Confrontiamo correttamente l'oggetto DateTime del token con quello dell'ora attuale
+        if ($utente != null && $utente->getDataScadenzaToken() !== null && $utente->getDataScadenzaToken() > new DateTime()) {
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $utente->setHashPassword($passwordHash); // setHashPassword è il metodo corretto in EUtente
+
+            // Azzeriamo il token dopo l'uso per motivi di sicurezza
+            $utente->setTokenRecupero(null);
+            $utente->setDataScadenzaToken(null);
+
+            $em->flush();
+            return true;
+        }
+        return false;
+    }
 }

@@ -57,6 +57,7 @@ class FContenuto
         $em = self::getEntityManager();
         $contenuti = $em->getRepository(EContenuto::class)->createQueryBuilder('c')
             ->where('c.titolo LIKE :query')
+            ->orderBy('c.titolo', 'ASC')
             ->setParameter('query', '%' . $query . '%')
             ->getQuery()
             ->getResult();

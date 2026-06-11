@@ -23,9 +23,9 @@ class ESerie extends EContenuto
     #[ORM\Column(type: 'string', enumType: Stato::class)]
     protected Stato $stato;
 
-    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, int $numeroStagioni, array $episodi, Stato $stato)
+    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, array $video = [], int $numeroStagioni, array $episodi, Stato $stato)
     {
-        parent::__construct($tmdbId, $id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi);
+        parent::__construct($tmdbId, $id, $titolo, $anno, $trama, $valutazioneMedia, $partecipazioni, $locandina, $generi, $video);
         $this->numeroStagioni = $numeroStagioni;
         $this->episodi = $episodi;
         $this->stato = $stato;

@@ -25,7 +25,7 @@ class FTMDb
     //prende un film da tmdb
     public static function fetchFilm(int $tmdbId)
     {
-        $url = self::BASE_URL . "/movie/" . $tmdbId . "?api_key=" . TMDB_API_KEY . "&language=it-IT&append_to_response=credits,genres";
+        $url = self::BASE_URL . "/movie/" . $tmdbId . "?api_key=" . TMDB_API_KEY . "&language=it-IT&append_to_response=credits,genres,videos";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -39,7 +39,7 @@ class FTMDb
     //prende una serie da tmdb
     public static function fetchSerie(int $tmdbId)
     {
-        $url = self::BASE_URL . "/tv/" . $tmdbId . "?api_key=" . TMDB_API_KEY . "&language=it-IT&append_to_response=credits,genres";
+        $url = self::BASE_URL . "/tv/" . $tmdbId . "?api_key=" . TMDB_API_KEY . "&language=it-IT&append_to_response=credits,genres,videos";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

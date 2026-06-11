@@ -60,8 +60,11 @@ class EContenuto
     #[ORM\Column(type: Types::JSON)]
     protected array $generi;
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    protected array $video = [];
 
-    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi)
+
+    public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, array $video = [])
     {
         $this->tmdbId = $tmdbId;
         $this->id = $id;
@@ -72,6 +75,7 @@ class EContenuto
         $this->partecipazioni = $partecipazioni;
         $this->locandina = $locandina;
         $this->generi = $generi;
+        $this->video = $video;
     }
 
     public function getRegista(): string
@@ -194,5 +198,15 @@ class EContenuto
     public function setGeneri(array $generi)
     {
         $this->generi = $generi;
+    }
+
+    public function getVideo(): array
+    {
+        return $this->video;
+    }
+
+    public function setVideo(array $video)
+    {
+        $this->video = $video;
     }
 }

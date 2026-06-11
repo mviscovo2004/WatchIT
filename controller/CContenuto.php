@@ -44,7 +44,8 @@ class CContenuto
                 }
             }
         }
-        $view->mostraSerie($serie, $watchlistIds);
+        $recensioni = FRecensione::findByContenuto($serie->getId());
+        $view->mostraSerie($serie, $watchlistIds, $recensioni);
     }
 
     public function mostraFilm()
@@ -66,7 +67,39 @@ class CContenuto
                 }
             }
         }
+        $recensioni = FRecensione::findByContenuto($film->getId());
+        $view->mostraFilm($film, $watchlistIds, $recensioni);
+    }
 
-        $view->mostraFilm($film, $watchlistIds);
+    public function mostraEpisodio()
+    {
+        $id = $_GET['id'] ?? null;
+        $serieId = $_GET['serie'] ?? null;
+
+        $episodio = FEpisodio::findById($id);
+        $serie = FContenuto::findById($serieId);
+        $view = new VContenuto();
+
+        $view->mostraEpisodio($episodio, $serie);
+    }
+
+    public function cerca()
+    {
+        $query = $_GET['query'] ?? null;
+        $contenuti = FContenuto::search($query);
+        $utenti = FUtente::search($query);
+
+        $film = [];
+        $serie = [];
+        foreach ($contenuti as $c) {
+            if ($c instanceof EFilm) {
+                $film[] = $c;
+            } else if ($c instanceof ESerie) {
+                $serie[] = $c;
+            }
+        }
+
+        $view = new VContenuto();
+        $view->mostraRicerca($film, $serie, $utenti);
     }
 }
