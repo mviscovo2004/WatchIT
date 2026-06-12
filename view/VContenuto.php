@@ -2,11 +2,12 @@
 
 class VContenuto extends VView
 {
-    public function mostraHome($filmPopolari = [], $seriePopolari = [], $watchlistIds = [])
+    public function mostraHome($filmPopolari = [], $seriePopolari = [], $watchlistIds = [], $recensioni = [])
     {
         $this->assign("filmPopolari", $filmPopolari);
         $this->assign("seriePopolari", $seriePopolari);
         $this->assign("watchlistIds", $watchlistIds);
+        $this->assign("recensioni", $recensioni);
         $this->display("homepage.tpl");
     }
 
@@ -18,11 +19,6 @@ class VContenuto extends VView
         $this->display("dettagli.tpl");
     }
 
-    public function mostraUltimeRecensioni($ultimeRecensioni)
-    {
-        $this->assign("ultimeRecensioni", $ultimeRecensioni);
-        $this->display("homepage.tpl");
-    }
 
     public function mostraSerie($serie, $watchlistIds = [], $recensioni = [])
     {

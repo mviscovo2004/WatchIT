@@ -21,17 +21,34 @@
                             <p class="text-red-400 font-semibold mb-1">Stato: Bannato</p>
                             <p class="text-slate-300"><span class="font-semibold">Motivo:</span> {$ban->getMotivo()}</p>
                             <p class="text-slate-300"><span class="font-semibold">Fino al:</span>
-                                {$ban->getDataScadenza()->format('d/m/Y')}</p>
+                                {$ban->getDataFine()->format('d/m/Y')}</p>
                         </div>
                     {/if}
                 </div>
 
-                <div class="flex justify-end items-center mt-4 pt-3 border-t border-slate-700/50">
+                <div class="flex justify-end items-center mt-4 pt-3 border-t border-slate-700/50 gap-2">
                     <button onclick="window.location.href='?controller=Admin&action=eliminaUtente&id={$utente->getId()}'"
                         class="text-slate-400 hover:text-red-500 text-sm font-bold transition-all duration-200 mr-auto">
                         Elimina
                     </button>
-                    {if !$utente instanceof EAmministratore}
+
+                    {if $utente instanceof EAmministratore}
+
+                        {if Session::get('user_id') !== $utente->getId()}
+                            <button
+                                onclick="window.location.href='index.php?controller=Admin&action=retrocediAdUtente&idUtente={$utente->getId()}'"
+                                class="px-3 py-1.5 bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white rounded-lg text-sm font-bold transition-all duration-200">
+                                Retrocedi
+                            </button>
+                        {/if}
+                    {else}
+                        {if empty($userBans)}
+                            <button
+                                onclick="window.location.href='index.php?controller=Admin&action=promuoviAdAdmin&idUtente={$utente->getId()}'"
+                                class="px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white rounded-lg text-sm font-bold transition-all duration-200">
+                                Promuovi ad Admin
+                            </button>
+                        {/if}
                         {if !empty($userBans)}
                             <button
                                 onclick="openUnbanModal('{$utente->getId()}', '{$utente->getNome()|escape:'javascript'} {$utente->getCognome()|escape:'javascript'}')"
@@ -47,6 +64,7 @@
                         {/if}
                     {/if}
                 </div>
+
             </div>
         {/foreach}
     </div>

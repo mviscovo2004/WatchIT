@@ -18,11 +18,14 @@ class VUtente extends VView
         $this->display("register.tpl");
     }
 
-    public function mostraProfilo($utente)
+    public function mostraProfilo($utente, $watchlists = [], $recensioni = [])
     {
         $this->assign("utente", $utente);
+        $this->assign("watchlists", $watchlists);
+        $this->assign("recensioni", $recensioni);
         $this->display("utente.tpl");
     }
+
 
     public function mostraResetPassword($token, $error = null)
     {

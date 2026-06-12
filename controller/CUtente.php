@@ -125,9 +125,15 @@ class CUtente
     public function mostraProfilo()
     {
         $id = $_GET['id'];
+
+        $utente = FUtente::findById($id);
+        $watchlists = FWatchlist::findPubblicheByUtente($id);
+        $recensioni = FRecensione::findByUtente($id);
+
         $view = new VUtente();
-        $view->mostraProfilo(FUtente::findById($id));
+        $view->mostraProfilo($utente, $watchlists, $recensioni);
     }
+
 
     public function forgotPassword()
     {

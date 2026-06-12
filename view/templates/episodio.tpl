@@ -39,7 +39,7 @@
 
                             <!-- Pulsante Valuta posizionato tutto a destra -->
                             {if $isLogged}
-                                <a href="index.php?controller=Recensione&action=aggiungiRecensione&id={$episodio->getId()}"
+                                <a onclick="toggleReviewModal(true)"
                                     class="shrink-0 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-600/20 text-sm hover:scale-105 active:scale-95 self-start sm:self-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current" viewBox="0 0 20 20">
                                         <path
@@ -94,6 +94,48 @@
 
                 </div>
             </div>
+            <div class="mt-12 space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Cast</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    {foreach $serie->getPartecipazioni() as $p}
+                        {if $p->getRuolo() === 'Attore'}
+                            <div
+                                class="flex flex-col items-center text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-purple-500 transition-all duration-300 group">
+                                <!-- Foto dell'attore tonda -->
+                                <div
+                                    class="w-20 h-20 rounded-full overflow-hidden bg-slate-800 border border-slate-700 mb-3 shrink-0">
+                                    {assign var="fotoAttore" value=$p->getPersona()->getFoto()}
+                                    <img src="{if $fotoAttore && $fotoAttore[0] === '/'}https://image.tmdb.org/t/p/w185{$fotoAttore}{else}view/images/{$fotoAttore|default:"default.png"}{/if}"
+                                        alt="{$p->getPersona()->getNome()}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
+                                </div>
+                                <!-- Nome dell'attore -->
+                                <h4
+                                    class="font-bold text-white text-sm truncate w-full group-hover:text-purple-400 transition-colors duration-200">
+                                    {$p->getPersona()->getNome()} {$p->getPersona()->getCognome()}
+                                </h4>
+                                <p class="text-xs text-slate-500 mt-1">{$p->getRuolo()}</p>
+                            </div>
+                        {/if}
+                    {/foreach}
+                </div>
+            </div>
+            <div class="mt-12 space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Recensioni</h2>
+
+                {if count($recensioni) == 0}
+                    <p class="text-slate-400 text-sm">Nessuna recensione per questo film. Sii il primo a scriverne una!</p>
+                {else}
+                    <div class="grid grid-cols-1 gap-4">
+                        {foreach $recensioni as $recensione}
+                            {include file="components/cards/cardRecensioneSemplice.tpl" recensione=$recensione cotenutoId=$serie->getId()}
+                        {/foreach}
+                    </div>
+                {/if}
+            </div>
+            {include file="components/modali/modaleRecensione.tpl" contenutoId=$serie->getId() episodioId=$episodio->getId()}
         </div>
     </div>
+    <script src="{$baseUrl}/view/js/modaleRecensione.js"></script>
+
 {/block}

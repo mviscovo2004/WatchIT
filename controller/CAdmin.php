@@ -149,11 +149,19 @@ class CAdmin
         }
         $idUtente = $_GET['idUtente'] ?? $_GET['id'] ?? null;
         if ($idUtente) {
-            FUtente::promuoviAdAdmin($idUtente);
+            $utente = FUtente::findById($idUtente);
+            if ($utente) {
+                // Esegui la promozione solo se l'utente non ha ban attivi
+                $userBans = FBan::findByUtente($utente);
+                if (empty($userBans)) {
+                    FUtente::promuoviAdAdmin($idUtente);
+                }
+            }
         }
         header("Location: index.php?controller=Admin&action=listaUtenti");
         exit();
     }
+
 
     public function retrocediAdUtente()
     {

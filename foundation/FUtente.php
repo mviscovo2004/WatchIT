@@ -23,10 +23,46 @@ class FUtente
     public static function delete(EUtente $utente)
     {
         $em = self::getEntityManager();
+
+        // 1. Rimuovi visualizzazioni associate all'utente
+        $visualizzazioni = $em->getRepository(EVisualizzazione::class)->findBy(['utente' => $utente]);
+        foreach ($visualizzazioni as $v) {
+            $em->remove($v);
+        }
+
+        // 2. Rimuovi recensioni scritte dall'utente
+        $recensioni = $em->getRepository(ERecensione::class)->findBy(['utente' => $utente]);
+        foreach ($recensioni as $recensione) {
+            $em->remove($recensione);
+        }
+
+        // 3. Rimuovi watchlist create dall'utente
+        $watchlists = $em->getRepository(EWatchlist::class)->findBy(['utente' => $utente]);
+        foreach ($watchlists as $watchlist) {
+            $em->remove($watchlist);
+        }
+
+        // 4. Rimuovi i ban subiti dall'utente
+        $banSubiti = $em->getRepository(EBan::class)->findBy(['utente' => $utente]);
+        foreach ($banSubiti as $b) {
+            $em->remove($b);
+        }
+
+        // 5. Se l'utente è un amministratore, rimuovi i ban emessi da lui
+        if ($utente instanceof EAmministratore) {
+            $banEmessi = $em->getRepository(EBan::class)->findBy(['amministratore' => $utente]);
+            foreach ($banEmessi as $b) {
+                $em->remove($b);
+            }
+        }
+
+        // 6. Rimuovi infine l'utente
         $em->remove($utente);
+
         $em->flush();
         return true;
     }
+
 
     //update
     public static function update(EUtente $utente)
@@ -157,9 +193,8 @@ class FUtente
     public static function promuoviAdAdmin(int $idUtente)
     {
         $em = self::getEntityManager();
-        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
-        $utente->setAdmin(true);
-        $em->flush();
+        $connection = $em->getConnection();
+        $connection->executeStatement("UPDATE utenti SET tipo = 'admin' WHERE id = :id", ['id' => $idUtente]);
         return true;
     }
 
@@ -167,11 +202,11 @@ class FUtente
     public static function retrocediAdUtente(int $idUtente)
     {
         $em = self::getEntityManager();
-        $utente = $em->getRepository(EUtente::class)->findOneBy(['id' => $idUtente]);
-        $utente->setAdmin(false);
-        $em->flush();
+        $connection = $em->getConnection();
+        $connection->executeStatement("UPDATE utenti SET tipo = 'utente' WHERE id = :id", ['id' => $idUtente]);
         return true;
     }
+
 
     //recupera password
     public static function forgotPassword(string $email)

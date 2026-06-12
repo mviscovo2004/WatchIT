@@ -6,6 +6,28 @@ require_once __DIR__ . '/../foundation/FTMDb.php';
 echo "Avvio Seeder TMDb...\n";
 
 $em = FEntityManager::getInstance();
+// Creazione di utenti fittizi per le recensioni con password sicure generate casualmente
+echo "Creazione utenti fittizi per le recensioni...\n";
+$utentiRecensioni = [];
+
+$esisteLuca = $em->getRepository(EUtente::class)->findOneBy(['username' => 'lucabianchi']);
+if (!$esisteLuca) {
+    $luca = new EUtente(0, 'Luca', 'Bianchi', 'default.png', 'lucabianchi', 'luca@bianchi.it', password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT));
+    $em->persist($luca);
+    $utentiRecensioni[] = $luca;
+} else {
+    $utentiRecensioni[] = $esisteLuca;
+}
+
+$esisteGiulia = $em->getRepository(EUtente::class)->findOneBy(['username' => 'giuliaverdi']);
+if (!$esisteGiulia) {
+    $giulia = new EUtente(0, 'Giulia', 'Verdi', 'default.png', 'giuliaverdi', 'giulia@verdi.it', password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT));
+    $em->persist($giulia);
+    $utentiRecensioni[] = $giulia;
+} else {
+    $utentiRecensioni[] = $esisteGiulia;
+}
+$em->flush();
 
 echo "Inizio download film...\n";
 
@@ -103,6 +125,34 @@ for ($i = 1; $i <= 3; $i++) {
 
             $em->flush();
             echo "Salvato Film: " . $film->getTitolo() . "\n";
+
+            // Creazione di recensioni fittizie per il film
+            $recensioniEsempio = [
+                ['voto' => 8, 'titolo' => 'Molto bello', 'descrizione' => 'Mi è piaciuto moltissimo, lo consiglio a tutti! Ambientazione superba e cast eccezionale.'],
+                ['voto' => 9, 'titolo' => 'Capolavoro assoluto', 'descrizione' => 'Uno dei migliori film dell\'anno. Regia e fotografia magistrali.'],
+                ['voto' => 5, 'titolo' => 'Deludente', 'descrizione' => 'Sinceramente mi aspettavo di meglio. Trama piatta e ritmo troppo lento.'],
+                ['voto' => 7, 'titolo' => 'Interessante', 'descrizione' => 'Un buon intrattenimento. Non un capolavoro ma scorre bene ed è divertente.'],
+                ['voto' => 10, 'titolo' => 'Perfetto', 'descrizione' => 'Assolutamente consigliato, merita 10 stelle! Storia originale e interpretazioni da oscar.'],
+            ];
+
+            $numRecensioni = rand(1, 2); // Genera casualmente 1 o 2 recensioni
+            for ($r = 0; $r < $numRecensioni; $r++) {
+                $recData = $recensioniEsempio[array_rand($recensioniEsempio)];
+                $utenteRecensione = $utentiRecensioni[array_rand($utentiRecensioni)];
+
+                $recensione = new ERecensione(
+                    0,
+                    $recData['titolo'],
+                    $recData['voto'],
+                    $recData['descrizione'],
+                    $film,
+                    null, // Nessun episodio
+                    $utenteRecensione,
+                    new DateTime('-' . rand(1, 30) . ' days') // Data di pubblicazione casuale negli ultimi 30 giorni
+                );
+                $em->persist($recensione);
+            }
+            $em->flush();
         }
     }
 }
@@ -235,6 +285,33 @@ for ($i = 1; $i <= 3; $i++) {
 
             $em->flush();
             echo "Salvata Serie TV: " . $serie->getTitolo() . "\n";
+
+            // Creazione di recensioni fittizie per la serie
+            $recensioniEsempioSerie = [
+                ['voto' => 8, 'titolo' => 'Serie TV fantastica', 'descrizione' => 'Ti tiene incollato allo schermo fin dal primo episodio! Ottimo cast.'],
+                ['voto' => 9, 'titolo' => 'Coinvolgente e misteriosa', 'descrizione' => 'Una trama complessa e ricca di colpi di scena. Consigliatissima!'],
+                ['voto' => 6, 'titolo' => 'Non male', 'descrizione' => 'Inizia bene ma si perde un po\' sul finale. Comunque si fa guardare.'],
+                ['voto' => 10, 'titolo' => 'Capolavoro seriale', 'descrizione' => 'Una delle migliori serie TV che abbia mai visto. Personaggi scritti divinamente.'],
+            ];
+
+            $numRecensioni = rand(1, 2);
+            for ($r = 0; $r < $numRecensioni; $r++) {
+                $recData = $recensioniEsempioSerie[array_rand($recensioniEsempioSerie)];
+                $utenteRecensione = $utentiRecensioni[array_rand($utentiRecensioni)];
+
+                $recensione = new ERecensione(
+                    0,
+                    $recData['titolo'],
+                    $recData['voto'],
+                    $recData['descrizione'],
+                    $serie,
+                    null, // Nessun episodio
+                    $utenteRecensione,
+                    new DateTime('-' . rand(1, 30) . ' days')
+                );
+                $em->persist($recensione);
+            }
+            $em->flush();
         }
     }
 }

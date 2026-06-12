@@ -71,6 +71,13 @@ class FRecensione
         return $recensioni;
     }
 
+    public static function findByEpisodio(int $idEpisodio)
+    {
+        $em = self::getEntityManager();
+        $recensioni = $em->getRepository(ERecensione::class)->findBy(['episodio' => $idEpisodio]);
+        return $recensioni;
+    }
+
     //read by user and content
     public static function findByUtenteAndContenuto(int $idUtente, int $idContenuto)
     {
@@ -116,7 +123,7 @@ class FRecensione
     public static function getUltimeRecensioni(int $limit = 5)
     {
         $em = self::getEntityManager();
-        $recensioni = $em->getRepository(ERecensione::class)->findBy([], ['dataRecensione' => 'DESC'], $limit);
+        $recensioni = $em->getRepository(ERecensione::class)->findBy([], ['dataPubblicazione' => 'DESC'], $limit);
         return $recensioni;
     }
 }

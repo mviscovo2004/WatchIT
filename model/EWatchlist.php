@@ -4,12 +4,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\Collection;
 
-enum Privacy
+enum Privacy: string
 {
-    case pubblico;
-    case privato;
-    case solo_amici;
+    case pubblico = 'pubblico';
+    case privato = 'privato';
+    case solo_amici = 'solo_amici';
 }
+
 
 #[ORM\Entity]
 #[ORM\Table(name: 'watchlist')]

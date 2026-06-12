@@ -42,7 +42,7 @@
 
 
 
-                         <a href="index.php?controller=Watchlist&action=mostra"
+                         <a href="index.php?controller=Watchlist&action=mostraTutteWatchlist"
                              class="px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white text-sm font-semibold transition-all duration-200">
                              Le mie watchlist
                          </a>

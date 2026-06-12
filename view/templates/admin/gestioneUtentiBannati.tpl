@@ -4,7 +4,8 @@
     <h1 class="text-2xl font-bold text-white mb-4 text-center">Gestione Utenti Bannati</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {foreach $utentiBannati as $utente}
+        {foreach $bannati as $ban}
+            {assign var="utente" value=$ban->getUtente()}
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col justify-between h-full">
                 <div>
                     <h3 class="font-semibold text-lg text-white">{$utente->getNome()} {$utente->getCognome()}</h3>
@@ -12,23 +13,32 @@
                     <p class="text-slate-400 text-sm mb-3">
                         {if $utente instanceof EAmministratore}Amministratore{else}Utente{/if}
                     </p>
+
+                    <!-- Box Dettagli Sospensione -->
+                    <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-3 my-2 text-xs">
+                        <p class="text-red-400 font-semibold mb-1">Stato: Bannato</p>
+                        <p class="text-slate-300"><span class="font-semibold">Motivo:</span> {$ban->getMotivo()}</p>
+                        <p class="text-slate-300"><span class="font-semibold">Fino al:</span>
+                            {$ban->getDataFine()->format('d/m/Y')}</p>
+                    </div>
                 </div>
 
                 <div class="flex justify-end items-center mt-4 pt-3 border-t border-slate-700/50">
                     <button
-                        onclick="window.location.href='index.php?controller=Utente&action=eliminaUtente&id={$utente->getId()}'"
+                        onclick="window.location.href='index.php?controller=Admin&action=eliminaUtente&id={$utente->getId()}'"
                         class="text-slate-400 hover:text-red-500 text-sm font-semibold transition-all duration-200 mr-auto">
                         Elimina
                     </button>
 
                     <button
                         onclick="openUnbanModal('{$utente->getId()}', '{$utente->getNome()|escape:'javascript'} {$utente->getCognome()|escape:'javascript'}')"
-                        class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-lg text-xs font-bold transition-all duration-200">
+                        class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-lg text-sm font-bold transition-all duration-200">
                         Sblocca
                     </button>
                 </div>
             </div>
         {/foreach}
+
     </div>
 
     <!-- ================= MODALE DI UNBAN (SBLOCCO) ================= -->

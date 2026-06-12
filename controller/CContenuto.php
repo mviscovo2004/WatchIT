@@ -19,10 +19,11 @@ class CContenuto
                 }
             }
         }
+        $recensioni = FRecensione::getUltimeRecensioni(6);
 
         $view = new VContenuto();
 
-        $view->mostraHome($filmPopolari, $seriePopolari, $watchlistIds);
+        $view->mostraHome($filmPopolari, $seriePopolari, $watchlistIds, $recensioni);
     }
 
     public function mostraSerie()
@@ -80,8 +81,12 @@ class CContenuto
         $serie = FContenuto::findById($serieId);
         $view = new VContenuto();
 
-        $view->mostraEpisodio($episodio, $serie);
+        // Carichiamo le recensioni specifiche per questo episodio
+        $recensioni = FRecensione::findByEpisodio($id);
+
+        $view->mostraEpisodio($episodio, $serie, $recensioni);
     }
+
 
     public function cerca()
     {

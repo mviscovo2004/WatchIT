@@ -122,11 +122,13 @@ class FWatchlist
         return false;
     }
 
-    //get pubbliche
-    public static function getPubbliche()
+    public static function findPubblicheByUtente(int $idUtente)
     {
         $em = self::getEntityManager();
-        $watchlists = $em->getRepository(EWatchlist::class)->findBy(['visibilita' => Privacy::pubblico]);
+        $watchlists = $em->getRepository(EWatchlist::class)->findBy([
+            'utente' => $idUtente,
+            'visibilita' => Privacy::pubblico->name
+        ]);
         return $watchlists;
     }
 }

@@ -87,6 +87,18 @@ class CRecensione
             if ($recensione) {
                 FRecensione::delete($recensione);
 
+                // Gestione dei redirect personalizzati
+                $redirect_to = $_POST['redirect_to'] ?? null;
+                if ($redirect_to === 'admin') {
+                    header("Location: index.php?controller=Admin&action=listaRecensioni");
+                    exit();
+                } else if ($redirect_to === 'profilo') {
+                    $profile_id = $_POST['profile_id'] ?? Session::get('user_id');
+                    header("Location: index.php?controller=Utente&action=mostraProfilo&id=" . $profile_id);
+                    exit();
+                }
+
+
                 $contenuto_id = $_POST['contenuto_id'];
                 $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
 

@@ -15,7 +15,8 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition-all duration-550 ease-out">
 
                         {if $isLogged}
-                            <a href="index.php?controller=Watchlist&action=aggiungi&id={$serie->getId()}"
+                            <a href="#" onclick="event.preventDefault(); openAddToWatchlistModal({$serie->getId()})"
+                                data-watchlist-content-id="{$serie->getId()}"
                                 class="absolute top-4 right-4 p-3 rounded-full bg-slate-950/80 border border-slate-800 font-bold text-white hover:bg-purple-600 hover:border-purple-500 transition-all duration-350 backdrop-blur-md opacity-0 group-hover:opacity-100 z-20 shadow-lg transform hover:scale-110"
                                 title="{if $watchlistIds && in_array($serie->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
                                 {if $watchlistIds && in_array($serie->getId(), $watchlistIds)}
@@ -50,7 +51,7 @@
 
                             <!-- Pulsante Valuta posizionato tutto a destra -->
                             {if $isLogged}
-                                <a href="index.php?controller=Recensione&action=aggiungiRecensione&id={$serie->getId()}"
+                                <a onclick="toggleReviewModal(true)"
                                     class="shrink-0 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-600/20 text-sm hover:scale-105 active:scale-95 self-start sm:self-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current" viewBox="0 0 20 20">
                                         <path
@@ -230,218 +231,81 @@
             <!-- FINE SEZIONE EPISODI -->
 
             {if $serie->getVideo()|count > 0}
-                <div class="mt-12 space-y-6">
-                    <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Video</h2>
+                {include file="components/caroselloVideo.tpl" videos=$serie->getVideo()}*
+            {/if}
 
-                    <!-- Contenitore Relativo del Carosello con gruppo hover e limite max-w-full -->
-                    <div class="relative group/carousel max-w-full">
+            <div class="mt-12 space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Cast</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
 
-                        <!-- Freccia Sinistra (appare all'hover) -->
-                        <button id="slideLeftBtn"
-                            class="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-950/80 border border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 backdrop-blur-md shadow-lg transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 focus:outline-none hover:scale-105 active:scale-95 disabled:opacity-0 cursor-pointer"
-                            title="Scorri a sinistra">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
+                    {foreach $serie->getPartecipazioni() as $p}
 
-                        <!-- Contenitore Video (con scrollbar nascosta via Tailwind in modo sicuro come in serie.tpl) -->
-                        <div id="videoContainer"
-                            class="flex w-full overflow-x-auto gap-6 pb-4 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            {foreach $serie->getVideo() as $v}
-                                <!-- Card video con proporzioni 16:9 -->
-                                <div
-                                    class="aspect-video w-[300px] sm:w-[400px] md:w-[480px] shrink-0 rounded-xl overflow-hidden border border-slate-800 shadow-md">
-                                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/{$v.key}"
-                                        title="YouTube video player" frameborder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                                </div>
-                            {/foreach}
-                        </div>
+                        {include file="components/cards/cardCast.tpl" partecipazione=$p}
 
-                        <!-- Freccia Destra (appare all'hover) -->
-                        <!-- Freccia Destra (appare all'hover) -->
-                        <button id="slideRightBtn"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-950/80 border border-slate-800 text-white hover:bg-purple-600 hover:border-purple-500 backdrop-blur-md shadow-lg transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 focus:outline-none hover:scale-105 active:scale-95 disabled:opacity-0 cursor-pointer"
-                            title="Scorri a destra">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-
-                    </div>
-                </div>
-
-                <!-- Script per gestire lo scorrimento fluido (identico a quello di serie.tpl) -->
-                {literal}
-                    <script>
-                        document.addEventListener('DOMContentLoaded', () => {
-                            const container = document.getElementById('videoContainer');
-                            const leftBtn = document.getElementById('slideLeftBtn');
-                            const rightBtn = document.getElementById('slideRightBtn');
-
-                            if (!container || !leftBtn || !rightBtn) return;
-
-                            // Determina lo spazio da scorrere (larghezza del primo video + gap)
-                            const getScrollAmount = () => {
-                                const firstVideo = container.firstElementChild;
-                                return firstVideo ? firstVideo.clientWidth + 24 : 400; // 24px è il gap-6
-                            };
-
-                            // Disabilita/Nasconde i pulsanti quando arrivi alla fine o all'inizio
-                                const updateButtons = () => {
-                                    const scrollLeft = container.scrollLeft;
-                                    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
-                                    leftBtn.disabled = (scrollLeft <= 5);
-                                    rightBtn.disabled = (scrollLeft >= maxScrollLeft - 5);
-                                };
-
-                                leftBtn.addEventListener('click', () => {
-                                    container.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-                                });
-
-                                rightBtn.addEventListener('click', () => {
-                                    container.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-                                });
-
-                                container.addEventListener('scroll', updateButtons);
-                                updateButtons();
-                                // Ricalcolo di sicurezza dopo mezzo secondo per caricamento video lento
-                                setTimeout(updateButtons, 500);
-                            });
-                        </script>
-                    {/literal}
-
-
-
-
-
-                        {/if}
-
-                <div class="mt-12 space-y-6">
-                    <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Cast</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-
-
-
-
-
-
-                        {foreach $serie->getPartecipazioni() as $p}
-
-
-
-
-
-
-                            {if $p->getRuolo() === 'Attore'}
-                                <div
-                                    class="flex flex-col items-center text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-purple-500 transition-all duration-300 group">
-                                    <!-- Foto dell'attore tonda -->
-                                    <div
-                                        class="w-20 h-20 rounded-full overflow-hidden bg-slate-800 border border-slate-700 mb-3 shrink-0">
-                                        {assign var="fotoAttore" value=$p->getPersona()->getFoto()}
-                                        <img src="{if $fotoAttore && $fotoAttore[0] === '/'}https://image.tmdb.org/t/p/w185{$fotoAttore}{else}{$fotoAttore|default:"../images/default.png"}{/if}"
-                                            alt="{$p->getPersona()->getNome()}"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                                    </div>
-                                    <!-- Nome dell'attore -->
-                                    <h4
-                                        class="font-bold text-white text-sm truncate w-full group-hover:text-purple-400 transition-colors duration-200">
-                                        {$p->getPersona()->getNome()} {$p->getPersona()->getCognome()}
-                                    </h4>
-                                    <p class="text-xs text-slate-500 mt-1">{$p->getRuolo()}</p>
-                                </div>
-                            {/if}
-                        {/foreach}
-                    </div>
-                </div>
-
-
-                <div class="mt-12 space-y-6">
-                    <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Recensioni</h2>
-                    {if count($recensioni) == 0}
-                        <p class="text-slate-400 text-sm">Nessuna recensione per questa serie TV. Sii il primo a scriverne una!</p>
-                    {else}
-                        <div class="grid grid-cols-1 gap-4">
-                            {foreach $recensioni as $recensione}
-                                <div
-                                    class="flex items-start gap-4 p-5 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700/80 transition-all duration-300">
-
-                                    <!-- Foto profilo dell'utente (tonda a sinistra) -->
-                                    <div class="w-12 h-12 rounded-full overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
-                                        {assign var="fotoUtente" value=$recensione->getUtente()->getFoto()}
-                                        <img src="{if $fotoUtente && $fotoUtente[0] === '/'}https://image.tmdb.org/t/p/w185{$fotoUtente}{else}{$fotoUtente|default:"../images/default.png"}{/if}"
-                                            alt="{$recensione->getUtente()->getUsername()}" class="w-full h-full object-cover">
-                                    </div>
-
-                                    <!-- Contenuto della recensione a destra -->
-                                    <div class="flex-1 min-w-0 space-y-2">
-                                        <div class="flex items-center justify-between">
-                                            <h4 class="font-bold text-white text-base">
-                                                {$recensione->getUtente()->getUsername()}
-                                            </h4>
-                                            <div class="flex items-center text-amber-500 font-bold text-sm">
-                                                <span class="mr-1">★</span>
-                                                <span>{$recensione->getVoto()}</span>
-                                                <span class="text-slate-500 font-normal text-xs ml-1">/ 10</span>
-                                            </div>
-                                        </div>
-                                        <!-- Usiamo getDescrizione() per ottenere il testo del commento -->
-                                        <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
-                                            {$recensione->getDescrizione()}
-                                        </p>
-                                    </div>
-
-                                </div>
-                            {/foreach}
-                        </div>
-                    {/if}
+                    {/foreach}
                 </div>
             </div>
+
+
+            <div class="mt-12 space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Recensioni</h2>
+
+                {if count($recensioni) == 0}
+                    <p class="text-slate-400 text-sm">Nessuna recensione per questa serie TV. Sii il primo a scriverne una!</p>
+
+                {else}
+                    <div class="grid grid-cols-1 gap-4">
+
+                        {foreach $recensioni as $recensione}
+
+                            {include file="components/cards/cardRecensioneSemplice.tpl" recensione=$recensione contenuto=$serie->getId()}
+
+                        {/foreach}
+                    </div>
+
+                {/if}
+            </div>
         </div>
+    </div>
 
-        {literal}
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    const seasonSelect = document.getElementById('seasonSelect');
-                    const prevBtn = document.getElementById('prevSeasonBtn');
-                    const nextBtn = document.getElementById('nextSeasonBtn');
-                    const episodes = document.querySelectorAll('.episode-card');
 
-                    if (!seasonSelect || !prevBtn || !nextBtn) return;
+    {literal}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const seasonSelect = document.getElementById('seasonSelect');
+                const prevBtn = document.getElementById('prevSeasonBtn');
+                const nextBtn = document.getElementById('nextSeasonBtn');
+                const episodes = document.querySelectorAll('.episode-card');
 
-                    function updateView() {
-                        const selectedValue = seasonSelect.value;
+                if (!seasonSelect || !prevBtn || !nextBtn) return;
 
-                        // Mostra o nasconde gli episodi
-                        episodes.forEach(episode => {
-                            const season = episode.getAttribute('data-season');
-                            if (season === selectedValue) {
-                                episode.classList.remove('hidden');
-                                // Piccola transizione di entrata
-                                setTimeout(() => {
-                                    episode.classList.remove('opacity-0', 'scale-95');
-                                    episode.classList.add('opacity-100', 'scale-100');
-                                }, 50);
-                            } else {
-                                episode.classList.add('hidden', 'opacity-0', 'scale-95');
-                                episode.classList.remove('opacity-100', 'scale-100');
-                            }
-                        });
+                function updateView() {
+                    const selectedValue = seasonSelect.value;
 
-                        // Ottieni gli indici correnti del dropdown
-                        const currentIndex = seasonSelect.selectedIndex;
-                        const totalOptions = seasonSelect.options.length;
+                    // Mostra o nasconde gli episodi
+                    episodes.forEach(episode => {
+                        const season = episode.getAttribute('data-season');
+                        if (season === selectedValue) {
+                            episode.classList.remove('hidden');
+                            // Piccola transizione di entrata
+                            setTimeout(() => {
+                                episode.classList.remove('opacity-0', 'scale-95');
+                                episode.classList.add('opacity-100', 'scale-100');
+                            }, 50);
+                        } else {
+                            episode.classList.add('hidden', 'opacity-0', 'scale-95');
+                            episode.classList.remove('opacity-100', 'scale-100');
+                        }
+                    });
 
-                        // Disabilita "precedente" se siamo sulla prima stagione (indice 0)
-                        prevBtn.disabled = (currentIndex === 0);
+                    // Ottieni gli indici correnti del dropdown
+                    const currentIndex = seasonSelect.selectedIndex;
+                    const totalOptions = seasonSelect.options.length;
 
-                        // Disabilita "successiva" se siamo all'ultima stagione
+                    // Disabilita "precedente" se siamo sulla prima stagione (indice 0)
+                    prevBtn.disabled = (currentIndex === 0);
+
+                    // Disabilita "successiva" se siamo all'ultima stagione
             nextBtn.disabled = (currentIndex === totalOptions - 1);
         }
 
@@ -458,16 +322,19 @@
 
         // Gestione click su pulsante successivo
         nextBtn.addEventListener('click', () => {
-                        if (seasonSelect.selectedIndex < seasonSelect.options.length - 1) {
-                            seasonSelect.selectedIndex++;
-                            updateView();
-                        }
-                    });
-
-                    // Inizializzazione della vista al caricamento
-                    updateView();
+                    if (seasonSelect.selectedIndex < seasonSelect.options.length - 1) {
+                        seasonSelect.selectedIndex++;
+                        updateView();
+                    }
                 });
-            </script>
-        {/literal}
 
-    {/block}
+                // Inizializzazione della vista al caricamento
+                updateView();
+            });
+        </script>
+    {/literal}
+    {include file="components/modali/modaleRecensione.tpl" contenuto=$serie->getId()}
+
+    <script src="{$baseURL}view/js/modaleRecensione.js"></script>
+
+{/block}
