@@ -7,13 +7,13 @@
 <div onclick="window.location.href='index.php?controller=Contenuto&action={$actionToShow}&id={$recensione->getContenuto()->getId()}'"
     class="flex gap-4 p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:bg-slate-900/60 transition-all duration-300 cursor-pointer group {if $colorTheme === 'amber'}hover:border-amber-500/50{else}hover:border-purple-500/50{/if}">
 
-    <!-- Locandina Contenuto (a sinistra, piccolina) -->
+
     <div class="w-20 h-28 rounded-lg overflow-hidden shrink-0 bg-slate-850 border border-slate-800">
         <img src="{$recensione->getContenuto()->getLocandina()}" alt="{$recensione->getContenuto()->getTitolo()}"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
     </div>
 
-    <!-- Dettagli Recensione -->
+
     <div class="flex-1 min-w-0 flex flex-col justify-between">
         <div>
             <div class="flex items-start justify-between gap-2">
@@ -28,9 +28,9 @@
 
             <p class="text-slate-400 text-xs mt-1">
                 Recensione di <span
-                    class="font-semibold text-slate-300">{$recensione->getUtente()->getUsername()}</span>
+                    class="font-semibold text-slate-300">{$recensione->getUtente()->getUsername()|escape}</span>
 
-                <!-- Badge Episodio se presente -->
+
                 {if $recensione->getEpisodio()}
                     per l'episodio <span
                     class="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 tracking-wider">
@@ -40,7 +40,7 @@
             </p>
 
             <p class="text-slate-300 text-sm mt-3 line-clamp-2 italic leading-relaxed">
-                "{$recensione->getDescrizione()}"
+                "{$recensione->getDescrizione()|escape}"
             </p>
         </div>
 

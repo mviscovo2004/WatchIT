@@ -1,14 +1,9 @@
 <?php
 
-class FBan
+class FBan extends FFoundation
 {
 
-    private static function getEntityManager()
-    {
-        return FEntityManager::getInstance();
-    }
-
-    //create
+    
     public static function insert(EBan $ban)
     {
         $em = self::getEntityManager();
@@ -17,7 +12,7 @@ class FBan
         return true;
     }
 
-    //delete
+    
     public static function delete(EBan $ban)
     {
         $em = self::getEntityManager();
@@ -33,7 +28,7 @@ class FBan
         return true;
     }
 
-    //read all
+    
     public static function findAll(): array
     {
         $em = self::getEntityManager();
@@ -41,7 +36,7 @@ class FBan
         return $bans;
     }
 
-    //read by id
+    
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -82,10 +77,14 @@ class FBan
         return $qb->getQuery()->getResult();
     }
 
-    public static function isBanned(int $id)
+    public static function isBanned(int $idUtente)
     {
         $em = self::getEntityManager();
-        $ban = $em->getRepository(EBan::class)->findOneBy(['id' => $id]);
+        $utente = $em->getRepository(EUtente::class)->find($idUtente);
+        if ($utente == null) {
+            return null;
+        }
+        $ban = $em->getRepository(EBan::class)->findOneBy(['utente' => $utente]);
         if ($ban != null) {
             $dataCorrente = new DateTime();
             if ($dataCorrente < $ban->getDataFine()) {
@@ -98,6 +97,26 @@ class FBan
         }
         return null;
     }
+
+    public static function cleanExpiredBans()
+    {
+        $em = self::getEntityManager();
+        $qb = $em->createQueryBuilder();
+        $qb->select('b')
+            ->from('EBan', 'b')
+            ->where('b.dataFine <= :ora')
+            ->setParameter('ora', new DateTime());
+
+        $expiredBans = $qb->getQuery()->getResult();
+
+        if (!empty($expiredBans)) {
+            foreach ($expiredBans as $ban) {
+                $em->remove($ban);
+            }
+            $em->flush();
+        }
+    }
+
 
     public static function ban(int $idUtente, DateTime $dataFine, string $motivo, int $idAmministratore)
     {

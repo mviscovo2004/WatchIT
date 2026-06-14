@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{block name=title}WatchIT{/block}</title>
+    <title>{block name="title"}WatchIT{/block}</title>
     <link href="{$baseUrl}/output.css" rel="stylesheet">
 </head>
 
@@ -14,7 +14,7 @@
     <main class="flex-grow">
         {block name="content"}
 
-            {include file="modaleWatchlist.tpl"}
+
 
         {/block}
     </main>
@@ -23,8 +23,8 @@
 
 
     {if !$isLogged}
-        <!-- Logica Smarty per rilevare errori e determinare quale modale riaprire all'avvio -->
-        <!-- Logica Smarty per rilevare errori dalle sessioni e riaprire il modale corretto all'avvio -->
+
+
         {assign var="showLogin" value=$showLogin|default:false}
         {assign var="showRegister" value=$showRegister|default:false}
         {if isset($loginError)}
@@ -39,8 +39,9 @@
         {include file="components/modali/modaleRecuperaPassword.tpl"}
 
 
-
-
+    {/if}
+    {if $isLogged}
+        {include file="components/modali/modaleWatchlist.tpl"}
     {/if}
 
 </html>

@@ -38,6 +38,10 @@ class EEpisodio
     #[ORM\Column(type: Types::FLOAT)]
     protected float $valutazioneMedia;
 
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    protected ?float $valutazioneIniziale = null;
+
+
     public function __construct(?int $tmdbId, int $id, ESerie $serie, int $numeroStagione, int $numeroEpisodio, string $titolo, string $trama, int $durataMinuti, float $valutazioneMedia)
     {
         $this->tmdbId = $tmdbId;
@@ -159,5 +163,15 @@ class EEpisodio
     public function getGeneri()
     {
         return $this->serie->getGeneri();
+    }
+
+    public function getValutazioneIniziale(): ?float
+    {
+        return $this->valutazioneIniziale;
+    }
+
+    public function setValutazioneIniziale(?float $valutazioneIniziale)
+    {
+        $this->valutazioneIniziale = $valutazioneIniziale;
     }
 }

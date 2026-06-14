@@ -1,7 +1,7 @@
 {extends file="main.tpl"}
 {block name="content"}
 
-    <!-- 1. HERO: IL FILM PIÙ POPOLARE IN ASSOLUTO -->
+
     {if $filmPopolari && count($filmPopolari) > 0}
         {assign var="hero" value=$filmPopolari[0]}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -32,9 +32,15 @@
                         {if $isLogged}
                             <a href="#" onclick="event.preventDefault(); openAddToWatchlistModal({$hero->getId()})"
                                 data-watchlist-content-id="{$hero->getId()}"
-                                class="px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm">
-                                + Watchlist
+                                class="watchlist-btn-text px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm"
+                                title="{if $watchlistIds && in_array($hero->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
+                                {if $watchlistIds && in_array($hero->getId(), $watchlistIds)}
+                                    ✓ In Watchlist
+                                {else}
+                                    + Watchlist
+                                {/if}
                             </a>
+
                         {else}
                             <a href="index.php?controller=Utente&action=login"
                                 class="px-6 py-3 rounded-xl bg-slate-800/80 border border-slate-700 font-bold text-white hover:bg-slate-700 transition-all duration-200 backdrop-blur-sm">
@@ -49,7 +55,7 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- 2. SEZIONE FILM POPOLARI (TOP 5) -->
+
         <div>
             <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">
                 <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>
@@ -64,7 +70,7 @@
             </div>
         </div>
 
-        <!-- 3. SEZIONE SERIE TV POPOLARI (TOP 5) -->
+
         <div>
             <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">
                 <span class="w-1.5 h-6 bg-amber-500 rounded-full"></span>
@@ -79,7 +85,7 @@
             </div>
 
         </div>
-        <!-- 4. SEZIONE ULTIME RECENSIONI (TOP 5) -->
+
         <div>
             <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-2 tracking-tight">
                 <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>

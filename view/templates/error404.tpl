@@ -15,7 +15,7 @@
 </head>
 
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center relative overflow-hidden">
-    <!-- Effetti sfumati premium nello sfondo -->
+
     <div
         class="absolute w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] -top-40 -left-40 pointer-events-none">
     </div>
@@ -23,7 +23,7 @@
         class="absolute w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[120px] -bottom-40 -right-40 pointer-events-none">
     </div>
     <div class="max-w-md w-full px-6 text-center z-10">
-        <!-- Badge 404 -->
+
         <div
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-500 text-sm font-semibold border border-amber-500/20 mb-6 tracking-wide uppercase">
             Errore 404
@@ -43,7 +43,7 @@
             disponibile.
         </p>
 
-        <!-- Bottone di ritorno alla home -->
+
         <a href="{$baseUrl}/index.php"
             class="inline-block px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white font-semibold transition-all duration-300 shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/35 transform hover:-translate-y-0.5">
             Torna alla Home

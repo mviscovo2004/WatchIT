@@ -1,15 +1,10 @@
 <?php
 
-class FContenuto
+class FContenuto extends FFoundation
 {
-    //istanza del gestore entita
-    public static function getEntityManager()
-    {
-        return  FEntityManager::getInstance();
-    }
 
-    //--- CRUD ---
-    //create
+    
+    
     public static function insert(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
@@ -18,16 +13,54 @@ class FContenuto
         return ($contenuto->getId() != null) ? true : false;
     }
 
-    //delete
+    
     public static function delete(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
+
+        
+        $participations = $em->getRepository(EPartecipazione::class)->findBy(['contenuto' => $contenuto]);
+        foreach ($participations as $p) {
+            $em->remove($p);
+        }
+
+        
+        $recensioni = $em->getRepository(ERecensione::class)->findBy(['contenuto' => $contenuto]);
+        foreach ($recensioni as $r) {
+            $em->remove($r);
+        }
+
+        
+        $watchlists = $em->getRepository(EWatchlist::class)->findAll();
+        foreach ($watchlists as $wl) {
+            if ($wl->getContenutiSalvati()->contains($contenuto)) {
+                $wl->getContenutiSalvati()->removeElement($contenuto);
+            }
+        }
+
+        
+        if ($contenuto instanceof ESerie) {
+            $episodi = $em->getRepository(EEpisodio::class)->findBy(['serie' => $contenuto]);
+            foreach ($episodi as $ep) {
+                
+                $recensioniEp = $em->getRepository(ERecensione::class)->findBy(['episodio' => $ep]);
+                foreach ($recensioniEp as $rEp) {
+                    $em->remove($rEp);
+                }
+
+                
+                $em->remove($ep);
+            }
+        }
+
+        
         $em->remove($contenuto);
         $em->flush();
         return true;
     }
 
-    //update
+
+    
     public static function update(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
@@ -35,7 +68,7 @@ class FContenuto
         return true;
     }
 
-    //read
+    
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -43,7 +76,7 @@ class FContenuto
         return $contenuto;
     }
 
-    //read all
+    
     public static function findAll()
     {
         $em = self::getEntityManager();
@@ -51,7 +84,23 @@ class FContenuto
         return $contenuti;
     }
 
-    //search by title
+    
+    public static function findAllFilm()
+    {
+        $em = self::getEntityManager();
+        $film = $em->getRepository(EFilm::class)->findAll();
+        return $film;
+    }
+
+    
+    public static function findAllSerie()
+    {
+        $em = self::getEntityManager();
+        $serie = $em->getRepository(ESerie::class)->findAll();
+        return $serie;
+    }
+
+    
     public static function search(string $query)
     {
         $em = self::getEntityManager();
@@ -64,7 +113,7 @@ class FContenuto
         return $contenuti;
     }
 
-    //search by genre
+    
     public static function searchByGenre(string $query)
     {
         $em = self::getEntityManager();
@@ -76,7 +125,7 @@ class FContenuto
         return $contenuti;
     }
 
-    //search by anno
+    
     public static function searchByAnno(string $query)
     {
         $em = self::getEntityManager();
@@ -88,7 +137,7 @@ class FContenuto
         return $contenuti;
     }
 
-    //search by tipo (film o serie tv)
+    
     public static function searchByTipo(string $query)
     {
         $em = self::getEntityManager();

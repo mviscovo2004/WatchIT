@@ -6,6 +6,23 @@ Session::start();
 
 require_once __DIR__ . "/vendor/autoload.php";
 
+
+if (class_exists('FBan')) {
+    FBan::cleanExpiredBans();
+    if (Session::isLogged()) {
+        $ban = FBan::isBanned(Session::get('user_id'));
+        if ($ban !== null) {
+            Session::remove('user_id');
+            Session::remove('ruolo');
+            Session::set('login_error', "Il tuo account è sospeso fino al " . $ban->getDataFine()->format('d/m/Y H:i') . " per il seguente motivo: " . $ban->getMotivo());
+            Session::set('show_login_modal', true);
+            header("Location: index.php");
+            exit();
+        }
+    }
+}
+
+
 $controllerName = "Contenuto";
 $actionName = "homepage";
 

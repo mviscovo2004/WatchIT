@@ -13,13 +13,13 @@ class VView
         }
         $this->smarty = self::$smartyInstance;
 
-        // Calcola dinamicamente la cartella base del progetto (/WatchIT in locale, stringa vuota su Altervista)
+        
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
         $dir = dirname($scriptName);
         $baseUrl = ($dir === DIRECTORY_SEPARATOR || $dir === '/' || $dir === '\\') ? '' : $dir;
         $this->smarty->assign("baseUrl", $baseUrl);
 
-        // --- ASSOCIAZIONE GLOBALE DI SESSIONE A SMARTY ---
+        
         if (Session::isLogged()) {
             $userId = Session::get('user_id');
             $utente = FUtente::findById($userId);
@@ -43,18 +43,30 @@ class VView
         }
 
 
-        // Se c'è un errore di registrazione in sessione, lo passiamo a Smarty e lo cancelliamo
+        
         if (Session::exists('register_error')) {
             $this->smarty->assign("registerError", Session::get('register_error'));
             Session::remove('register_error');
         }
 
-        // Se c'è un errore di login in sessione, lo passiamo a Smarty e lo cancelliamo
+        
         if (Session::exists('login_error')) {
             $this->smarty->assign("loginError", Session::get('login_error'));
             Session::remove('login_error');
         }
-        // Forza l'apertura dei modali all'avvio se richiesto via sessione (es. redirect da GET)
+        
+        if (Session::exists('import_error')) {
+            $this->smarty->assign("importError", Session::get('import_error'));
+            Session::remove('import_error');
+        }
+        
+        if (Session::exists('import_success')) {
+            $this->smarty->assign("importSuccess", Session::get('import_success'));
+            Session::remove('import_success');
+        }
+
+
+        
         if (Session::exists('show_login_modal')) {
             $this->smarty->assign("showLogin", true);
             Session::remove('show_login_modal');
@@ -73,5 +85,11 @@ class VView
     public function display($templateName)
     {
         $this->smarty->display($templateName);
+    }
+
+    public function mostraErrore($errore)
+    {
+        $this->assign('errore', $errore);
+        $this->display('errore.tpl');
     }
 }

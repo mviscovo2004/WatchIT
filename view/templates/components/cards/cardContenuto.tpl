@@ -11,19 +11,20 @@
             class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
 
         {if $isLogged}
-            <a href="#" onclick="event.preventDefault(); openAddToWatchlistModal({$contenuto->getId()})"
+            <a href="#"
+                onclick="event.preventDefault(); event.stopPropagation(); openAddToWatchlistModal({$contenuto->getId()})"
                 data-watchlist-content-id="{$contenuto->getId()}"
-                class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-purple-600 hover:border-purple-500 transition-all duration-200 backdrop-blur-sm opacity-0 group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
+                class="absolute top-3 right-3 p-2 rounded-full bg-slate-950/80 border border-slate-700 font-bold text-white hover:bg-purple-600 hover:border-purple-500 transition-all duration-200 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-md transform hover:scale-110"
                 title="{if $watchlistIds && in_array($contenuto->getId(), $watchlistIds)}Rimuovi dalla Watchlist{else}Aggiungi alla Watchlist{/if}">
                 {if $watchlistIds && in_array($contenuto->getId(), $watchlistIds)}
-                    <!-- Spunta verde se già in watchlist -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                 {else}
-                    <!-- Icona Più (+) se da aggiungere -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-200" fill="none" viewBox="0 0 24 24"
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>

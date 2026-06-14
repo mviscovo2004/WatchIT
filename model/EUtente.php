@@ -180,4 +180,36 @@ class EUtente
     {
         return $this->tokenRecupero !== null && $this->dataScadenzaToken < new DateTime();
     }
+
+    public function addSeguito(EUtente $utente)
+    {
+        if (!$this->isFollowing($utente)) {
+            $this->seguiti[] = $utente;
+        }
+    }
+
+    public function removeSeguito(EUtente $utente)
+    {
+        foreach ($this->seguiti as $key => $seguito) {
+            if ($seguito->getId() === $utente->getId()) {
+                unset($this->seguiti[$key]);
+                break;
+            }
+        }
+    }
+
+    public function isFollowing(EUtente $utente): bool
+    {
+        
+        if (empty($this->seguiti)) {
+            return false;
+        }
+
+        foreach ($this->seguiti as $seguito) {
+            if ($seguito->getId() === $utente->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

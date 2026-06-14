@@ -1,8 +1,8 @@
-<!-- MODALE LOGIN -->
+
 <div id="loginModal"
     class="fixed inset-0 z-50 {if $showLogin}flex{else}hidden{/if} items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">
-        <!-- Tasto di chiusura -->
+
         <button onclick="toggleModal('loginModal', false)"
             class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold transition focus:outline-none">&times;</button>
 
@@ -12,7 +12,7 @@
                 Accedi
             </h4>
 
-            <!-- Box Messaggio Errore Login -->
+
             {include file="components/alert.tpl" message=$loginError type="error"}
 
             <form action="index.php?controller=Utente&action=login" method="post"

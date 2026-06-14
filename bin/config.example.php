@@ -1,0 +1,3 @@
+<?php
+
+define('TMDB_API_KEY', 'INSERISCI_QUI_LA_TUA_CHIAVE');

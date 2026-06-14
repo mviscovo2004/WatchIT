@@ -1,15 +1,10 @@
 <?php
 
-class FWatchlist
+class FWatchlist extends FFoundation
 {
-    //istanza del gestore entita
-    public static function getEntityManager()
-    {
-        return  FEntityManager::getInstance();
-    }
 
-    //--- CRUD ---
-    //create
+    
+    
     public static function insert(EWatchlist $watchlist)
     {
         $em = self::getEntityManager();
@@ -18,7 +13,7 @@ class FWatchlist
         return ($watchlist->getId() != null) ? true : false;
     }
 
-    //delete
+    
     public static function delete(EWatchlist $watchlist)
     {
         $em = self::getEntityManager();
@@ -27,7 +22,7 @@ class FWatchlist
         return true;
     }
 
-    //update
+    
     public static function update(EWatchlist $watchlist)
     {
         $em = self::getEntityManager();
@@ -35,7 +30,7 @@ class FWatchlist
         return true;
     }
 
-    //read
+    
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -43,7 +38,7 @@ class FWatchlist
         return $watchlist;
     }
 
-    //read all
+    
     public static function findAll()
     {
         $em = self::getEntityManager();
@@ -51,7 +46,7 @@ class FWatchlist
         return $watchlists;
     }
 
-    //ricerca per utente
+    
     public static function findByUtente(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -60,7 +55,7 @@ class FWatchlist
     }
 
 
-    //ritorna tutti i contenuti di una watchlist
+    
     public static function getContenuti(int $idWatchlist)
     {
         $em = self::getEntityManager();
@@ -69,7 +64,7 @@ class FWatchlist
         return $contenuti;
     }
 
-    //aggiunge un contenuto alla watchlist
+    
     public static function addContenuto(int $idWatchlist, int $idContenuto)
     {
         $em = self::getEntityManager();
@@ -86,14 +81,14 @@ class FWatchlist
         }
     }
 
-    //rimuove un contenuto dalla watchlist
+    
     public static function removeContenuto(int $idWatchlist, int $idContenuto)
     {
         $em = self::getEntityManager();
         $watchlist = $em->find(EWatchlist::class, $idWatchlist);
         if (self::contains($idWatchlist, $idContenuto)) {
             $contenuti = $watchlist->getContenutiSalvati();
-            //rimuove il contenuto dalla lista
+            
             foreach ($contenuti as $index => $c) {
                 if ($c->getId() == $idContenuto) {
                     unset($contenuti[$index]);
@@ -108,7 +103,7 @@ class FWatchlist
         }
     }
 
-    //cerca se un contenuto è nella watchlist
+    
     public static function contains(int $idWatchlist, int $idContenuto)
     {
         $em = self::getEntityManager();

@@ -5,32 +5,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!container || !leftBtn || !rightBtn) return;
 
-    // Determina lo spazio da scorrere (larghezza del primo video + gap)
-    const getScrollAmount = () => {
-        const firstVideo = container.firstElementChild;
-        return firstVideo ? firstVideo.clientWidth + 24 : 400; // 24px è il gap-6
-    };
-
-    // Disabilita/Nasconde i pulsanti quando arrivi alla fine o all'inizio
+    
     const updateButtons = () => {
         const scrollLeft = container.scrollLeft;
-        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+        const maxScroll = container.scrollWidth - container.clientWidth;
 
-        leftBtn.disabled = (scrollLeft <= 5);
-        rightBtn.disabled = (scrollLeft >= maxScrollLeft - 5);
+        
+        leftBtn.disabled = scrollLeft <= 2;
+        
+        
+        rightBtn.disabled = scrollLeft >= maxScroll - 2;
     };
 
+    
+    const getScrollAmount = () => {
+        const firstChild = container.firstElementChild;
+        return firstChild ? firstChild.clientWidth + 24 : 400;
+    };
+
+    
     leftBtn.addEventListener('click', () => {
-        container.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+        container.scrollBy({
+            left: -getScrollAmount(),
+            behavior: 'smooth'
+        });
     });
 
+    
     rightBtn.addEventListener('click', () => {
-        container.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+        container.scrollBy({
+            left: getScrollAmount(),
+            behavior: 'smooth'
+        });
     });
 
     container.addEventListener('scroll', updateButtons);
-    updateButtons();
+    window.addEventListener('resize', updateButtons);
+
     
-    // Ricalcolo di sicurezza dopo mezzo secondo per caricamento video lento
-    setTimeout(updateButtons, 500);
+    setTimeout(updateButtons, 100);
 });

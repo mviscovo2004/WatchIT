@@ -39,6 +39,26 @@ class VAdmin extends VView
         $this->display('admin/gestioneUtentiBannati.tpl');
     }
 
+    public function mostraInserisciDaTMDB($ultimiFilm = [], $ultimeSerie = [])
+    {
+        $this->assign('ultimiFilm', $ultimiFilm);
+        $this->assign('ultimeSerie', $ultimeSerie);
+        $this->display('admin/importaTMDB.tpl');
+    }
+
+
+    public function mostraFilm($film)
+    {
+        $this->assign('film', $film);
+        $this->display('admin/gestioneFilm.tpl');
+    }
+
+    public function mostraSerie($serie)
+    {
+        $this->assign('serie', $serie);
+        $this->display('admin/gestioneSerie.tpl');
+    }
+
 
 
     public function mostraAccessoNegato()

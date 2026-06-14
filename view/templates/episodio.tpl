@@ -2,12 +2,12 @@
 
 {block name="content"}
     <div class="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
-        <!-- Rimosso lo sfondo, il bordo e l'effetto glassmorphism per eliminare la card -->
+
         <div class="max-w-6xl mx-auto">
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-                <!-- Colonna Locandina (1/4 della larghezza su schermi grandi) -->
+
                 <div class="md:col-span-1 flex flex-col items-center md:items-start">
                     <div
                         class="group relative w-64 h-96 sm:w-72 sm:h-[26rem] md:w-full md:h-[28rem] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl transition-all duration-300 hover:shadow-indigo-500/10">
@@ -17,11 +17,11 @@
                     </div>
                 </div>
 
-                <!-- Colonna Dettagli (3/4 della larghezza su schermi grandi) -->
+
                 <div class="md:col-span-3 flex flex-col justify-between space-y-6">
                     <div class="space-y-4">
 
-                        <!-- Contenitore Flex per Titolo (Sinistra) e Pulsante Valuta (Destra) -->
+
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h1
                                 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-amber-500 tracking-tight leading-tight pb-2">
@@ -37,7 +37,7 @@
 
 
 
-                            <!-- Pulsante Valuta posizionato tutto a destra -->
+
                             {if $isLogged}
                                 <a onclick="toggleReviewModal(true)"
                                     class="shrink-0 inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-600/20 text-sm hover:scale-105 active:scale-95 self-start sm:self-auto">
@@ -50,7 +50,7 @@
                             {/if}
                         </div>
 
-                        <!-- Chips Informative (Anno, Stato, Valutazione) -->
+
                         <div class="flex flex-wrap gap-3 items-center text-sm pt-2">
                             <span
                                 class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-xl text-slate-300 font-medium shadow-inner">
@@ -71,7 +71,7 @@
 
                     <hr class="border-slate-800/80" />
 
-                    <!-- Sezione Trama -->
+
                     <div class="space-y-2">
                         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Trama</h2>
                         <p class="text-slate-300 leading-relaxed text-base font-light">
@@ -79,7 +79,7 @@
                         </p>
                     </div>
 
-                    <!-- Sezione Generi -->
+
                     <div class="space-y-2">
                         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Generi</h2>
                         <div class="flex flex-wrap gap-2">
@@ -101,7 +101,7 @@
                         {if $p->getRuolo() === 'Attore'}
                             <div
                                 class="flex flex-col items-center text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-purple-500 transition-all duration-300 group">
-                                <!-- Foto dell'attore tonda -->
+
                                 <div
                                     class="w-20 h-20 rounded-full overflow-hidden bg-slate-800 border border-slate-700 mb-3 shrink-0">
                                     {assign var="fotoAttore" value=$p->getPersona()->getFoto()}
@@ -109,7 +109,7 @@
                                         alt="{$p->getPersona()->getNome()}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
                                 </div>
-                                <!-- Nome dell'attore -->
+
                                 <h4
                                     class="font-bold text-white text-sm truncate w-full group-hover:text-purple-400 transition-colors duration-200">
                                     {$p->getPersona()->getNome()} {$p->getPersona()->getCognome()}
@@ -120,19 +120,8 @@
                     {/foreach}
                 </div>
             </div>
-            <div class="mt-12 space-y-6">
-                <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Recensioni</h2>
+            {include file="components/sezioneRecensioni.tpl" recensioni=$recensioni contenutoId=$serie->getId()}
 
-                {if count($recensioni) == 0}
-                    <p class="text-slate-400 text-sm">Nessuna recensione per questo film. Sii il primo a scriverne una!</p>
-                {else}
-                    <div class="grid grid-cols-1 gap-4">
-                        {foreach $recensioni as $recensione}
-                            {include file="components/cards/cardRecensioneSemplice.tpl" recensione=$recensione cotenutoId=$serie->getId()}
-                        {/foreach}
-                    </div>
-                {/if}
-            </div>
             {include file="components/modali/modaleRecensione.tpl" contenutoId=$serie->getId() episodioId=$episodio->getId()}
         </div>
     </div>

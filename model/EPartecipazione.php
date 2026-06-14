@@ -4,7 +4,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'partecipazioni')]
-class EPartecipazione{
+class EPartecipazione
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,43 +22,65 @@ class EPartecipazione{
     #[ORM\Column]
     protected string $ruolo;
 
-        public function __construct(int $id,EPersona $persona,EContenuto $contenuto,string $ruolo){
-            $this->id=$id;
-            $this->persona=$persona;
-            $this->contenuto=$contenuto;
-            $this->ruolo=$ruolo;
-        }
+    #[ORM\Column]
+    protected string $personaggio;
 
-        public function getId():int{
-            return $this->id;
-        }
-
-        public function setId(int $id){
-            $this->id=$id;
-        }
-
-        public function getPersona():EPersona{
-            return $this->persona;
-        }
-
-        public function setPersona(EPersona $persona){
-            $this->persona=$persona;
-        }
-
-        public function getContenuto():EContenuto{
-            return $this->contenuto;
-        }
-
-        public function setContenuto(EContenuto $contenuto){
-            $this->contenuto=$contenuto;
-        }
-
-        public function getRuolo():string{
-            return $this->ruolo;
-        }
-
-        public function setRuolo(string $ruolo){
-            $this->ruolo=$ruolo;
-        }
+    public function __construct(int $id, EPersona $persona, EContenuto $contenuto, string $ruolo, string $personaggio)
+    {
+        $this->id = $id;
+        $this->persona = $persona;
+        $this->contenuto = $contenuto;
+        $this->ruolo = $ruolo;
+        $this->personaggio = $personaggio;
     }
-?>
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getPersona(): EPersona
+    {
+        return $this->persona;
+    }
+
+    public function setPersona(EPersona $persona)
+    {
+        $this->persona = $persona;
+    }
+
+    public function getContenuto(): EContenuto
+    {
+        return $this->contenuto;
+    }
+
+    public function setContenuto(EContenuto $contenuto)
+    {
+        $this->contenuto = $contenuto;
+    }
+
+    public function getRuolo(): string
+    {
+        return $this->ruolo;
+    }
+
+    public function setRuolo(string $ruolo)
+    {
+        $this->ruolo = $ruolo;
+    }
+
+    public function getPersonaggio(): string
+    {
+        return $this->personaggio;
+    }
+
+    public function setPersonaggio(string $personaggio)
+    {
+        $this->personaggio = $personaggio;
+    }
+}

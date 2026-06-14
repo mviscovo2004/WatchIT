@@ -2,14 +2,44 @@
 
 class CUtente
 {
-    //login
-    public function login()
+    private VUtente $view;
+
+    public function __construct()
+    {
+        $this->view = new VUtente();
+    }
+
+    private function attivaModaleEReindirizza(string $chiaveModale)
+    {
+        Session::set($chiaveModale, true);
+        $redirect = Session::get('previous_url') ?? $_SERVER['HTTP_REFERER'] ?? 'index.php';
+        header("Location: " . $redirect);
+        exit();
+    }
+
+
+    private function reindirizzaSeLoggato()
     {
         if (Session::isLogged()) {
             $redirect = Session::get('previous_url') ?? 'index.php';
             header("Location: " . $redirect);
             exit();
         }
+    }
+
+    private function impostaSessioneUtente(EUtente $utente)
+    {
+        Session::set('user_id', $utente->getId());
+        $ruolo = ($utente instanceof EAmministratore) ? 'admin' : 'utente';
+        Session::set('ruolo', $ruolo);
+    }
+
+
+
+    
+    public function login()
+    {
+        $this->reindirizzaSeLoggato();
 
         $error = null;
 
@@ -20,9 +50,17 @@ class CUtente
             if (!empty($identificativo) && !empty($password)) {
                 $utente = FUtente::login($identificativo, $password);
                 if ($utente !== null) {
-                    Session::set('user_id', $utente->getId());
-                    $ruolo = ($utente instanceof EAmministratore) ? 'admin' : 'utente';
-                    Session::set('ruolo', $ruolo);
+                    
+                    $ban = FBan::isBanned($utente->getId());
+                    if ($ban !== null) {
+                        $error = "Il tuo account è sospeso fino al " . $ban->getDataFine()->format('d/m/Y H:i') . " per il seguente motivo: " . $ban->getMotivo();
+                        Session::set('login_error', $error);
+                        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+                        header("Location: " . $referer);
+                        exit();
+                    }
+
+                    $this->impostaSessioneUtente($utente);
 
                     $redirect = Session::get('previous_url') ?? 'index.php';
                     header("Location: " . $redirect);
@@ -34,28 +72,21 @@ class CUtente
                 $error = "Compila tutti i campi obbligatori.";
             }
 
-            // Salva l'errore in sessione e torna alla pagina precedente (senza cambiare sfondo)
+            
             Session::set('login_error', $error);
             $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
             header("Location: " . $referer);
             exit();
         }
 
-        Session::set('show_login_modal', true);
-        $redirect = Session::get('previous_url') ?? 'index.php';
-        header("Location: " . $redirect);
-        exit();
+        $this->attivaModaleEReindirizza('show_login_modal');
     }
 
 
-    //registrazione
+    
     public function registrazione()
     {
-        if (Session::isLogged()) {
-            $redirect = Session::get('previous_url') ?? 'index.php';
-            header("Location: " . $redirect);
-            exit();
-        }
+        $this->reindirizzaSeLoggato();
 
         $error = null;
 
@@ -83,9 +114,7 @@ class CUtente
                     } else {
                         $utente = FUtente::register($nome, $cognome, $foto, $username, $email, $password);
                         if ($utente !== null) {
-                            Session::set('user_id', $utente->getId());
-                            $ruolo = ($utente instanceof EAmministratore) ? 'admin' : 'utente';
-                            Session::set('ruolo', $ruolo);
+                            $this->impostaSessioneUtente($utente);
                             $redirect = Session::get('previous_url') ?? 'index.php';
                             header("Location: " . $redirect);
                             exit();
@@ -98,41 +127,94 @@ class CUtente
                 $error = "Tutti i campi sono obbligatori.";
             }
 
-            // Salva l'errore in sessione e torna alla pagina precedente (senza cambiare sfondo)
+            
             Session::set('register_error', $error);
             $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
             header("Location: " . $referer);
             exit();
         }
 
-        Session::set('show_register_modal', true);
-        $redirect = Session::get('previous_url') ?? 'index.php';
-        header("Location: " . $redirect);
-        exit();
+        $this->attivaModaleEReindirizza('show_register_modal');
     }
 
 
 
-    //logout
+    
     public function logout()
     {
-        Session::destroy();
         $redirect = Session::get('previous_url') ?? 'index.php';
+
+        
+        
+        if (
+            strpos($redirect, 'controller=Admin') !== false ||
+            strpos($redirect, 'controller=Watchlist') !== false
+        ) {
+            $redirect = 'index.php';
+        }
+
+        
+        Session::destroy();
+        if (isset($_SESSION)) {
+            $_SESSION = [];
+        }
+
         header("Location: " . $redirect);
         exit();
     }
+
 
     public function mostraProfilo()
     {
-        $id = $_GET['id'];
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            $this->view->mostraErrore('ID utente non valido.');
+            return;
+        }
 
         $utente = FUtente::findById($id);
-        $watchlists = FWatchlist::findPubblicheByUtente($id);
+        if (!$utente) {
+            $this->view->mostraErrore('Utente non trovato.');
+            return;
+        }
+
+        $idUtenteLoggato = Session::get('user_id');
+        $isFollowing = false;
+        $isAmico = false;
+
+        if ($idUtenteLoggato !== null && $idUtenteLoggato !== (int)$id) {
+            $isFollowing = FUtente::isFollowing($idUtenteLoggato, (int)$id);
+            $isAmico = $isFollowing && FUtente::isFollowing((int)$id, $idUtenteLoggato);
+        }
+
+        
+        $tutteWatchlist = FWatchlist::findByUtente((int)$id);
+        $watchlists = [];
+        foreach ($tutteWatchlist as $w) {
+            $vis = $w->getVisibilita();
+            if ($vis === Privacy::pubblico) {
+                $watchlists[] = $w;
+            } elseif ($vis === Privacy::solo_amici) {
+                if ($idUtenteLoggato === (int)$id || $isAmico) {
+                    $watchlists[] = $w;
+                }
+            } elseif ($vis === Privacy::privato) {
+                if ($idUtenteLoggato === (int)$id) {
+                    $watchlists[] = $w;
+                }
+            }
+        }
+
         $recensioni = FRecensione::findByUtente($id);
 
         $view = new VUtente();
+        
+        $view->assign('isFollowing', $isFollowing);
+        $view->assign('isAmico', $isAmico);
+
         $view->mostraProfilo($utente, $watchlists, $recensioni);
     }
+
 
 
     public function forgotPassword()
@@ -141,25 +223,19 @@ class CUtente
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = trim($_POST['email'] ?? '');
             if (!empty($email)) {
-                if (FUtente::findByEmail($email) != null) {
-                    FUtente::forgotPassword($email);
-                    $error = "Email inviata con successo.";
-                } else {
-                    $error = "Email non trovata.";
-                }
+                FUtente::forgotPassword($email);
+                $error = "Se l'indirizzo email inserito è registrato nei nostri sistemi, riceverai a breve un link per impostare una nuova password.";
             } else {
-                $error = "Email non trovata.";
+                $error = "Inserisci un indirizzo email valido.";
             }
             Session::set('forgot_password_error', $error);
             $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
             header("Location: " . $referer);
             exit();
         }
-        Session::set('show_forgot_password_modal', true);
-        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
-        header("Location: " . $referer);
-        exit();
+        $this->attivaModaleEReindirizza('show_forgot_password_modal');
     }
+
 
     public function resetPassword()
     {
@@ -183,8 +259,42 @@ class CUtente
                 $error = "Tutti i campi sono obbligatori.";
             }
         }
+        $this->view->mostraResetPassword($token, $error);
+    }
 
-        $view = new VUtente();
-        $view->mostraResetPassword($token, $error);
+    public function follow()
+    {
+        $idUtenteLoggato = Session::get('user_id');
+        if (!$idUtenteLoggato) {
+            header("Location: index.php?controller=Utente&action=login");
+            exit();
+        }
+
+        $idUtenteSeguito = $_GET['id'] ?? null;
+        if ($idUtenteSeguito && (int)$idUtenteSeguito !== $idUtenteLoggato) {
+            FUtente::follow($idUtenteLoggato, (int)$idUtenteSeguito);
+        }
+
+        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+        header("Location: " . $referer);
+        exit();
+    }
+
+    public function unfollow()
+    {
+        $idUtenteLoggato = Session::get('user_id');
+        if (!$idUtenteLoggato) {
+            header("Location: index.php?controller=Utente&action=login");
+            exit();
+        }
+
+        $idUtenteSeguito = $_GET['id'] ?? null;
+        if ($idUtenteSeguito && (int)$idUtenteSeguito !== $idUtenteLoggato) {
+            FUtente::unfollow($idUtenteLoggato, (int)$idUtenteSeguito);
+        }
+
+        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+        header("Location: " . $referer);
+        exit();
     }
 }

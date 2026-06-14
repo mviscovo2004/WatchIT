@@ -2,28 +2,58 @@
 
 class CContenuto
 {
+    private VContenuto $view;
+
+    public function __construct()
+    {
+        $this->view = new VContenuto();
+    }
+
+    private function getWatchlistIdsUtente()
+    {
+        $watchlistIds = [];
+        $userId = Session::get('user_id');
+        if ($userId) {
+            $watchlists = FWatchlist::findByUtente($userId);
+            foreach ($watchlists as $watchlist) {
+                $contenutiSalvati = $watchlist->getContenutiSalvati();
+                foreach ($contenutiSalvati as $c) {
+                    $watchlistIds[] = $c->getId();
+                }
+            }
+            $watchlistIds = array_unique($watchlistIds);
+        }
+        return $watchlistIds;
+    }
+
+
     public function homepage()
     {
         $filmPopolari = FContenuto::getFilmPopolari(5);
         $seriePopolari = FContenuto::getSeriePopolari(5);
 
-        // Determina gli ID dei contenuti già salvati in watchlist
-        $watchlistIds = [];
-        $userId = Session::get('user_id');
-        if ($userId) {
-            $watchlists = FWatchlist::findByUtente($userId);
-            if (!empty($watchlists)) {
-                $contenutiSalvati = $watchlists[0]->getContenutiSalvati();
-                foreach ($contenutiSalvati as $c) {
-                    $watchlistIds[] = $c->getId();
-                }
-            }
-        }
+        $watchlistIds = $this->getWatchlistIdsUtente();
+
         $recensioni = FRecensione::getUltimeRecensioni(6);
 
-        $view = new VContenuto();
+        $this->view->mostraHome($filmPopolari, $seriePopolari, $watchlistIds, $recensioni);
+    }
 
-        $view->mostraHome($filmPopolari, $seriePopolari, $watchlistIds, $recensioni);
+    public function mostra()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $contenuto = FContenuto::findById($id);
+            if ($contenuto) {
+                if ($contenuto instanceof EFilm) {
+                    $this->mostraFilm();
+                } else if ($contenuto instanceof ESerie) {
+                    $this->mostraSerie();
+                }
+                return;
+            }
+        }
+        $this->homepage();
     }
 
     public function mostraSerie()
@@ -31,22 +61,11 @@ class CContenuto
         $id = $_GET['id'] ?? null;
 
         $serie = FContenuto::findById($id);
-        $view = new VContenuto();
 
-        // Determina gli ID dei contenuti già salvati in watchlist
-        $watchlistIds = [];
-        $userId = Session::get('user_id');
-        if ($userId) {
-            $watchlists = FWatchlist::findByUtente($userId);
-            if (!empty($watchlists)) {
-                $contenutiSalvati = $watchlists[0]->getContenutiSalvati();
-                foreach ($contenutiSalvati as $c) {
-                    $watchlistIds[] = $c->getId();
-                }
-            }
-        }
+        $watchlistIds = $this->getWatchlistIdsUtente();
+
         $recensioni = FRecensione::findByContenuto($serie->getId());
-        $view->mostraSerie($serie, $watchlistIds, $recensioni);
+        $this->view->mostraSerie($serie, $watchlistIds, $recensioni);
     }
 
     public function mostraFilm()
@@ -54,22 +73,12 @@ class CContenuto
         $id = $_GET['id'] ?? null;
 
         $film = FContenuto::findById($id);
-        $view = new VContenuto();
 
-        // Determina gli ID dei contenuti già salvati in watchlist
-        $watchlistIds = [];
-        $userId = Session::get('user_id');
-        if ($userId) {
-            $watchlists = FWatchlist::findByUtente($userId);
-            if (!empty($watchlists)) {
-                $contenutiSalvati = $watchlists[0]->getContenutiSalvati();
-                foreach ($contenutiSalvati as $c) {
-                    $watchlistIds[] = $c->getId();
-                }
-            }
-        }
+        $watchlistIds = $this->getWatchlistIdsUtente();
+
+
         $recensioni = FRecensione::findByContenuto($film->getId());
-        $view->mostraFilm($film, $watchlistIds, $recensioni);
+        $this->view->mostraFilm($film, $watchlistIds, $recensioni);
     }
 
     public function mostraEpisodio()
@@ -79,12 +88,11 @@ class CContenuto
 
         $episodio = FEpisodio::findById($id);
         $serie = FContenuto::findById($serieId);
-        $view = new VContenuto();
 
-        // Carichiamo le recensioni specifiche per questo episodio
+        
         $recensioni = FRecensione::findByEpisodio($id);
 
-        $view->mostraEpisodio($episodio, $serie, $recensioni);
+        $this->view->mostraEpisodio($episodio, $serie, $recensioni);
     }
 
 
@@ -104,7 +112,6 @@ class CContenuto
             }
         }
 
-        $view = new VContenuto();
-        $view->mostraRicerca($film, $serie, $utenti);
+        $this->view->mostraRicerca($film, $serie, $utenti);
     }
 }

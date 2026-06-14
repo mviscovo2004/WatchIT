@@ -1,5 +1,5 @@
 <div class="h-full flex flex-col bg-slate-900/60 backdrop-blur-md border-r border-slate-800/80 text-slate-300">
-    <!-- Brand / Header -->
+
     <div class="p-6 border-b border-slate-800/80 flex items-center gap-3">
         <div
             class="bg-gradient-to-r from-purple-600 to-amber-500 p-2 rounded-lg text-white font-bold text-lg tracking-wider shadow-md shadow-purple-600/20">
@@ -11,10 +11,10 @@
         </div>
     </div>
 
-    <!-- Lista di Navigazione -->
+
     <div class="flex-grow overflow-y-auto px-4 py-6 space-y-7">
 
-        <!-- Gruppo Principale -->
+
         <div>
             <span class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Principale</span>
             <ul class="mt-2 space-y-1">
@@ -32,12 +32,12 @@
             </ul>
         </div>
 
-        <!-- Gruppo Gestione -->
+
         <div>
             <span class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Gestione</span>
             <ul class="mt-2 space-y-2">
 
-                <!-- Gestione Contenuti -->
+
                 <li>
                     <div class="space-y-1">
                         <button type="button"
@@ -56,7 +56,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <!-- Sottomenu Contenuti (nascosto di default con 'hidden') -->
+
                         <ul id="submenu-contenuti"
                             class="pl-9 space-y-1 text-xs text-slate-400 border-l border-slate-800 ml-5 hidden">
                             <li>
@@ -74,7 +74,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="?controller=Admin&action=inserisciContenutoDaTMDB"
+                                <a href="?controller=Admin&action=inserisciDaTMDB"
                                     class="py-1.5 hover:text-white transition-colors flex items-center gap-1.5">
                                     <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                                     Inserisci da TMDB
@@ -99,7 +99,7 @@
                     </div>
                 </li>
 
-                <!-- Gestione Utenti -->
+
                 <li>
                     <div class="space-y-1">
                         <button type="button"
@@ -118,7 +118,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <!-- Sottomenu Utenti (nascosto di default con 'hidden') -->
+
                         <ul id="submenu-utenti"
                             class="pl-9 space-y-1 text-xs text-slate-400 border-l border-slate-800 ml-5 hidden">
                             <li>
@@ -139,7 +139,7 @@
                     </div>
                 </li>
 
-                <!-- Gestione Recensioni -->
+
                 <li>
                     <div class="space-y-1">
                         <button type="button"
@@ -158,7 +158,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <!-- Sottomenu Recensioni (nascosto di default con 'hidden') -->
+
                         <ul id="submenu-recensioni"
                             class="pl-9 space-y-1 text-xs text-slate-400 border-l border-slate-800 ml-5 hidden">
                             <li>
@@ -175,7 +175,7 @@
         </div>
     </div>
 
-    <!-- Azioni in fondo -->
+
     <div class="p-4 border-t border-slate-800/80">
         <a href="index.php"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-850 transition-all duration-300 group">
@@ -188,67 +188,4 @@
     </div>
 </div>
 
-<!-- Script per la gestione dinamica del dropdown -->
-{literal}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const triggers = document.querySelectorAll('.menu-trigger');
-
-            triggers.forEach(trigger => {
-                trigger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('data-target');
-                    const targetMenu = document.getElementById(targetId);
-                    const chevron = this.querySelector('.chevron');
-
-                    if (targetMenu.classList.contains('hidden')) {
-                        // Mostra il sottomenu e ruota il chevron
-                        targetMenu.classList.remove('hidden');
-                        chevron.classList.add('rotate-180');
-                    } else {
-                        // Nascondi il sottomenu e ripristina il chevron
-                        targetMenu.classList.add('hidden');
-                        chevron.classList.remove('rotate-180');
-                    }
-                });
-            });
-
-            // Auto-espansione automatica basata sull'azione nell'URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const action = urlParams.get('action');
-
-            if (action) {
-                let activeMenuId = null;
-
-                // Mappa le azioni al rispettivo menu
-                const contenutiActions = ['listaContenuti', 'aggiungiContenuto', 'inserisciContenutoDaTMDB',
-                    'listaFilm', 'listaSerie', 'listaAttori', 'listaRegisti'
-                ];
-                const utentiActions = ['listaUtenti', 'listaUtentiBannati'];
-                const recensioniActions = ['listaRecensioni'];
-
-                if (contenutiActions.includes(action)) {
-                    activeMenuId = 'submenu-contenuti';
-                } else if (utentiActions.includes(action)) {
-                    activeMenuId = 'submenu-utenti';
-                } else if (recensioniActions.includes(action)) {
-                    activeMenuId = 'submenu-recensioni';
-                }
-
-                // Se c'è una corrispondenza, espande il sottomenu all'avvio
-                if (activeMenuId) {
-                    const activeMenu = document.getElementById(activeMenuId);
-                    if (activeMenu) {
-                        activeMenu.classList.remove('hidden');
-                        const trigger = document.querySelector(`.menu-trigger[data-target="${activeMenuId}"]`);
-                        if (trigger) {
-                            const chevron = trigger.querySelector('.chevron');
-                            if (chevron) {
-                                chevron.classList.add('rotate-180');
-                            }
-                        }
-                    }
-                }
-            }
-        });
-</script>{/literal}
+<script src="{$baseUrl}/view/js/sidebarAdmin.js"></script>

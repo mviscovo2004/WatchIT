@@ -1,1 +1,0 @@
-Link per m.viscovo2004@gmail.com: http://localhost/WatchIT/index.php?controller=Utente&action=resetPassword&token=b2b16c74d0d42a618c522d0a86785b2615eae0d4f148c3202ea8ba7e79ad3e5a

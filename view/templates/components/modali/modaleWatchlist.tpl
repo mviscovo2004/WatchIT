@@ -1,9 +1,9 @@
 {if $isLogged}
-    <!-- MODALE SCELTA WATCHLIST (AJAX) -->
+
     <div id="addToWatchlistModal"
         class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full relative shadow-2xl space-y-4">
-            <!-- Tasto di chiusura -->
+
             <button onclick="toggleWatchlistModal(false)"
                 class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold transition focus:outline-none">&times;</button>
 
@@ -19,12 +19,12 @@
                 <p class="text-slate-400 text-xs">Seleziona le watchlist in cui salvare questo contenuto.</p>
             </div>
 
-            <!-- Lista delle Watchlists con checkbox (riempita via JS) -->
+
             <div id="watchlistOptionsContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1 py-1">
-                <!-- Riempito Dinamicamente via JS -->
+
             </div>
 
-            <!-- Sezione navigazione rapida -->
+
             <div class="pt-4 border-t border-slate-800/80 flex justify-between items-center gap-2">
                 <a href="index.php?controller=Watchlist&action=mostraTutteWatchlist"
                     class="text-xs text-purple-400 hover:text-purple-300 font-semibold hover:underline">

@@ -63,6 +63,10 @@ class EContenuto
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected array $video = [];
 
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    protected ?float $valutazioneIniziale = null;
+
+
 
     public function __construct(?int $tmdbId, int $id, string $titolo, string $anno, string $trama, float $valutazioneMedia, array $partecipazioni, string $locandina, array $generi, array $video = [])
     {
@@ -208,5 +212,15 @@ class EContenuto
     public function setVideo(array $video)
     {
         $this->video = $video;
+    }
+
+    public function getValutazioneIniziale(): ?float
+    {
+        return $this->valutazioneIniziale;
+    }
+
+    public function setValutazioneIniziale(?float $valutazioneIniziale)
+    {
+        $this->valutazioneIniziale = $valutazioneIniziale;
     }
 }

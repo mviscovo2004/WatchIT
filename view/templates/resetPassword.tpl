@@ -8,12 +8,12 @@
                     Nuova Password
                 </h4>
 
-                <!-- Box Messaggio Errore o Successo -->
+
             {include file="components/alert.tpl" message=$error type={if $error === "Password reimpostata con successo."}"success"
             {else}"error"
             {/if}}
 
-            <!-- Mostra il form solo se la password non è stata ancora modificata con successo -->
+
             {if !isset($error) || $error !== "Password reimpostata con successo."}
                 <form action="index.php?controller=Utente&action=resetPassword&token={$token}" method="post"
                     class="flex flex-col items-center justify-center w-full space-y-4">
@@ -29,7 +29,7 @@
                     </button>
                 </form>
             {else}
-                <!-- Se il reset ha avuto successo, mostra un tasto rapido per accedere direttamente -->
+
                 <button onclick="toggleModal('loginModal', true)"
                     class="w-full py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-purple-600/20">
                     Accedi Ora

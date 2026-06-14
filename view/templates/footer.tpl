@@ -1,7 +1,7 @@
 <footer class="bg-slate-950 border-t border-slate-900 mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Logo e Descrizione del Progetto -->
+
             <div class="space-y-4 col-span-1 md:col-span-2">
                 <a href="index.php"
                     class="text-2xl font-black tracking-wider bg-gradient-to-r from-purple-600 to-amber-500 text-transparent bg-clip-text">
@@ -13,7 +13,7 @@
                 </p>
             </div>
 
-            <!-- Navigazione Veloce -->
+
             <div>
                 <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Navigazione</h4>
                 <ul class="space-y-2.5 text-sm text-slate-400">
@@ -26,7 +26,7 @@
             </div>
 
 
-            <!-- Info Accademiche -->
+
             <div>
                 <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Info Progetto</h4>
                 <ul class="space-y-2.5 text-sm text-slate-400">
@@ -52,11 +52,11 @@
 
 
 
-        <!-- Copyright & Socials -->
+
         <div class="mt-15px flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
             <p>© 2026 WatchIT. Sviluppato per scopi didattici. Tutti i diritti riservati.</p>
             <div class="flex items-center gap-4">
-                <!-- Icona GitHub -->
+
                 <a href="https://github.com/mviscovo2004/WatchIT/"
                     class="hover:text-slate-300 transition-colors duration-200" title="GitHub">
                     <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">

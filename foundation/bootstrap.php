@@ -16,12 +16,12 @@ $isDevMode = true;
 
 $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
-// Rilevamento dinamico di Altervista
+
 $hostName = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $isAltervista = (strpos($hostName, 'altervista.org') !== false);
 
 if ($isAltervista) {
-    // Estrae il nome utente dal dominio (es: "tuoutente.altervista.org" -> "tuoutente")
+    
     $parts = explode('.', $hostName);
     $altervistaUser = $parts[0];
 
@@ -31,10 +31,10 @@ if ($isAltervista) {
         'port'     => 3306,
         'dbname'   => 'my_' . $altervistaUser,
         'user'     => $altervistaUser,
-        'password' => '', // Su Altervista la password del database è vuota di default
+        'password' => '', 
     ];
 } else {
-    // Configurazione locale per XAMPP
+    
     $connectionParams = [
         'driver'   => 'pdo_mysql',
         'host'     => 'localhost',

@@ -2,149 +2,285 @@
 
 class CWatchlist
 {
+    private VWatchlist $view;
+
+    public function __construct()
+    {
+        $this->view = new VWatchlist();
+    }
+
+    private function richiediLogin()
+    {
+        $idUtente = Session::get('user_id');
+        if (!$idUtente) {
+            header("Location: index.php?controller=Utente&action=login");
+            exit();
+        }
+        return $idUtente;
+    }
+
+
     public function mostra()
     {
         $idWatchlist = $_GET['id'] ?? null;
-        $view = new VWatchlist();
         if ($idWatchlist) {
             $watchlist = FWatchlist::findById($idWatchlist);
             if ($watchlist) {
-                $contenuti = $watchlist->getContenutiSalvati();
-                $view->mostraWatchlist($watchlist, $contenuti);
+                
+                $idUtenteLoggato = Session::get('user_id');
+
+                $visibilita = $watchlist->getVisibilita();
+                $idProprietario = $watchlist->getUtente()->getId();
+
+                $hasAccess = false;
+
+                if ($visibilita === Privacy::pubblico) {
+                    $hasAccess = true;
+                } elseif ($idUtenteLoggato !== null) {
+                    
+                    if ($idUtenteLoggato === $idProprietario) {
+                        $hasAccess = true;
+                    } elseif ($visibilita === Privacy::solo_amici) {
+                        
+                        if (class_exists('FUtente') && FUtente::isFollowing($idUtenteLoggato, $idProprietario) && FUtente::isFollowing($idProprietario, $idUtenteLoggato)) {
+                            $hasAccess = true;
+                        }
+                    }
+                }
+
+                if ($hasAccess) {
+                    $contenuti = $watchlist->getContenutiSalvati();
+                    $this->view->mostraWatchlist($watchlist, $contenuti);
+                } else {
+                    $this->view->mostraErrore('Accesso negato. Questa watchlist è privata.');
+                }
             } else {
-                $view->mostraErrore('Watchlist non trovata.');
+                $this->view->mostraErrore('Watchlist non trovata.');
             }
         } else {
-            $view->mostraErrore('ID Watchlist non valido.');
+            $this->view->mostraErrore('ID Watchlist non valido.');
         }
     }
 
     public function aggiungi()
     {
         $idContenuto = $_GET['id'] ?? null;
-        $idUtente = Session::get('user_id');
         $idWatchlist = $_GET['idWatchlist'] ?? null;
-        $view = new VWatchlist();
 
-        if (!$idUtente) {
-            // Se l'utente non è loggato, lo rimandiamo alla pagina di login
-            header("Location: index.php?controller=Utente&action=login");
-            exit();
-        }
+        $idUtente = $this->richiediLogin();
 
         if ($idContenuto) {
-            // Se non è stata fornita una watchlist specifica in GET, usiamo quella di default
+            
             if (!$idWatchlist) {
                 $watchlists = FWatchlist::findByUtente($idUtente);
                 if (empty($watchlists)) {
-                    // Crea una watchlist di default se l'utente non ne ha nessuna
+                    
                     $utente = FUtente::findById($idUtente);
                     if ($utente) {
                         $defaultWatchlist = new EWatchlist(0, 'La mia Lista', 'Watchlist di default per i tuoi contenuti preferiti.', [], Privacy::privato, $utente);
                         FWatchlist::insert($defaultWatchlist);
                         $idWatchlist = $defaultWatchlist->getId();
                     } else {
-                        $view->mostraErrore('Utente non trovato.');
+                        $this->view->mostraErrore('Utente non trovato.');
                         return;
                     }
                 } else {
                     $idWatchlist = $watchlists[0]->getId();
                 }
 
-                // Eseguiamo il toggle: aggiungi se manca, rimuovi se c'è
+                
                 if (FWatchlist::contains($idWatchlist, $idContenuto)) {
                     FWatchlist::removeContenuto($idWatchlist, $idContenuto);
                 } else {
                     FWatchlist::addContenuto($idWatchlist, $idContenuto);
                 }
 
-                // Reindirizza alla pagina precedente per non interrompere la navigazione dell'utente
                 $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
                 header("Location: " . $referer);
                 exit();
             } else {
-                // Comportamento esplicito se viene passato un idWatchlist (es. aggiunta mirata da altre sezioni)
-                FWatchlist::addContenuto($idWatchlist, $idContenuto);
+                
                 $watchlist = FWatchlist::findById($idWatchlist);
-                $contenuti = $watchlist->getContenutiSalvati();
-                $view->mostraWatchlist($watchlist, $contenuti);
+                if ($watchlist) {
+                    
+                    if ($watchlist->getUtente()->getId() === $idUtente) {
+                        FWatchlist::addContenuto($idWatchlist, $idContenuto);
+                        
+                        header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
+                        exit();
+                    } else {
+                        $this->view->mostraErrore('Operazione non consentita.');
+                    }
+                } else {
+                    $this->view->mostraErrore('Watchlist non trovata.');
+                }
             }
         } else {
-            $view->mostraErrore('ID Contenuto non specificato.');
+            $this->view->mostraErrore('ID Contenuto non specificato.');
         }
     }
-
 
     public function rimuovi()
     {
-        $idContenuto = $_GET['id'];
-        $idUtente = Session::get('user_id');
+        $idContenuto = $_GET['id'] ?? null;
         $idWatchlist = $_GET['idWatchlist'] ?? null;
-        $view = new VWatchlist();
+
+        $idUtente = $this->richiediLogin();
+
         if ($idContenuto && $idUtente && $idWatchlist) {
-            // Corretto: passiamo $idWatchlist anziché $idUtente
-            FWatchlist::removeContenuto($idWatchlist, $idContenuto);
             $watchlist = FWatchlist::findById($idWatchlist);
-            $contenuti = $watchlist->getContenutiSalvati();
-            $view->mostraWatchlist($watchlist, $contenuti);
+            if ($watchlist) {
+                
+                if ($watchlist->getUtente()->getId() === $idUtente) {
+                    FWatchlist::removeContenuto($idWatchlist, $idContenuto);
+                    
+                    header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
+                    exit();
+                } else {
+                    $this->view->mostraErrore('Operazione non consentita.');
+                }
+            } else {
+                $this->view->mostraErrore('Watchlist non trovata.');
+            }
         } else {
-            $view->mostraErrore('Errore nel salvataggio ' . $idWatchlist);
+            $this->view->mostraErrore('Errore nel salvataggio. Parametri mancanti.');
         }
     }
+
 
     public function mostraTutteWatchlist()
     {
-        $idUtente = Session::get('user_id');
-        $view = new VWatchlist();
-        if ($idUtente) {
-            $watchlists = FWatchlist::findByUtente($idUtente);
-            $view->mostraTutteWatchlist($watchlists);
-        } else {
-            $view->mostraErrore('Errore nel caricamento delle watchlist.');
-        }
+        $idUtente = $this->richiediLogin();
+
+        $watchlists = FWatchlist::findByUtente($idUtente);
+        $this->view->mostraTutteWatchlist($watchlists);
     }
+
 
     public function crea()
     {
-        $idUtente = Session::get('user_id');
-        $view = new VWatchlist();
-        if ($idUtente && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $idUtente = $this->richiediLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nome = trim($_POST['nome'] ?? '');
             $descrizione = trim($_POST['descrizione'] ?? '');
-            $visibilitaStr = $_POST['visibilita'] ?? 'privato';
+            $visibilita = $_POST['visibilita'] ?? 'privato';
 
             if (!empty($nome)) {
-                $visibilita = Privacy::privato;
-                if ($visibilitaStr === 'pubblico') {
-                    $visibilita = Privacy::pubblico;
-                } elseif ($visibilitaStr === 'solo_amici') {
-                    $visibilita = Privacy::solo_amici;
-                }
-
                 $utente = FUtente::findById($idUtente);
                 if ($utente) {
-                    $watchlist = new EWatchlist(0, $nome, $descrizione, [], $visibilita, $utente);
+                    $privacy = Privacy::privato;
+                    if ($visibilita === 'pubblico') {
+                        $privacy = Privacy::pubblico;
+                    } elseif ($visibilita === 'solo_amici') {
+                        $privacy = Privacy::solo_amici;
+                    }
+
+                    $watchlist = new EWatchlist(0, $nome, $descrizione, [], $privacy, $utente);
                     FWatchlist::insert($watchlist);
+
                     header("Location: index.php?controller=Watchlist&action=mostraTutteWatchlist");
                     exit();
                 } else {
-                    $view->mostraErrore('Utente non trovato.');
+                    $this->view->mostraErrore('Utente non trovato.');
                 }
             } else {
-                $view->mostraErrore('Il nome della watchlist è obbligatorio.');
+                $this->view->mostraErrore('Il nome della watchlist è obbligatorio.');
             }
-        } else {
-            $view->mostraErrore('Operazione non valida.');
         }
     }
+
+
+    public function elimina()
+    {
+        $idWatchlist = $_GET['id'] ?? null;
+        $idUtente = $this->richiediLogin();
+
+        if ($idWatchlist) {
+            $watchlist = FWatchlist::findById($idWatchlist);
+            if ($watchlist) {
+                if ($watchlist->getUtente()->getId() === $idUtente) {
+                    FWatchlist::delete($watchlist);
+                    header("Location: index.php?controller=Watchlist&action=mostraTutteWatchlist");
+                    exit();
+                } else {
+                    $this->view->mostraErrore('Operazione non consentita.');
+                }
+            } else {
+                $this->view->mostraErrore('Watchlist non trovata.');
+            }
+        } else {
+            $this->view->mostraErrore('Parametri non validi per l\'eliminazione.');
+        }
+    }
+
+    public function modifica()
+    {
+        $idWatchlist = $_GET['id'] ?? null;
+        $idUtente = $this->richiediLogin();
+
+        if ($idWatchlist) {
+            $watchlist = FWatchlist::findById($idWatchlist);
+            if ($watchlist) {
+                if ($watchlist->getUtente()->getId() === $idUtente) {
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        $nome = trim($_POST['nome'] ?? $watchlist->getNome());
+                        $descrizione = trim($_POST['descrizione'] ?? $watchlist->getDescrizione());
+                        $visibilitaStr = $_POST['visibilita'] ?? $watchlist->getVisibilita()->name;
+
+                        if (!empty($nome)) {
+                            
+                            $privacy = Privacy::privato;
+                            if ($visibilitaStr === 'pubblico') {
+                                $privacy = Privacy::pubblico;
+                            } elseif ($visibilitaStr === 'solo_amici') {
+                                $privacy = Privacy::solo_amici;
+                            }
+
+                            $watchlist->setNome($nome);
+                            $watchlist->setDescrizione($descrizione);
+                            $watchlist->setVisibilita($privacy);
+
+                            FWatchlist::update($watchlist);
+
+                            
+                            $redirectTo = $_POST['redirect_to'] ?? 'lista';
+                            if ($redirectTo === 'dettaglio') {
+                                header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
+                            } else {
+                                header("Location: index.php?controller=Watchlist&action=mostraTutteWatchlist");
+                            }
+                            exit();
+                        } else {
+                            $this->view->mostraErrore('Il nome della watchlist è obbligatorio.');
+                        }
+                    } else {
+                        $this->view->mostraErrore('Metodo di richiesta non supportato.');
+                    }
+                } else {
+                    $this->view->mostraErrore('Operazione non consentita.');
+                }
+            } else {
+                $this->view->mostraErrore('Watchlist non trovata.');
+            }
+        } else {
+            $this->view->mostraErrore('Parametri non validi per la modifica.');
+        }
+    }
+
+
     public function getWatchlistsJSON()
     {
         header('Content-Type: application/json');
         $idUtente = Session::get('user_id');
-        $idContenuto = $_GET['idContenuto'] ?? null;
+        if (!$idUtente) {
+            echo json_encode(['success' => false, 'error' => 'Utente non autenticato.']);
+            exit();
+        }
 
-        if (!$idUtente || !$idContenuto) {
-            echo json_encode(['success' => false, 'error' => 'Non autenticato o parametri mancanti']);
+        $idContenuto = (int)($_GET['idContenuto'] ?? 0);
+        if (!$idContenuto) {
+            echo json_encode(['success' => false, 'error' => 'ID Contenuto mancante.']);
             exit();
         }
 
@@ -157,6 +293,7 @@ class CWatchlist
                 'contains' => FWatchlist::contains($w->getId(), $idContenuto)
             ];
         }
+
         echo json_encode(['success' => true, 'watchlists' => $result]);
         exit();
     }
@@ -165,38 +302,35 @@ class CWatchlist
     {
         header('Content-Type: application/json');
         $idUtente = Session::get('user_id');
-        $idContenuto = $_POST['idContenuto'] ?? null;
-        $idWatchlist = $_POST['idWatchlist'] ?? null;
-
-        if (!$idUtente || !$idContenuto || !$idWatchlist) {
-            echo json_encode(['success' => false, 'error' => 'Parametri mancanti']);
+        if (!$idUtente) {
+            echo json_encode(['success' => false, 'error' => 'Utente non autenticato.']);
             exit();
         }
 
-        // Verifica che la watchlist appartenga all'utente
+        $idContenuto = (int)($_POST['idContenuto'] ?? 0);
+        $idWatchlist = (int)($_POST['idWatchlist'] ?? 0);
+
+        if (!$idContenuto || !$idWatchlist) {
+            echo json_encode(['success' => false, 'error' => 'Parametri mancanti.']);
+            exit();
+        }
+
         $watchlist = FWatchlist::findById($idWatchlist);
         if (!$watchlist || $watchlist->getUtente()->getId() !== $idUtente) {
-            echo json_encode(['success' => false, 'error' => 'Watchlist non autorizzata']);
+            echo json_encode(['success' => false, 'error' => 'Operazione non consentita.']);
             exit();
         }
 
+        
         if (FWatchlist::contains($idWatchlist, $idContenuto)) {
             FWatchlist::removeContenuto($idWatchlist, $idContenuto);
+            $added = false;
         } else {
             FWatchlist::addContenuto($idWatchlist, $idContenuto);
+            $added = true;
         }
 
-        // Determina se il contenuto è ancora salvato in ALMENO UNA watchlist dell'utente
-        $watchlists = FWatchlist::findByUtente($idUtente);
-        $isInAny = false;
-        foreach ($watchlists as $w) {
-            if (FWatchlist::contains($w->getId(), $idContenuto)) {
-                $isInAny = true;
-                break;
-            }
-        }
-
-        echo json_encode(['success' => true, 'added' => $isInAny]);
+        echo json_encode(['success' => true, 'added' => $added]);
         exit();
     }
 }

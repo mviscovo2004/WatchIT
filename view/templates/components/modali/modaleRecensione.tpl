@@ -1,6 +1,6 @@
 <div id="reviewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">
-        <!-- Tasto di chiusura -->
+
         <button onclick="toggleReviewModal(false)"
             class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold transition focus:outline-none">&times;</button>
 
@@ -13,19 +13,19 @@
             <form action="index.php?controller=Recensione&action=aggiungiRecensione" method="post"
                 class="flex flex-col items-center justify-center w-full space-y-4">
 
-                <!-- Campi Hidden richiesti dal controller -->
-                <input type="hidden" name="contenuto_id" value="{$film->getId()}">
 
-                <!-- Selettore del Voto (da 1 a 10) -->
-                <!-- Sistema di Votazione con Stelline (1-10) -->
+                <input type="hidden" name="contenuto_id" value="{$contenuto}">
+
+
+
                 <div class="w-full space-y-2 text-center">
                     <label
                         class="text-xs font-semibold text-slate-400 uppercase tracking-wider block text-left">Voto</label>
 
-                    <!-- Input hidden per inviare il voto selezionato in POST al controller -->
+
                     <input type="hidden" name="voto" id="votoInput" required>
 
-                    <!-- Contenitore orizzontale delle 10 stelline -->
+
                     <div class="flex items-center justify-center gap-1 py-2">
                         {for $v=1 to 10}
                             <button type="button" data-value="{$v}"
@@ -39,14 +39,14 @@
                         {/for}
                     </div>
 
-                    <!-- Testo dinamico per mostrare il voto -->
+
                     <div id="votoVisualizzato" class="text-sm font-semibold text-amber-500 h-5 mt-1">
                         Nessun voto selezionato
                     </div>
                 </div>
 
 
-                <!-- Campo Testo Recensione -->
+
                 <div class="w-full space-y-1 text-left">
                     <label for="testo" class="text-xs font-semibold text-slate-450 uppercase tracking-wider">Recensione
                         (opzionale)</label>
@@ -54,7 +54,7 @@
                         class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all duration-200 placeholder-slate-500 text-white resize-none"></textarea>
                 </div>
 
-                <!-- Pulsante Invia -->
+
                 <button type="submit"
                     class="w-full text-center py-2.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-purple-600/20 cursor-pointer">
                     Invia Valutazione

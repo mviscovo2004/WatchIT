@@ -3,7 +3,7 @@
 {block name="content"}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- Intestazione Pagina -->
+
         <div class="p-8  flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div class="space-y-3">
                 <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-3">
@@ -16,7 +16,7 @@
                 </p>
             </div>
 
-            <!-- Bottone per creare una watchlist -->
+
             <button onclick="toggleCreateWatchlistModal(true)"
                 class="shrink-0 inline-flex items-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-purple-600/20">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -28,7 +28,7 @@
             </button>
         </div>
 
-        <!-- Sezione Watchlists -->
+
         <div>
             {if $watchlist && count($watchlist) > 0}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -42,15 +42,12 @@
                         <div onclick="window.location.href='index.php?controller=Watchlist&action=mostra&id={$lista->getId()}'"
                             class="group rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-purple-500/40 hover:bg-slate-900 transition-all duration-300 cursor-pointer shadow-xl overflow-hidden flex flex-col justify-between h-full">
 
-                            <!-- Immagine di Copertina / Gradiente -->
+
                             <div
                                 class="relative aspect-video w-full overflow-hidden bg-slate-950 border-b border-slate-800 flex items-center justify-center">
-                                {if $primoContenuto}
-                                    <img src="{$primoContenuto->getLocandina()}" alt="{$lista->getNome()}"
-                                        class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500 blur-sm opacity-30 absolute inset-0">
-                                    <img src="{$primoContenuto->getLocandina()}" alt="{$lista->getNome()}"
-                                        class="h-full object-contain relative z-10 py-2 group-hover:scale-105 transition-all duration-500">
-                                {else}
+                                {$numContenuti = count($contenuti)}
+                                {if $numContenuti == 0}
+
                                     <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-slate-950 to-slate-900"></div>
                                     <div class="relative z-10 flex flex-col items-center justify-center text-slate-500 space-y-2">
                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -63,9 +60,50 @@
                                             class="text-xs font-semibold uppercase tracking-wider text-slate-600 group-hover:text-slate-500 transition-colors">Lista
                                             Vuota</span>
                                     </div>
+                                {elseif $numContenuti == 1}
+
+                                    <img src="{$contenuti[0]->getLocandina()}" alt="{$lista->getNome()}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500 blur-sm opacity-30 absolute inset-0">
+                                    <img src="{$contenuti[0]->getLocandina()}" alt="{$lista->getNome()}"
+                                        class="h-full object-contain relative z-10 py-2 group-hover:scale-105 transition-all duration-500">
+                                {elseif $numContenuti == 2}
+
+                                    <div
+                                        class="grid grid-cols-2 w-full h-full absolute inset-0 group-hover:scale-102 transition-all duration-500">
+                                        <img src="{$contenuti[0]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover">
+                                        <img src="{$contenuti[1]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover border-l border-slate-950">
+                                    </div>
+                                {elseif $numContenuti == 3}
+
+                                    <div
+                                        class="grid grid-cols-2 w-full h-full absolute inset-0 group-hover:scale-102 transition-all duration-500">
+                                        <img src="{$contenuti[0]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover">
+                                        <div class="grid grid-rows-2 h-full border-l border-slate-950">
+                                            <img src="{$contenuti[1]->getLocandina()}" alt="{$lista->getNome()}"
+                                                class="w-full h-full object-cover">
+                                            <img src="{$contenuti[2]->getLocandina()}" alt="{$lista->getNome()}"
+                                                class="w-full h-full object-cover border-t border-slate-950">
+                                        </div>
+                                    </div>
+                                {else}
+
+                                    <div
+                                        class="grid grid-cols-2 grid-rows-2 w-full h-full absolute inset-0 group-hover:scale-102 transition-all duration-500">
+                                        <img src="{$contenuti[0]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover">
+                                        <img src="{$contenuti[1]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover border-l border-slate-950">
+                                        <img src="{$contenuti[2]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover border-t border-slate-950">
+                                        <img src="{$contenuti[3]->getLocandina()}" alt="{$lista->getNome()}"
+                                            class="w-full h-full object-cover border-t border-l border-slate-950">
+                                    </div>
                                 {/if}
 
-                                <!-- Badge Visibilità -->
+
                                 <div class="absolute top-4 right-4 z-20">
                                     {if $lista->getVisibilita()->name === 'pubblico'}
                                         <span
@@ -104,7 +142,9 @@
                                 </div>
                             </div>
 
-                            <!-- Contenuto Testuale -->
+
+
+
                             <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
                                 <div class="space-y-2">
                                     <h3
@@ -126,19 +166,41 @@
                                 </div>
                             </div>
 
-                            <!-- Bottone d'azione -->
-                            <div class="px-6 pb-6 pt-0">
-                                <div
-                                    class="w-full py-2.5 bg-slate-800 group-hover:bg-purple-600 text-white rounded-xl text-center text-xs font-bold transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-600/10">
-                                    Visualizza Watchlist
-                                </div>
+
+
+                            <div class="px-6 pb-6 pt-0 flex gap-2" onclick="event.stopPropagation();">
+                                <a href="index.php?controller=Watchlist&action=mostra&id={$lista->getId()}"
+                                    class="flex-1 py-2.5 bg-slate-850 hover:bg-purple-600 text-white rounded-xl text-center text-xs font-bold transition-all duration-300 hover:shadow-lg hover:shadow-purple-650/15">
+                                    Visualizza
+                                </a>
+                                <button type="button"
+                                    onclick="openEditModalFromList(event, {$lista->getId()}, '{$lista->getNome()|escape:'javascript'}', '{$lista->getDescrizione()|escape:'javascript'}', '{$lista->getVisibilita()->name}')"
+                                    class="px-3.5 py-2.5 bg-slate-900 border border-slate-800 hover:border-purple-500/40 hover:text-purple-400 text-slate-350 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                    title="Modifica Watchlist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                                <a href="index.php?controller=Watchlist&action=elimina&id={$lista->getId()}"
+                                    onclick="event.stopPropagation(); return confirm('Vuoi davvero eliminare questa watchlist? Questa azione non può essere annullata.');"
+                                    class="px-3.5 py-2.5 bg-red-950/20 border border-red-950/30 hover:bg-red-950/40 hover:border-red-900/50 text-red-400 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                    title="Elimina Watchlist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </a>
                             </div>
+
 
                         </div>
                     {/foreach}
                 </div>
             {else}
-                <!-- Stato Vuoto -->
+
                 <div
                     class="text-center py-16 bg-slate-900/40 border border-dashed border-slate-850 rounded-2xl space-y-4 max-w-xl mx-auto">
                     <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto text-slate-400">
@@ -165,80 +227,12 @@
         </div>
 
     </div>
-    <!-- Modale per Creazione Watchlist -->
-    <div id="createWatchlistModal"
-        class="fixed inset-0 z-[9999] hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">
-            <!-- Pulsante Chiusura -->
-            <button onclick="toggleCreateWatchlistModal(false)"
-                class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <div class="space-y-2">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                    </svg>
-                    Nuova Watchlist
-                </h3>
-                <p class="text-slate-400 text-xs">Crea una nuova raccolta personalizzata per organizzare i tuoi film e
-                    serie TV.</p>
-            </div>
-            <form action="index.php?controller=Watchlist&action=crea" method="POST" class="space-y-4">
-                <div class="space-y-1">
-                    <label for="nome" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Nome
-                        Watchlist</label>
-                    <input type="text" name="nome" id="nome" required
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 text-sm transition-colors"
-                        placeholder="Es. Film da Vedere d'Estate">
-                </div>
-                <div class="space-y-1">
-                    <label for="descrizione"
-                        class="text-xs font-bold text-slate-400 uppercase tracking-wider">Descrizione</label>
-                    <textarea name="descrizione" id="descrizione" rows="3"
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 text-sm transition-colors"
-                        placeholder="Una breve descrizione della tua lista..."></textarea>
-                </div>
-                <div class="space-y-1">
-                    <label for="visibilita"
-                        class="text-xs font-bold text-slate-400 uppercase tracking-wider">Privacy</label>
-                    <select name="visibilita" id="visibilita"
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 text-sm transition-colors">
-                        <option value="pubblico" class="bg-slate-900">Pubblica (Visibile a tutti)</option>
-                        <option value="privato" class="bg-slate-900" selected>Privata (Solo per te)</option>
-                        <option value="solo_amici" class="bg-slate-900">Solo Amici (Visibile ai tuoi amici)</option>
-                    </select>
-                </div>
-                <div class="pt-4 border-t border-slate-800/60 flex justify-end gap-3">
-                    <button type="button" onclick="toggleCreateWatchlistModal(false)"
-                        class="px-4 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-xl text-sm font-semibold transition-colors">
-                        Annulla
-                    </button>
-                    <button type="submit"
-                        class="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-sm font-semibold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-purple-600/20">
-                        Crea Lista
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <script>
-        {literal}
-            function toggleCreateWatchlistModal(show) {
-                const modal = document.getElementById('createWatchlistModal');
-                if (show) {
-                    modal.classList.remove('hidden');
-                    document.body.classList.add('overflow-hidden');
-                } else {
-                    modal.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                }
-            }
-        {/literal}
-    </script>
+
+    {include file='components/modali/modaleCreaWatchlist.tpl'}
+
+    {include file='components/modali/modaleModificaWatchlist.tpl'}
+    <script src="{$baseUrl}/view/js/modaleModificaWatchlist.js"></script>
+
+    <script src="{$baseUrl}/view/js/modaleWatchlist.js"></script>
+
 {/block}

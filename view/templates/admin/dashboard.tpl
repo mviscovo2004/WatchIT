@@ -5,9 +5,9 @@
     {block name="content"}
         <h1 class="text-white font-bold text-2xl mb-4" align="center">Dashboard</h1>
 
-        <!-- Statistiche principali -->
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Totale utenti -->
+
             <div class="glass-panel p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <!-- Totale contenuti -->
+
             <div class="glass-panel p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <!-- Totale recensioni -->
+
             <div class="glass-panel p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        <!-- Contenuti recenti -->
+
         <div class="glass-panel p-6 mb-8">
             <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                 <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,21 +77,21 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     {foreach $contenutiRecenti as $contenuto}
                         <div class="relative group">
-                            <!-- Copertina con overlay animato -->
+
                             <a href="?controller=Contenuto&action=mostra&id={$contenuto->getId()}" class="block">
                                 <div
                                     class="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-indigo-900/30 transition-all duration-300 transform hover:-translate-y-1">
-                                    <!-- Locandina del contenuto -->
+
                                     <img src="{$contenuto->getLocandina()}" alt="{$contenuto->getTitolo()}"
                                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
-                                    <!-- Overlay con titolo -->
+
                                     <div
                                         class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex items-end">
                                         <p class="text-white text-sm font-semibold leading-tight">{$contenuto->getTitolo()}</p>
                                     </div>
                                 </div>
                             </a>
-                            <!-- Informazioni sotto la copertina -->
+
                             <div class="mt-2">
                                 <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">{$contenuto->getAnno()}</p>
                                 <p class="text-sm font-bold text-white truncate">{$contenuto->getTitolo()}</p>
