@@ -13,13 +13,13 @@ class VView
         }
         $this->smarty = self::$smartyInstance;
 
-        
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+
+        $scriptName = Session::getServer('SCRIPT_NAME', '');
         $dir = dirname($scriptName);
         $baseUrl = ($dir === DIRECTORY_SEPARATOR || $dir === '/' || $dir === '\\') ? '' : $dir;
         $this->smarty->assign("baseUrl", $baseUrl);
 
-        
+
         if (Session::isLogged()) {
             $userId = Session::get('user_id');
             $utente = FUtente::findById($userId);
@@ -43,30 +43,30 @@ class VView
         }
 
 
-        
+
         if (Session::exists('register_error')) {
             $this->smarty->assign("registerError", Session::get('register_error'));
             Session::remove('register_error');
         }
 
-        
+
         if (Session::exists('login_error')) {
             $this->smarty->assign("loginError", Session::get('login_error'));
             Session::remove('login_error');
         }
-        
+
         if (Session::exists('import_error')) {
             $this->smarty->assign("importError", Session::get('import_error'));
             Session::remove('import_error');
         }
-        
+
         if (Session::exists('import_success')) {
             $this->smarty->assign("importSuccess", Session::get('import_success'));
             Session::remove('import_success');
         }
 
 
-        
+
         if (Session::exists('show_login_modal')) {
             $this->smarty->assign("showLogin", true);
             Session::remove('show_login_modal');

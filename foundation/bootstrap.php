@@ -17,11 +17,11 @@ $isDevMode = true;
 $config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
 
 
-$hostName = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$hostName = Session::getServer('HTTP_HOST', 'localhost');
 $isAltervista = (strpos($hostName, 'altervista.org') !== false);
 
 if ($isAltervista) {
-    
+
     $parts = explode('.', $hostName);
     $altervistaUser = $parts[0];
 
@@ -31,10 +31,10 @@ if ($isAltervista) {
         'port'     => 3306,
         'dbname'   => 'my_' . $altervistaUser,
         'user'     => $altervistaUser,
-        'password' => '', 
+        'password' => '',
     ];
 } else {
-    
+
     $connectionParams = [
         'driver'   => 'pdo_mysql',
         'host'     => 'localhost',

@@ -4,8 +4,8 @@
 class FUtente extends FFoundation
 {
 
-    
-    
+
+
     public static function insert(EUtente $utente)
     {
         $em = self::getEntityManager();
@@ -14,31 +14,31 @@ class FUtente extends FFoundation
         return ($utente->getId() != null) ? true : false;
     }
 
-    
+
     public static function delete(EUtente $utente)
     {
         $em = self::getEntityManager();
 
 
-        
+
         $recensioni = $em->getRepository(ERecensione::class)->findBy(['utente' => $utente]);
         foreach ($recensioni as $recensione) {
             $em->remove($recensione);
         }
 
-        
+
         $watchlists = $em->getRepository(EWatchlist::class)->findBy(['utente' => $utente]);
         foreach ($watchlists as $watchlist) {
             $em->remove($watchlist);
         }
 
-        
+
         $banSubiti = $em->getRepository(EBan::class)->findBy(['utente' => $utente]);
         foreach ($banSubiti as $b) {
             $em->remove($b);
         }
 
-        
+
         if ($utente instanceof EAmministratore) {
             $banEmessi = $em->getRepository(EBan::class)->findBy(['amministratore' => $utente]);
             foreach ($banEmessi as $b) {
@@ -46,7 +46,7 @@ class FUtente extends FFoundation
             }
         }
 
-        
+
         $em->remove($utente);
 
         $em->flush();
@@ -54,7 +54,7 @@ class FUtente extends FFoundation
     }
 
 
-    
+
     public static function update(EUtente $utente)
     {
         $em = self::getEntityManager();
@@ -62,7 +62,7 @@ class FUtente extends FFoundation
         return true;
     }
 
-    
+
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -70,7 +70,7 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-    
+
     public static function findByUsername(string $username)
     {
         $em = self::getEntityManager();
@@ -78,7 +78,7 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-    
+
     public static function findByEmail(string $email)
     {
         $em = self::getEntityManager();
@@ -86,7 +86,7 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-    
+
     public static function findAll()
     {
         $em = self::getEntityManager();
@@ -94,7 +94,7 @@ class FUtente extends FFoundation
         return $utenti;
     }
 
-    
+
     public static function search(string $query)
     {
         $em = self::getEntityManager();
@@ -106,8 +106,8 @@ class FUtente extends FFoundation
         return $utenti;
     }
 
-    
-    
+
+
     public static function follow(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -118,7 +118,7 @@ class FUtente extends FFoundation
         return true;
     }
 
-    
+
     public static function unfollow(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -129,7 +129,7 @@ class FUtente extends FFoundation
         return true;
     }
 
-    
+
     public static function isFollowing(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -138,7 +138,7 @@ class FUtente extends FFoundation
         return $utente->isFollowing($utenteSeguito);
     }
 
-    
+
     public static function getFollowers(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -146,7 +146,7 @@ class FUtente extends FFoundation
         return $utente->getSeguaci();
     }
 
-    
+
     public static function getFollowing(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -154,7 +154,7 @@ class FUtente extends FFoundation
         return $utente->getSeguiti();
     }
 
-    
+
     public static function login(string $identificativo, string $password)
     {
         $em = self::getEntityManager();
@@ -168,7 +168,7 @@ class FUtente extends FFoundation
         return null;
     }
 
-    
+
     public static function register(string $nome, string $cognome, string $foto, string $username, string $email, string $password)
     {
         $em = self::getEntityManager();
@@ -179,7 +179,7 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-    
+
     public static function promuoviAdAdmin(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -188,7 +188,7 @@ class FUtente extends FFoundation
         return true;
     }
 
-    
+
     public static function retrocediAdUtente(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -198,7 +198,7 @@ class FUtente extends FFoundation
     }
 
 
-    
+
     public static function forgotPassword(string $email)
     {
         $em = self::getEntityManager();
@@ -206,15 +206,15 @@ class FUtente extends FFoundation
         if ($utente != null) {
             $token = bin2hex(random_bytes(32));
 
-            
+
             $dataScadenza = new DateTime('+1 hour');
 
             $utente->setTokenRecupero($token);
             $utente->setDataScadenzaToken($dataScadenza);
 
-            
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+
+            $host = Session::getServer('HTTP_HOST', 'localhost');
+            $scriptName = Session::getServer('SCRIPT_NAME', '');
             $dir = dirname($scriptName);
             $baseDir = ($dir === DIRECTORY_SEPARATOR || $dir === '/' || $dir === '\\') ? '' : $dir;
 
@@ -223,9 +223,9 @@ class FUtente extends FFoundation
 
             $mailSent = false;
 
-            
+
             if (function_exists('mail')) {
-                
+
                 $mailSent = @mail(
                     $email,
                     'Recupera Password - WatchIT',
@@ -236,7 +236,7 @@ class FUtente extends FFoundation
                 );
             }
 
-            
+
             if (!$mailSent || in_array($host, ['localhost', '127.0.0.1', '[::1]'])) {
                 file_put_contents(__DIR__ . '/../recupero_link.txt', "Link per $email: " . $link . "\n");
             }
@@ -247,18 +247,18 @@ class FUtente extends FFoundation
         return false;
     }
 
-    
+
     public static function resetPassword(string $token, string $password)
     {
         $em = self::getEntityManager();
         $utente = $em->getRepository(EUtente::class)->findOneBy(['tokenRecupero' => $token]);
 
-        
+
         if ($utente != null && $utente->getDataScadenzaToken() !== null && $utente->getDataScadenzaToken() > new DateTime()) {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $utente->setHashPassword($passwordHash); 
+            $utente->setHashPassword($passwordHash);
 
-            
+
             $utente->setTokenRecupero(null);
             $utente->setDataScadenzaToken(null);
 
