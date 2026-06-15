@@ -11,12 +11,15 @@ function toggleWatchlistModal(show) {
     if (show) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');    
     } else {
         modal.classList.remove('flex');
         modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden'); 
         currentWatchlistContentId = null;
     }
 }
+
 
 
 function openAddToWatchlistModal(contentId) {

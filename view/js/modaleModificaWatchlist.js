@@ -1,18 +1,36 @@
+
 function toggleEditWatchlistModal(show) {
     const modal = document.getElementById('editWatchlistModal');
     if (modal) {
         if (show) {
             modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            modal.classList.add('flex');
+            document.body.classList.add('overflow-hidden'); 
         } else {
+            modal.classList.remove('flex');
             modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
+            document.body.classList.remove('overflow-hidden'); 
+        }
+    }
+}
+
+
+function toggleCreateWatchlistModal(show) {
+    const modal = document.getElementById('createWatchlistModal');
+    if (modal) {
+        if (show) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.classList.add('overflow-hidden'); 
+        } else {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden'); 
         }
     }
 }
 
 function openEditModalFromList(event, id, nome, descrizione, visibilita) {
-
     if (event) {
         event.stopPropagation();
     }
@@ -21,7 +39,6 @@ function openEditModalFromList(event, id, nome, descrizione, visibilita) {
     if (redirectInput) {
         redirectInput.value = 'lista';
     }
-
 
     const nomeInput = document.getElementById('edit_nome');
     const descrizioneInput = document.getElementById('edit_descrizione');
@@ -42,8 +59,13 @@ function openEditModalFromList(event, id, nome, descrizione, visibilita) {
 }
 
 window.addEventListener('click', function (e) {
-    const modal = document.getElementById('editWatchlistModal');
-    if (e.target === modal) {
+    const editModal = document.getElementById('editWatchlistModal');
+    const createModal = document.getElementById('createWatchlistModal');
+    if (e.target === editModal) {
         toggleEditWatchlistModal(false);
     }
+    if (e.target === createModal) {
+        toggleCreateWatchlistModal(false);
+    }
 });
+

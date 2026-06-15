@@ -1,7 +1,8 @@
 {if $isLogged}
 
-    <div id="addToWatchlistModal"
-        class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div id="addToWatchlistModal" style="z-index: 99999;"
+        class="fixed inset-0 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full relative shadow-2xl space-y-4">
 
             <button onclick="toggleWatchlistModal(false)"

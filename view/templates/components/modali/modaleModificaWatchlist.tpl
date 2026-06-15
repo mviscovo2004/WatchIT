@@ -1,5 +1,6 @@
-<div id="editWatchlistModal"
-    class="fixed inset-0 z-[9999] hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+<div id="editWatchlistModal" style="z-index: 99999;"
+    class="fixed inset-0 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">
 
         <button onclick="toggleEditWatchlistModal(false)"

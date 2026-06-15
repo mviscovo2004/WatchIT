@@ -1,3 +1,4 @@
+// Mostra o nasconde il modale delle recensioni
 function toggleReviewModal(show) {
     const modal = document.getElementById('reviewModal');
     if (!modal) return;
@@ -14,6 +15,7 @@ function toggleReviewModal(show) {
     }
 }
 
+// Resetta i dati del modulo e ripristina il colore grigio di base delle stelle
 function resetReviewForm() {
     const votoInput = document.getElementById('votoInput');
     const votoVisualizzato = document.getElementById('votoVisualizzato');
@@ -25,8 +27,7 @@ function resetReviewForm() {
     if (commento) commento.value = '';
 
     stars.forEach(star => {
-        star.classList.remove('text-amber-500');
-        star.classList.add('text-slate-600');
+        star.style.color = '#475569'; // Ripristina il grigio nativamente (slate-600)
     });
 }
 
@@ -38,15 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedRating = 0;
 
+    
     const colorStars = (rating) => {
         stars.forEach(star => {
             const val = parseInt(star.getAttribute('data-value'));
             if (val <= rating) {
-                star.classList.remove('text-slate-600');
-                star.classList.add('text-amber-500');
+                star.style.color = '#f59e0b'; 
             } else {
-                star.classList.remove('text-amber-500');
-                star.classList.add('text-slate-600');
+                star.style.color = '#475569'; 
             }
         });
     };
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stars.forEach(star => {
         const val = parseInt(star.getAttribute('data-value'));
 
+        
         star.addEventListener('mouseenter', () => {
             colorStars(val);
             if (votoVisualizzato) {
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        
         star.addEventListener('mouseleave', () => {
             colorStars(selectedRating);
             if (votoVisualizzato) {
@@ -68,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        
         star.addEventListener('click', () => {
             selectedRating = val;
             if (votoInput) votoInput.value = val;
@@ -75,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    
     window.addEventListener('click', function(e) {
         if (e.target === modal) {
             toggleReviewModal(false);
