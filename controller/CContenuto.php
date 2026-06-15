@@ -41,7 +41,7 @@ class CContenuto
 
     public function mostra()
     {
-        $id = $_GET['id'] ?? null;
+        $id = Session::getGet('id') ?? null;
         if ($id) {
             $contenuto = FContenuto::findById($id);
             if ($contenuto) {
@@ -58,7 +58,7 @@ class CContenuto
 
     public function mostraSerie()
     {
-        $id = $_GET['id'] ?? null;
+        $id = Session::getGet('id') ?? null;
 
         $serie = FContenuto::findById($id);
 
@@ -70,7 +70,7 @@ class CContenuto
 
     public function mostraFilm()
     {
-        $id = $_GET['id'] ?? null;
+        $id = Session::getGet('id') ?? null;
 
         $film = FContenuto::findById($id);
 
@@ -83,13 +83,13 @@ class CContenuto
 
     public function mostraEpisodio()
     {
-        $id = $_GET['id'] ?? null;
-        $serieId = $_GET['serie'] ?? null;
+        $id = Session::getGet('id') ?? null;
+        $serieId = Session::getGet('serie') ?? null;
 
         $episodio = FEpisodio::findById($id);
         $serie = FContenuto::findById($serieId);
 
-        
+
         $recensioni = FRecensione::findByEpisodio($id);
 
         $this->view->mostraEpisodio($episodio, $serie, $recensioni);
@@ -98,7 +98,7 @@ class CContenuto
 
     public function cerca()
     {
-        $query = $_GET['query'] ?? null;
+        $query = Session::getGet('query');
         $contenuti = FContenuto::search($query);
         $utenti = FUtente::search($query);
 

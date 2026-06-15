@@ -79,19 +79,19 @@ class CAdmin
     {
         $this->verificaAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $tipo = trim($_POST['tipo'] ?? 'film');
-            $titolo = trim($_POST['titolo'] ?? '');
-            $anno = trim($_POST['anno'] ?? '');
-            $trama = trim($_POST['trama'] ?? '');
-            $valutazioneMedia = (float)($_POST['valutazioneMedia'] ?? 0.0);
-            $locandina = trim($_POST['locandina'] ?? '');
-            $generi = $_POST['generi'] ?? [];
+        if (Session::isPost()) {
+            $tipo = trim(Session::getPost('tipo') ?? 'film');
+            $titolo = trim(Session::getPost('titolo') ?? '');
+            $anno = trim(Session::getPost('anno') ?? '');
+            $trama = trim(Session::getPost('trama') ?? '');
+            $valutazioneMedia = (float)(Session::getPost('valutazioneMedia') ?? 0.0);
+            $locandina = trim(Session::getPost('locandina') ?? '');
+            $generi = Session::getPost('generi') ?? [];
 
             $em = FEntityManager::getInstance();
 
             if ($tipo === 'film') {
-                $durataMinuti = (int)($_POST['durataMinuti'] ?? 0);
+                $durataMinuti = (int)(Session::getPost('durataMinuti') ?? 0);
                 $contenuto = new EFilm(
                     null,
                     0,
@@ -106,8 +106,8 @@ class CAdmin
                     $durataMinuti
                 );
             } else {
-                $numeroStagioni = (int)($_POST['numeroStagioni'] ?? 1);
-                $statoInput = $_POST['stato'] ?? 'in_corso';
+                $numeroStagioni = (int)(Session::getPost('numeroStagioni', 1));
+                $statoInput = Session::getPost('stato', 'in_corso');
                 $statoEnum = match ($statoInput) {
                     'conclusa' => Stato::conclusa,
                     'cancellata' => Stato::cancellata,
@@ -134,13 +134,13 @@ class CAdmin
             $em->persist($contenuto);
             $em->flush();
 
-            
-            $registaInput = $_POST['regista'] ?? '';
-            $attoriInput = $_POST['attori'] ?? '';
+
+            $registaInput = Session::getPost('regista') ?? '';
+            $attoriInput = Session::getPost('attori') ?? '';
             $this->salvaPartecipazioni($contenuto, $registaInput, $attoriInput);
 
-            
-            $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=Admin&action=listaContenuti';
+
+            $referer = Session::getServer('HTTP_REFERER') ?? 'index.php?controller=Admin&action=listaContenuti';
             header("Location: " . $referer);
             exit();
         }
@@ -157,7 +157,7 @@ class CAdmin
         }
 
 
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)(Session::getGet('id') ?? 0);
         if ($id) {
             $contenuto = FContenuto::findById($id);
             if ($contenuto) {
@@ -197,29 +197,29 @@ class CAdmin
     {
         $this->verificaAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = (int)($_POST['id'] ?? 0);
+        if (Session::isPost()) {
+            $id = (int)(Session::getPost('id', 0));
             $contenuto = FContenuto::findById($id);
             if ($contenuto) {
-                $contenuto->setTitolo(trim($_POST['titolo'] ?? ''));
-                $contenuto->setAnno(trim($_POST['anno'] ?? ''));
-                $contenuto->setTrama(trim($_POST['trama'] ?? ''));
-                $contenuto->setValutazioneMedia((float)($_POST['valutazioneMedia'] ?? 0.0));
+                $contenuto->setTitolo(trim(Session::getPost('titolo', '')));
+                $contenuto->setAnno(trim(Session::getPost('anno', '')));
+                $contenuto->setTrama(trim(Session::getPost('trama', '')));
+                $contenuto->setValutazioneMedia((float)(Session::getPost('valutazioneMedia', 0.0)));
 
-                
-                $locandina = trim($_POST['locandina'] ?? '');
+
+                $locandina = trim(Session::getPost('locandina', ''));
                 if (strpos($locandina, 'https://image.tmdb.org/t/p/w500') === 0) {
                     $locandina = str_replace('https://image.tmdb.org/t/p/w500', '', $locandina);
                 }
                 $contenuto->setLocandina($locandina);
 
-                $contenuto->setGeneri($_POST['generi'] ?? []);
+                $contenuto->setGeneri(Session::getPost('generi') ?? []);
 
                 if ($contenuto instanceof EFilm) {
-                    $contenuto->setDurata((int)($_POST['durataMinuti'] ?? 0));
+                    $contenuto->setDurata((int)(Session::getPost('durataMinuti', 0)));
                 } else if ($contenuto instanceof ESerie) {
-                    $contenuto->setNumeroStagioni((int)($_POST['numeroStagioni'] ?? 0));
-                    $statoInput = $_POST['stato'] ?? 'in_corso';
+                    $contenuto->setNumeroStagioni((int)(Session::getPost('numeroStagioni', 0)));
+                    $statoInput = Session::getPost('stato', 'in_corso');
                     $statoEnum = match ($statoInput) {
                         'conclusa' => Stato::conclusa,
                         'cancellata' => Stato::cancellata,
@@ -232,12 +232,12 @@ class CAdmin
                 $em->persist($contenuto);
                 $em->flush();
 
-                
-                $registaInput = $_POST['regista'] ?? '';
-                $attoriInput = $_POST['attori'] ?? '';
+
+                $registaInput = Session::getPost('regista') ?? '';
+                $attoriInput = Session::getPost('attori') ?? '';
                 $this->salvaPartecipazioni($contenuto, $registaInput, $attoriInput);
 
-                $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php?controller=Admin&action=listaContenuti';
+                $referer = Session::getServer('HTTP_REFERER', 'index.php?controller=Admin&action=listaContenuti');
                 header("Location: " . $referer);
                 exit();
             }
@@ -251,10 +251,10 @@ class CAdmin
         $nome = trim($parti[0]);
         $cognome = isset($parti[1]) ? trim($parti[1]) : '';
 
-        
+
         $persona = $em->getRepository(EPersona::class)->findOneBy(['nome' => $nome, 'cognome' => $cognome]);
         if (!$persona) {
-            
+
             $persona = new EPersona(null, 0, $nome, $cognome, '');
             $em->persist($persona);
             $em->flush();
@@ -267,31 +267,31 @@ class CAdmin
     {
         $em = FEntityManager::getInstance();
 
-        
+
         $vecchiePartecipazioni = $em->getRepository(EPartecipazione::class)->findBy(['contenuto' => $contenuto]);
         foreach ($vecchiePartecipazioni as $p) {
             $em->remove($p);
         }
         $em->flush();
 
-        
+
         $registaInput = trim($registaInput);
         if (!empty($registaInput)) {
-            
+
             $regista = $this->ottieniOCreaPersona($registaInput);
 
             $p = new EPartecipazione(0, $regista, $contenuto, 'Regista', '');
             $em->persist($p);
         }
 
-        
+
         if (!empty($attoriInput)) {
             $attoriNomi = explode(",", $attoriInput);
             foreach ($attoriNomi as $nomeAttore) {
                 $nomeAttore = trim($nomeAttore);
                 if (empty($nomeAttore)) continue;
 
-                
+
                 $attore = $this->ottieniOCreaPersona($nomeAttore);
 
                 $p = new EPartecipazione(0, $attore, $contenuto, 'Attore', '');
@@ -307,11 +307,11 @@ class CAdmin
     public function inserisciDaTMDB()
     {
         $this->verificaAdmin();
-        
+
         $film = FContenuto::findAllFilm();
         $serie = FContenuto::findAllSerie();
 
-        
+
         $ultimiFilm = array_slice(array_reverse($film), 0, 5);
         $ultimeSerie = array_slice(array_reverse($serie), 0, 5);
 
@@ -323,8 +323,8 @@ class CAdmin
     {
         $this->verificaAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titolo = trim($_POST['titolo'] ?? '');
+        if (Session::isPost()) {
+            $titolo = trim(Session::getPost('titolo') ?? '');
 
             if (empty($titolo)) {
                 Session::set('import_error', "Inserisci un titolo valido.");
@@ -332,7 +332,7 @@ class CAdmin
                 exit();
             }
 
-            
+
             $risultati = FTMDb::search($titolo);
 
             if (empty($risultati)) {
@@ -341,7 +341,7 @@ class CAdmin
                 exit();
             }
 
-            
+
             $contenutoScelto = null;
             foreach ($risultati as $r) {
                 if (isset($r['media_type']) && ($r['media_type'] === 'movie' || $r['media_type'] === 'tv')) {
@@ -361,7 +361,7 @@ class CAdmin
             $mediaType = $contenutoScelto['media_type'];
 
             if ($mediaType === 'movie') {
-                
+
                 $esiste = $em->getRepository(EFilm::class)->findOneBy(['tmdbId' => $tmdbId]);
                 if ($esiste) {
                     Session::set('import_error', "Il film '" . $esiste->getTitolo() . "' è già presente a catalogo.");
@@ -369,7 +369,7 @@ class CAdmin
                     exit();
                 }
 
-                
+
                 $details = FTMDb::fetchFilm($tmdbId);
 
                 $film = new EFilm(
@@ -379,7 +379,7 @@ class CAdmin
                     $details['release_date'] ?? '',
                     $details['overview'] ?? '',
                     $details['vote_average'] ?? 0.0,
-                    [], 
+                    [],
                     $details['poster_path'] ?? '',
                     $details['genres'] ?? [],
                     $details['videos']['results'] ?? [],
@@ -389,7 +389,7 @@ class CAdmin
                 $film->setValutazioneIniziale($details['vote_average'] ?? 0.0);
                 $em->persist($film);
 
-                
+
                 if (isset($details['credits']['cast'])) {
                     $cast = array_slice($details['credits']['cast'], 0, 5);
                     foreach ($cast as $attoreData) {
@@ -409,7 +409,7 @@ class CAdmin
                     }
                 }
 
-                
+
                 if (isset($details['credits']['crew'])) {
                     foreach ($details['credits']['crew'] as $crewMember) {
                         if ($crewMember['job'] === 'Director') {
@@ -434,7 +434,7 @@ class CAdmin
                 $em->flush();
                 Session::set('import_success', "Il film '" . $film->getTitolo() . "' è stato importato con successo!");
             } else if ($mediaType === 'tv') {
-                
+
                 $esiste = $em->getRepository(ESerie::class)->findOneBy(['tmdbId' => $tmdbId]);
                 if ($esiste) {
                     Session::set('import_error', "La serie TV '" . $esiste->getTitolo() . "' è già presente a catalogo.");
@@ -442,7 +442,7 @@ class CAdmin
                     exit();
                 }
 
-                
+
                 $details = FTMDb::fetchSerie($tmdbId);
 
                 $statoAPI = $details['status'] ?? '';
@@ -471,7 +471,7 @@ class CAdmin
                 $serie->setValutazioneIniziale($details['vote_average'] ?? 0.0);
                 $em->persist($serie);
 
-                
+
                 $numeroStagioni = $details['number_of_seasons'] ?? 1;
                 for ($s = 1; $s <= $numeroStagioni; $s++) {
                     $stagioneDetails = FTMDb::fetchSeriesEpisodes($tmdbId, $s);
@@ -495,7 +495,7 @@ class CAdmin
                     }
                 }
 
-                
+
                 if (isset($details['credits']['cast'])) {
                     $cast = array_slice($details['credits']['cast'], 0, 5);
                     foreach ($cast as $attoreData) {
@@ -515,7 +515,7 @@ class CAdmin
                     }
                 }
 
-                
+
                 if (isset($details['created_by'])) {
                     foreach ($details['created_by'] as $creator) {
                         $creatoreId = $creator['id'];
@@ -548,10 +548,10 @@ class CAdmin
     public function banUtente()
     {
         $this->verificaAdmin();
-        $durata = $_GET['durata'];
-        $idUtente = $_GET['idUtente'];
+        $durata = Session::getGet('durata');
+        $idUtente = Session::getGet('idUtente');
         $dataFine = new DateTime('+' . $durata . ' days');
-        $motivo = $_POST['motivo'] ?? '';
+        $motivo = Session::getPost('motivo');
         $idAmministratore = Session::get('user_id');
         FBan::ban($idUtente, $dataFine, $motivo, $idAmministratore);
         header("Location: index.php?controller=Admin&action=listaUtenti");
@@ -561,7 +561,7 @@ class CAdmin
     public function unbanUtente()
     {
         $this->verificaAdmin();
-        $idUtente = $_GET['idUtente'];
+        $idUtente = Session::getGet('idUtente');
         FBan::unban($idUtente);
         header("Location: index.php?controller=Admin&action=listaUtenti");
         exit();
@@ -578,11 +578,11 @@ class CAdmin
     public function promuoviAdAdmin()
     {
         $this->verificaAdmin();
-        $idUtente = $_GET['idUtente'] ?? $_GET['id'] ?? null;
+        $idUtente = Session::getGet('idUtente') ?? Session::getGet('id');
         if ($idUtente) {
             $utente = FUtente::findById($idUtente);
             if ($utente) {
-                
+
                 $userBans = FBan::findByUtente($utente);
                 if (empty($userBans)) {
                     FUtente::promuoviAdAdmin($idUtente);
@@ -597,7 +597,7 @@ class CAdmin
     public function retrocediAdUtente()
     {
         $this->verificaAdmin();
-        $idUtente = $_GET['idUtente'] ?? $_GET['id'] ?? null;
+        $idUtente = Session::getGet('idUtente') ?? Session::getGet('id');
         if ($idUtente) {
             FUtente::retrocediAdUtente($idUtente);
         }
@@ -608,7 +608,7 @@ class CAdmin
     public function eliminaUtente()
     {
         $this->verificaAdmin();
-        $idUtente = $_GET['idUtente'] ?? $_GET['id'] ?? null;
+        $idUtente = Session::getGet('idUtente') ?? Session::getGet('id');
         if ($idUtente) {
             $utente = FUtente::findById($idUtente);
             if ($utente) {
@@ -622,7 +622,7 @@ class CAdmin
     public function eliminaContenuto()
     {
         $this->verificaAdmin();
-        $idContenuto = $_GET['idContenuto'] ?? $_GET['id'] ?? null;
+        $idContenuto = Session::getGet('idContenuto') ?? Session::getGet('id');
         if ($idContenuto) {
             $contenuto = FContenuto::findById($idContenuto);
             if ($contenuto) {

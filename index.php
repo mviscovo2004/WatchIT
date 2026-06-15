@@ -26,25 +26,25 @@ if (class_exists('FBan')) {
 $controllerName = "Contenuto";
 $actionName = "homepage";
 
-if (isset($_GET['controller']) && !empty($_GET['controller'])) {
-    $controllerName = ucfirst($_GET['controller']);
+$controllerNameGet = Session::getGet('controller');
+if (!empty($controllerNameGet)) {
+    $controllerName = ucfirst($controllerNameGet);
 }
 
-if (isset($_GET['action']) && !empty($_GET['action'])) {
-    $actionName = $_GET['action'];
+$actionNameGet = Session::getGet('action');
+if (!empty($actionNameGet)) {
+    $actionName = $actionNameGet;
 }
-
-$controllerClass = 'C' . $controllerName;
-
 
 if (
-    $_SERVER['REQUEST_METHOD'] === 'GET' &&
+    Session::isGet() &&
     $controllerName !== 'Utente' &&
     !in_array($actionName, ['login', 'registrazione', 'logout'])
 ) {
-    Session::set('previous_url', $_SERVER['REQUEST_URI']);
+    Session::set('previous_url', Session::getServer('REQUEST_URI'));
 }
 
+$controllerClass = 'C' . $controllerName;
 
 if (class_exists($controllerClass)) {
     $controllerInstance = new $controllerClass();

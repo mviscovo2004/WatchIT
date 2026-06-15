@@ -22,11 +22,11 @@ class CWatchlist
 
     public function mostra()
     {
-        $idWatchlist = $_GET['id'] ?? null;
+        $idWatchlist = Session::getGet('id');
         if ($idWatchlist) {
             $watchlist = FWatchlist::findById($idWatchlist);
             if ($watchlist) {
-                
+
                 $idUtenteLoggato = Session::get('user_id');
 
                 $visibilita = $watchlist->getVisibilita();
@@ -37,11 +37,11 @@ class CWatchlist
                 if ($visibilita === Privacy::pubblico) {
                     $hasAccess = true;
                 } elseif ($idUtenteLoggato !== null) {
-                    
+
                     if ($idUtenteLoggato === $idProprietario) {
                         $hasAccess = true;
                     } elseif ($visibilita === Privacy::solo_amici) {
-                        
+
                         if (class_exists('FUtente') && FUtente::isFollowing($idUtenteLoggato, $idProprietario) && FUtente::isFollowing($idProprietario, $idUtenteLoggato)) {
                             $hasAccess = true;
                         }
@@ -64,17 +64,17 @@ class CWatchlist
 
     public function aggiungi()
     {
-        $idContenuto = $_GET['id'] ?? null;
-        $idWatchlist = $_GET['idWatchlist'] ?? null;
+        $idContenuto = Session::getGet('id');
+        $idWatchlist = Session::getGet('idWatchlist');
 
         $idUtente = $this->richiediLogin();
 
         if ($idContenuto) {
-            
+
             if (!$idWatchlist) {
                 $watchlists = FWatchlist::findByUtente($idUtente);
                 if (empty($watchlists)) {
-                    
+
                     $utente = FUtente::findById($idUtente);
                     if ($utente) {
                         $defaultWatchlist = new EWatchlist(0, 'La mia Lista', 'Watchlist di default per i tuoi contenuti preferiti.', [], Privacy::privato, $utente);
@@ -88,24 +88,24 @@ class CWatchlist
                     $idWatchlist = $watchlists[0]->getId();
                 }
 
-                
+
                 if (FWatchlist::contains($idWatchlist, $idContenuto)) {
                     FWatchlist::removeContenuto($idWatchlist, $idContenuto);
                 } else {
                     FWatchlist::addContenuto($idWatchlist, $idContenuto);
                 }
 
-                $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+                $referer = Session::getServer('HTTP_REFERER') ?? 'index.php';
                 header("Location: " . $referer);
                 exit();
             } else {
-                
+
                 $watchlist = FWatchlist::findById($idWatchlist);
                 if ($watchlist) {
-                    
+
                     if ($watchlist->getUtente()->getId() === $idUtente) {
                         FWatchlist::addContenuto($idWatchlist, $idContenuto);
-                        
+
                         header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
                         exit();
                     } else {
@@ -122,18 +122,18 @@ class CWatchlist
 
     public function rimuovi()
     {
-        $idContenuto = $_GET['id'] ?? null;
-        $idWatchlist = $_GET['idWatchlist'] ?? null;
+        $idContenuto = Session::getGet('id') ?? null;
+        $idWatchlist = Session::getGet('idWatchlist') ?? null;
 
         $idUtente = $this->richiediLogin();
 
         if ($idContenuto && $idUtente && $idWatchlist) {
             $watchlist = FWatchlist::findById($idWatchlist);
             if ($watchlist) {
-                
+
                 if ($watchlist->getUtente()->getId() === $idUtente) {
                     FWatchlist::removeContenuto($idWatchlist, $idContenuto);
-                    
+
                     header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
                     exit();
                 } else {
@@ -161,10 +161,10 @@ class CWatchlist
     {
         $idUtente = $this->richiediLogin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nome = trim($_POST['nome'] ?? '');
-            $descrizione = trim($_POST['descrizione'] ?? '');
-            $visibilita = $_POST['visibilita'] ?? 'privato';
+        if (Session::isPost()) {
+            $nome = trim(Session::getPost('nome') ?? '');
+            $descrizione = trim(Session::getPost('descrizione') ?? '');
+            $visibilita = Session::getPost('visibilita') ?? 'privato';
 
             if (!empty($nome)) {
                 $utente = FUtente::findById($idUtente);
@@ -193,7 +193,7 @@ class CWatchlist
 
     public function elimina()
     {
-        $idWatchlist = $_GET['id'] ?? null;
+        $idWatchlist = Session::getGet('id');
         $idUtente = $this->richiediLogin();
 
         if ($idWatchlist) {
@@ -216,20 +216,20 @@ class CWatchlist
 
     public function modifica()
     {
-        $idWatchlist = $_GET['id'] ?? null;
+        $idWatchlist = Session::getGet('id');
         $idUtente = $this->richiediLogin();
 
         if ($idWatchlist) {
             $watchlist = FWatchlist::findById($idWatchlist);
             if ($watchlist) {
                 if ($watchlist->getUtente()->getId() === $idUtente) {
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        $nome = trim($_POST['nome'] ?? $watchlist->getNome());
-                        $descrizione = trim($_POST['descrizione'] ?? $watchlist->getDescrizione());
-                        $visibilitaStr = $_POST['visibilita'] ?? $watchlist->getVisibilita()->name;
+                    if (Session::isPost()) {
+                        $nome = trim(Session::getPost('nome') ?? $watchlist->getNome());
+                        $descrizione = trim(Session::getPost('descrizione') ?? $watchlist->getDescrizione());
+                        $visibilitaStr = Session::getPost('visibilita') ?? $watchlist->getVisibilita()->name;
 
                         if (!empty($nome)) {
-                            
+
                             $privacy = Privacy::privato;
                             if ($visibilitaStr === 'pubblico') {
                                 $privacy = Privacy::pubblico;
@@ -243,8 +243,8 @@ class CWatchlist
 
                             FWatchlist::update($watchlist);
 
-                            
-                            $redirectTo = $_POST['redirect_to'] ?? 'lista';
+
+                            $redirectTo = Session::getPost('redirect_to') ?? 'lista';
                             if ($redirectTo === 'dettaglio') {
                                 header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
                             } else {
@@ -278,7 +278,7 @@ class CWatchlist
             exit();
         }
 
-        $idContenuto = (int)($_GET['idContenuto'] ?? 0);
+        $idContenuto = (int)(Session::getGet('idContenuto', 0));
         if (!$idContenuto) {
             echo json_encode(['success' => false, 'error' => 'ID Contenuto mancante.']);
             exit();
@@ -307,8 +307,8 @@ class CWatchlist
             exit();
         }
 
-        $idContenuto = (int)($_POST['idContenuto'] ?? 0);
-        $idWatchlist = (int)($_POST['idWatchlist'] ?? 0);
+        $idContenuto = (int)(Session::getPost('idContenuto') ?? 0);
+        $idWatchlist = (int)(Session::getPost('idWatchlist') ?? 0);
 
         if (!$idContenuto || !$idWatchlist) {
             echo json_encode(['success' => false, 'error' => 'Parametri mancanti.']);
@@ -321,7 +321,7 @@ class CWatchlist
             exit();
         }
 
-        
+
         if (FWatchlist::contains($idWatchlist, $idContenuto)) {
             FWatchlist::removeContenuto($idWatchlist, $idContenuto);
             $added = false;

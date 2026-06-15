@@ -21,7 +21,7 @@ class CRecensione
     {
         $em = FEntityManager::getInstance();
 
-        
+
         if ($oggetto->getValutazioneIniziale() === null) {
             $oggetto->setValutazioneIniziale($oggetto->getValutazioneMedia());
         }
@@ -29,7 +29,7 @@ class CRecensione
         $votoIniziale = $oggetto->getValutazioneIniziale();
         $totaleRecensioni = count($recensioni);
 
-        
+
         $somma = $votoIniziale;
         foreach ($recensioni as $r) {
             $somma += $r->getVoto();
@@ -44,23 +44,23 @@ class CRecensione
 
     public function aggiungiRecensione()
     {
-        if (isset($_POST['contenuto_id']) && isset($_POST['testo']) && isset($_POST['voto'])) {
-            $contenuto_id = $_POST['contenuto_id'];
-            $testo = $_POST['testo'];
-            $voto = (int)$_POST['voto'];
+        if (Session::getPost('contenuto_id') !== null && Session::getPost('testo') !== null && Session::getPost('voto') !== null) {
+            $contenuto_id = Session::getPost('contenuto_id');
+            $testo = Session::getPost('testo');
+            $voto = (int)Session::getPost('voto');
             $user_id = Session::get('user_id');
 
             $utente = FUtente::findById($user_id);
             $contenuto = FContenuto::findById($contenuto_id);
 
-            $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
+            $episodio_id = (Session::getPost('episodio_id') !== null && Session::getPost('episodio_id') !== '') ? Session::getPost('episodio_id') : null;
 
             if ($episodio_id) {
                 $episodio = FEpisodio::findById($episodio_id);
                 $successo = FRecensione::aggiungiRecensioneEpisodio(0, "", $voto, $testo, $contenuto, $episodio, $utente);
 
                 if ($successo) {
-                    
+
                     self::aggiornaMediaContenutoOEpisodio($contenuto_id, $episodio_id);
                     self::reindirizzaDopoOperazione($contenuto_id, $episodio_id);
                 }
@@ -68,7 +68,7 @@ class CRecensione
                 $successo = FRecensione::aggiungiRecensione(0, "", $voto, $testo, $contenuto, $utente);
 
                 if ($successo) {
-                    
+
                     self::aggiornaMediaContenutoOEpisodio($contenuto_id);
                     self::reindirizzaDopoOperazione($contenuto_id);
                 }
@@ -80,24 +80,24 @@ class CRecensione
 
     public function modificaRecensione()
     {
-        if (isset($_POST['recensione_id']) && isset($_POST['testo']) && isset($_POST['voto'])) {
-            $recensione_id = $_POST['recensione_id'];
-            $testo = $_POST['testo'];
-            $voto = (int)$_POST['voto'];
+        if (Session::getPost('recensione_id') !== null && Session::getPost('testo') !== null && Session::getPost('voto') !== null) {
+            $recensione_id = Session::getPost('recensione_id');
+            $testo = Session::getPost('testo');
+            $voto = (int)Session::getPost('voto');
 
             $recensione = FRecensione::findById($recensione_id);
 
             if ($recensione) {
-                
+
                 $idUtenteLoggato = Session::get('user_id');
-                
+
                 if ($idUtenteLoggato === null || ($recensione->getUtente()->getId() !== $idUtenteLoggato)) {
                     $view = new VView();
                     $view->assign('errore', 'Non hai i permessi per modificare questa recensione.');
                     $view->display('errore.tpl');
                     exit();
                 }
-                
+
 
                 $recensione->setDescrizione($testo);
                 $recensione->setVoto($voto);
@@ -105,10 +105,10 @@ class CRecensione
                 FRecensione::update($recensione);
 
 
-                $contenuto_id = $_POST['contenuto_id'];
-                $episodio_id = isset($_POST['episodio_id']) && $_POST['episodio_id'] !== '' ? $_POST['episodio_id'] : null;
+                $contenuto_id = Session::getPost('contenuto_id');
+                $episodio_id = (Session::getPost('episodio_id') !== null && Session::getPost('episodio_id') !== '') ? Session::getPost('episodio_id') : null;
 
-                
+
                 self::aggiornaMediaContenutoOEpisodio($contenuto_id, $episodio_id);
                 self::reindirizzaDopoOperazione($contenuto_id, $episodio_id);
             }
@@ -118,42 +118,42 @@ class CRecensione
 
     public function eliminaRecensione()
     {
-        if (isset($_POST['recensione_id'])) {
-            $recensione_id = $_POST['recensione_id'];
+        if (Session::getPost('recensione_id') !== null) {
+            $recensione_id = Session::getPost('recensione_id');
             $recensione = FRecensione::findById($recensione_id);
 
             if ($recensione) {
 
-                
+
                 $idUtenteLoggato = Session::get('user_id');
                 $ruolo = Session::get('ruolo');
 
-                
+
                 if ($idUtenteLoggato === null || ($recensione->getUtente()->getId() !== $idUtenteLoggato && $ruolo !== 'admin')) {
                     $view = new VView();
                     $view->assign('errore', 'Non hai i permessi per eliminare questa recensione.');
                     $view->display('errore.tpl');
                     exit();
                 }
-                
 
 
-                
+
+
                 $contenuto_id = $recensione->getContenuto() ? $recensione->getContenuto()->getId() : null;
                 $episodio_id = $recensione->getEpisodio() ? $recensione->getEpisodio()->getId() : null;
 
                 FRecensione::delete($recensione);
 
-                
+
                 self::aggiornaMediaContenutoOEpisodio($contenuto_id, $episodio_id);
 
-                
-                $redirect_to = $_POST['redirect_to'] ?? null;
+
+                $redirect_to = Session::getPost('redirect_to') ?? null;
                 if ($redirect_to === 'admin') {
                     header("Location: index.php?controller=Admin&action=listaRecensioni");
                     exit();
                 } else if ($redirect_to === 'profilo') {
-                    $profile_id = $_POST['profile_id'] ?? Session::get('user_id');
+                    $profile_id = Session::getPost('profile_id') ?? Session::get('user_id');
                     header("Location: index.php?controller=Utente&action=mostraProfilo&id=" . $profile_id);
                     exit();
                 }
