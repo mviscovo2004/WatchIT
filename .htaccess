@@ -1,0 +1,38 @@
+RewriteEngine On
+
+# ----------------------------------------------------------------------
+# 1. Regola di Interruzione per File e Cartelle Reali
+# ----------------------------------------------------------------------
+# Se la richiesta corrisponde a un file fisico reale (es. index.php, output.css, immagini) 
+# o a una cartella fisica reale, interrompi la riscrittura e servili direttamente.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ----------------------------------------------------------------------
+# 2. Rotte Specifiche (con parametri multipli custom)
+# ----------------------------------------------------------------------
+
+# Rotta per mostraEpisodio (richiede i parametri 'serie' e 'id')
+# URL: /Contenuto/mostraEpisodio/ID_SERIE/ID_EPISODIO
+RewriteRule ^Contenuto/mostraEpisodio/([^/]+)/([^/]+)/?$ index.php?controller=Contenuto&action=mostraEpisodio&serie=$1&id=$2 [QSA,L]
+
+# Rotta per rimuovi da watchlist (richiede i parametri 'id' e 'idWatchlist')
+# URL: /Watchlist/rimuovi/ID_CONTENUTO/ID_WATCHLIST
+RewriteRule ^Watchlist/rimuovi/([^/]+)/([^/]+)/?$ index.php?controller=Watchlist&action=rimuovi&id=$1&idWatchlist=$2 [QSA,L]
+
+# ----------------------------------------------------------------------
+# 3. Rotte Generiche (in ordine decrescente di specificità)
+# ----------------------------------------------------------------------
+
+# Rotta generica a 3 segmenti: /controller/azione/id
+# Esempio: /Utente/mostraProfilo/3 -> index.php?controller=Utente&action=mostraProfilo&id=3
+RewriteRule ^([^/]+)/([^/]+)/([^/]+)/?$ index.php?controller=$1&action=$2&id=$3 [QSA,L]
+
+# Rotta generica a 2 segmenti: /controller/azione
+# Esempio: /Utente/login -> index.php?controller=Utente&action=login
+RewriteRule ^([^/]+)/([^/]+)/?$ index.php?controller=$1&action=$2 [QSA,L]
+
+# Rotta generica a 1 segmento: /controller
+# Esempio: /Utente -> index.php?controller=Utente
+RewriteRule ^([^/]+)/?$ index.php?controller=$1 [QSA,L]

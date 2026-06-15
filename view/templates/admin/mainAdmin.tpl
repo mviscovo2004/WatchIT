@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{block name=title}WatchIT{/block}</title>
     <link href="{$baseUrl}/output.css" rel="stylesheet">
+    <base href="{$baseUrl}/">
+    </base>
 </head>
 
 <body class="bg-slate-950 text-white flex flex-row min-h-screen">

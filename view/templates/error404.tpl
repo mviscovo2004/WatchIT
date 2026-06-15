@@ -12,6 +12,7 @@
             font-family: 'Outfit', sans-serif;
         }
     </style>
+    <base href="{$baseUrl}/">
 </head>
 
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center relative overflow-hidden">
