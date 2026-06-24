@@ -1,14 +1,40 @@
 <?php
 
+/**
+ * Classe CWatchlist
+ * 
+ * Controller per la gestione delle watchlist degli utenti.
+ * Gestisce la visualizzazione delle watchlist singole (verificando i permessi di privacy/amicizia),
+ * l'aggiunta e la rimozione di contenuti (film o serie TV) dalle liste, la creazione,
+ * la modifica e l'eliminazione delle watchlist stesse, comprese le relative chiamate AJAX.
+ * 
+ * @package Controller
+ * @author Marco Viscovo
+ */
 class CWatchlist
 {
+    /**
+     * Vista della watchlist
+     * 
+     * @var VWatchlist
+     */
     private VWatchlist $view;
 
+    /**
+     * Costruttore della classe CWatchlist
+     * 
+     * @return void
+     */
     public function __construct()
     {
         $this->view = new VWatchlist();
     }
 
+    /**
+     * Richiede il login dell'utente
+     * 
+     * @return int ID utente
+     */
     private function richiediLogin()
     {
         $idUtente = Session::get('user_id');
@@ -20,15 +46,18 @@ class CWatchlist
     }
 
 
+    /**
+     * Mostra la watchlist
+     * 
+     * @return void
+     */
     public function mostra()
     {
         $idWatchlist = Session::getGet('id');
         if ($idWatchlist) {
             $watchlist = FWatchlist::findById($idWatchlist);
             if ($watchlist) {
-
                 $idUtenteLoggato = Session::get('user_id');
-
                 $visibilita = $watchlist->getVisibilita();
                 $idProprietario = $watchlist->getUtente()->getId();
 
@@ -62,6 +91,11 @@ class CWatchlist
         }
     }
 
+    /**
+     * Aggiunge un contenuto alla watchlist
+     * 
+     * @return void
+     */
     public function aggiungi()
     {
         $idContenuto = Session::getGet('id');
@@ -120,6 +154,11 @@ class CWatchlist
         }
     }
 
+    /**
+     * Rimuove un contenuto dalla watchlist
+     * 
+     * @return void
+     */
     public function rimuovi()
     {
         $idContenuto = Session::getGet('id') ?? null;
@@ -148,19 +187,27 @@ class CWatchlist
     }
 
 
+    /**
+     * Mostra tutte le watchlist
+     * 
+     * @return void
+     */
     public function mostraTutteWatchlist()
     {
         $idUtente = $this->richiediLogin();
-
         $watchlists = FWatchlist::findByUtente($idUtente);
         $this->view->mostraTutteWatchlist($watchlists);
     }
 
 
+    /**
+     * Crea una watchlist
+     * 
+     * @return void
+     */
     public function crea()
     {
         $idUtente = $this->richiediLogin();
-
         if (Session::isPost()) {
             $nome = trim(Session::getPost('nome') ?? '');
             $descrizione = trim(Session::getPost('descrizione') ?? '');
@@ -191,6 +238,11 @@ class CWatchlist
     }
 
 
+    /**
+     * Elimina una watchlist
+     * 
+     * @return void
+     */
     public function elimina()
     {
         $idWatchlist = Session::getGet('id');
@@ -214,6 +266,11 @@ class CWatchlist
         }
     }
 
+    /**
+     * Modifica una watchlist
+     * 
+     * @return void
+     */
     public function modifica()
     {
         $idWatchlist = Session::getGet('id');
@@ -236,14 +293,10 @@ class CWatchlist
                             } elseif ($visibilitaStr === 'solo_amici') {
                                 $privacy = Privacy::solo_amici;
                             }
-
                             $watchlist->setNome($nome);
                             $watchlist->setDescrizione($descrizione);
                             $watchlist->setVisibilita($privacy);
-
                             FWatchlist::update($watchlist);
-
-
                             $redirectTo = Session::getPost('redirect_to') ?? 'lista';
                             if ($redirectTo === 'dettaglio') {
                                 header("Location: index.php?controller=Watchlist&action=mostra&id=" . $idWatchlist);
@@ -269,6 +322,11 @@ class CWatchlist
     }
 
 
+    /**
+     * Ottiene le watchlist in formato JSON
+     * 
+     * @return void
+     */
     public function getWatchlistsJSON()
     {
         header('Content-Type: application/json');
@@ -298,6 +356,11 @@ class CWatchlist
         exit();
     }
 
+    /**
+     * Attiva o disattiva un contenuto dalla watchlist
+     * 
+     * @return void
+     */
     public function toggleContenutoAJAX()
     {
         header('Content-Type: application/json');

@@ -1,17 +1,41 @@
 <?php
 
+/**
+ * Classe CAdmin
+ * 
+ * Classe controller per l'amministrazione del sito
+ * Gestisce tutte le operazioni amministrative dell'applicazione,
+ * tra cui la moderazione utenti (ban/unban), la visualizzazione delle dashboard,
+ * l'inserimento, la modifica e l'eliminazione dei contenuti (anche tramite API TMDB).
+ * 
+ * @package Controller
+ * @author Marco Viscovo
+ */
 class CAdmin
 {
 
-
+    /**
+     * Vista di amministrazione
+     * 
+     * @var VAdmin
+     */
     private VAdmin $view;
 
+    /**
+     * Costruttore
+     * 
+     * Inizializza la vista di amministrazione
+     */
     public function __construct()
     {
         $this->view = new VAdmin();
     }
 
 
+    /**
+     * Verifica che l'utente sia loggato e sia un amministratore
+     * Se non lo è, mostra una pagina di accesso negato
+     */
     public function verificaAdmin()
     {
         if (!Session::isLogged() || Session::get('ruolo') !== 'admin') {
@@ -20,6 +44,11 @@ class CAdmin
         }
     }
 
+    /**
+     * Mostra la dashboard dell'amministratore
+     * 
+     * @return void
+     */
     public function dashboard()
     {
         $this->verificaAdmin();
@@ -34,6 +63,11 @@ class CAdmin
         $this->view->mostraDashboard($stats, $contenutiRecenti);
     }
 
+    /**
+     * Mostra la lista degli utenti
+     * 
+     * @return void
+     */
     public function listaUtenti()
     {
         $this->verificaAdmin();
@@ -41,6 +75,11 @@ class CAdmin
         $this->view->mostraUtenti($utenti);
     }
 
+    /**
+     * Mostra la lista di tutti i contenuti
+     * 
+     * @return void
+     */
     public function listaContenuti()
     {
         $this->verificaAdmin();
@@ -48,6 +87,11 @@ class CAdmin
         $this->view->mostraContenuti($contenuti);
     }
 
+    /**
+     * Mostra la lista dei film
+     * 
+     * @return void
+     */
     public function listaFilm()
     {
         $this->verificaAdmin();
@@ -55,6 +99,11 @@ class CAdmin
         $this->view->mostraFilm($film);
     }
 
+    /**
+     * Mostra la lista delle serie TV
+     * 
+     * @return void
+     */
     public function listaSerie()
     {
         $this->verificaAdmin();
@@ -62,6 +111,11 @@ class CAdmin
         $this->view->mostraSerie($serie);
     }
 
+    /**
+     * Mostra la lista delle recensioni
+     * 
+     * @return void
+     */
     public function listaRecensioni()
     {
         $this->verificaAdmin();
@@ -69,12 +123,22 @@ class CAdmin
         $this->view->mostraRecensioni($recensioni);
     }
 
+    /**
+     * Mostra il form per l'aggiunta di un nuovo contenuto
+     * 
+     * @return void
+     */
     public function mostraAggiungiContenuto()
     {
         $this->verificaAdmin();
         $this->view->mostraAggiungiContenuto();
     }
 
+    /**
+     * Aggiunge un nuovo contenuto al database
+     * 
+     * @return void
+     */
     public function aggiungiContenuto()
     {
         $this->verificaAdmin();
@@ -148,6 +212,11 @@ class CAdmin
         $this->view->mostraAggiungiContenuto();
     }
 
+    /**
+     * Mostra i dettagli di un contenuto in formato AJAX
+     * 
+     * @return void
+     */
     public function dettagliContenutoAjax()
     {
         if (!Session::isLogged() || Session::get('ruolo') !== 'admin') {
@@ -193,6 +262,11 @@ class CAdmin
         exit();
     }
 
+    /**
+     * Modifica un contenuto esistente
+     * 
+     * @return void
+     */
     public function modificaContenuto()
     {
         $this->verificaAdmin();
@@ -244,6 +318,12 @@ class CAdmin
         }
     }
 
+    /**
+     * Ottiene o crea una persona nel database
+     * 
+     * @param string $nomeCompleto Nome completo della persona
+     * @return EPersona Oggetto persona
+     */
     private function ottieniOCreaPersona(string $nomeCompleto)
     {
         $em = FEntityManager::getInstance();
@@ -262,7 +342,14 @@ class CAdmin
         return $persona;
     }
 
-
+    /**
+     * Salva le partecipazioni di un contenuto (regista e attori)
+     * 
+     * @param EContenuto $contenuto Contenuto di cui salvare le partecipazioni
+     * @param string $registaInput Nome completo del regista
+     * @param string $attoriInput Nomi degli attori separati da virgole
+     * @return void
+     */
     private function salvaPartecipazioni($contenuto, $registaInput, $attoriInput)
     {
         $em = FEntityManager::getInstance();
@@ -303,7 +390,11 @@ class CAdmin
     }
 
 
-
+    /**
+     * Mostra il form per l'inserimento di contenuti da TMDB
+     * 
+     * @return void
+     */
     public function inserisciDaTMDB()
     {
         $this->verificaAdmin();
@@ -318,7 +409,11 @@ class CAdmin
         $this->view->mostraInserisciDaTMDB($ultimiFilm, $ultimeSerie);
     }
 
-
+    /**
+     * Importa contenuti da TMDB nel database
+     * 
+     * @return void
+     */
     public function importaDaTMDB()
     {
         $this->verificaAdmin();
@@ -544,7 +639,11 @@ class CAdmin
         }
     }
 
-
+    /**
+     * Banna un utente
+     * 
+     * @return void
+     */
     public function banUtente()
     {
         $this->verificaAdmin();
@@ -558,6 +657,11 @@ class CAdmin
         exit();
     }
 
+    /**
+     * Rimette un utente non bannato
+     * 
+     * @return void
+     */
     public function unbanUtente()
     {
         $this->verificaAdmin();
@@ -567,6 +671,11 @@ class CAdmin
         exit();
     }
 
+    /**
+     * Mostra la lista degli utenti bannati
+     * 
+     * @return void
+     */
     public function listaBannati()
     {
         $this->verificaAdmin();
@@ -575,6 +684,11 @@ class CAdmin
         $this->view->mostraBannati($bannati);
     }
 
+    /**
+     * Promuove un utente ad amministratore
+     * 
+     * @return void
+     */
     public function promuoviAdAdmin()
     {
         $this->verificaAdmin();
@@ -593,7 +707,11 @@ class CAdmin
         exit();
     }
 
-
+    /**
+     * Retrocede un amministratore ad utente
+     * 
+     * @return void
+     */
     public function retrocediAdUtente()
     {
         $this->verificaAdmin();
@@ -605,6 +723,11 @@ class CAdmin
         exit();
     }
 
+    /**
+     * Elimina un utente dal database
+     * 
+     * @return void
+     */
     public function eliminaUtente()
     {
         $this->verificaAdmin();
@@ -619,6 +742,11 @@ class CAdmin
         exit();
     }
 
+    /**
+     * Elimina un contenuto dal database
+     * 
+     * @return void
+     */
     public function eliminaContenuto()
     {
         $this->verificaAdmin();

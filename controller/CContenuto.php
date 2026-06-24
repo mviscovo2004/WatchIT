@@ -1,14 +1,38 @@
 <?php
 
+/**
+ * Classe CContenuto
+ * 
+ * Controller per la gestione dei contenuti
+ * Gestisce le richieste relative ai contenuti e le comunica alla view
+ * 
+ * @package Controller
+ * @author Marco Viscovo
+ */
 class CContenuto
 {
+    /**
+     * View associata al controller
+     * 
+     * @var VContenuto
+     */
     private VContenuto $view;
 
+    /**
+     * Costruttore del controller
+     * 
+     * @return void
+     */
     public function __construct()
     {
         $this->view = new VContenuto();
     }
 
+    /**
+     * Ottiene gli ID delle watchlist dell'utente
+     * 
+     * @return array Lista di ID delle watchlist
+     */
     private function getWatchlistIdsUtente()
     {
         $watchlistIds = [];
@@ -26,7 +50,11 @@ class CContenuto
         return $watchlistIds;
     }
 
-
+    /**
+     * Mostra la homepage con i film e le serie più popolari
+     * 
+     * @return void
+     */
     public function homepage()
     {
         $filmPopolari = FContenuto::getFilmPopolari(5);
@@ -39,6 +67,11 @@ class CContenuto
         $this->view->mostraHome($filmPopolari, $seriePopolari, $watchlistIds, $recensioni);
     }
 
+    /**
+     * Mostra il contenuto in base all'ID fornito
+     * 
+     * @return void
+     */
     public function mostra()
     {
         $id = Session::getGet('id') ?? null;
@@ -56,6 +89,11 @@ class CContenuto
         $this->homepage();
     }
 
+    /**
+     * Mostra una serieTV con i dettagli e le recensioni
+     * 
+     * @return void
+     */
     public function mostraSerie()
     {
         $id = Session::getGet('id') ?? null;
@@ -68,6 +106,11 @@ class CContenuto
         $this->view->mostraSerie($serie, $watchlistIds, $recensioni);
     }
 
+    /**
+     * Mostra un film con i dettagli e le recensioni
+     * 
+     * @return void
+     */
     public function mostraFilm()
     {
         $id = Session::getGet('id') ?? null;
@@ -81,6 +124,11 @@ class CContenuto
         $this->view->mostraFilm($film, $watchlistIds, $recensioni);
     }
 
+    /**
+     * Mostra un episodio con i dettagli e le recensioni
+     * 
+     * @return void
+     */
     public function mostraEpisodio()
     {
         $id = Session::getGet('id') ?? null;
@@ -95,7 +143,11 @@ class CContenuto
         $this->view->mostraEpisodio($episodio, $serie, $recensioni);
     }
 
-
+    /**
+     * Mostra i risultati della ricerca
+     * 
+     * @return void
+     */
     public function cerca()
     {
         $query = Session::getGet('query');

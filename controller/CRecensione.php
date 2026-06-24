@@ -1,6 +1,24 @@
 <?php
+
+/**
+ * Classe CRecensione
+ * 
+ * Controller per la gestione delle recensioni.
+ * Gestisce l'inserimento, la modifica e l'eliminazione delle recensioni per film,
+ * serie TV ed episodi, oltre alla verifica dei permessi degli utenti che le inseriscono.
+ * 
+ * @package Controller
+ * @author Marco Viscovo
+ */
 class CRecensione
 {
+    /**
+     * Reindirizza l'utente alla pagina dopo un'operazione
+     * 
+     * @param int $contenuto_id ID del contenuto
+     * @param int|null $episodio_id ID dell'episodio
+     * @return void
+     */
     private static function reindirizzaDopoOperazione($contenuto_id, $episodio_id = null)
     {
         if ($episodio_id) {
@@ -16,7 +34,13 @@ class CRecensione
         exit();
     }
 
-
+    /**
+     * Ricalcola la media di un oggetto (contenuto o episodio)
+     * 
+     * @param EContenuto|EEpisodio $oggetto Oggetto da aggiornare
+     * @param array $recensioni Lista di recensioni
+     * @return void
+     */
     private static function ricalcolaMediaOggetto($oggetto, array $recensioni)
     {
         $em = FEntityManager::getInstance();
@@ -42,6 +66,9 @@ class CRecensione
         $em->flush();
     }
 
+    /**
+     * Aggiunge una recensione
+     */
     public function aggiungiRecensione()
     {
         if (Session::getPost('contenuto_id') !== null && Session::getPost('testo') !== null && Session::getPost('voto') !== null) {
@@ -77,7 +104,9 @@ class CRecensione
     }
 
 
-
+    /**
+     * Modifica una recensione
+     */
     public function modificaRecensione()
     {
         if (Session::getPost('recensione_id') !== null && Session::getPost('testo') !== null && Session::getPost('voto') !== null) {
@@ -115,7 +144,9 @@ class CRecensione
         }
     }
 
-
+    /**
+     * Elimina una recensione
+     */
     public function eliminaRecensione()
     {
         if (Session::getPost('recensione_id') !== null) {
@@ -163,6 +194,13 @@ class CRecensione
         }
     }
 
+    /**
+     * Aggiorna la media di un contenuto o di un episodio
+     * 
+     * @param int $contenuto_id ID del contenuto
+     * @param int|null $episodio_id ID dell'episodio
+     * @return void
+     */
     private static function aggiornaMediaContenutoOEpisodio($contenuto_id, $episodio_id = null)
     {
         $em = FEntityManager::getInstance();
