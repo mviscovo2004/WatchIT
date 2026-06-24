@@ -54,20 +54,20 @@ for ($i = 1; $i <= 3; $i++) {
                 $ftmdbDetails['release_date'] ?? '',
                 $ftmdbDetails['overview'] ?? '',
                 $ftmdbDetails['vote_average'] ?? 0.0,
-                [], 
+                [],
                 $ftmdbDetails['poster_path'] ?? '',
                 $ftmdbDetails['genres'] ?? [],
                 $ftmdbDetails['videos']['results'] ?? [],
                 $ftmdbDetails['runtime'] ?? 0
             );
             $em->persist($film);
-            
+
             if (isset($ftmdbDetails['credits']['cast'])) {
                 $cast = array_slice($ftmdbDetails['credits']['cast'], 0, 5);
                 foreach ($cast as $attoreData) {
                     $attoreId = $attoreData['id'];
 
-                    
+
                     if (isset($personeInMemoria[$attoreId])) {
                         $attoreDB = $personeInMemoria[$attoreId];
                     } else {
@@ -83,7 +83,7 @@ for ($i = 1; $i <= 3; $i++) {
                         $cognome = $partiNome[1] ?? '';
                         $attoreDB = new EPersona($attoreId, 0, $nome, $cognome, $attoreData['profile_path'] ?? '');
                         $em->persist($attoreDB);
-                        $personeInMemoria[$attoreId] = $attoreDB; 
+                        $personeInMemoria[$attoreId] = $attoreDB;
                     }
 
                     $partecipazione = new EPartecipazione(0, $attoreDB, $film, 'Attore', $attoreData['character'] ?? '');
@@ -91,13 +91,11 @@ for ($i = 1; $i <= 3; $i++) {
                 }
             }
 
-            
             if (isset($ftmdbDetails['credits']['crew'])) {
                 foreach ($ftmdbDetails['credits']['crew'] as $crewMember) {
                     if ($crewMember['job'] === 'Director') {
                         $registaId = $crewMember['id'];
 
-                        
                         if (isset($personeInMemoria[$registaId])) {
                             $registaDB = $personeInMemoria[$registaId];
                         } else {
@@ -113,13 +111,13 @@ for ($i = 1; $i <= 3; $i++) {
                             $cognome = $partiNome[1] ?? '';
                             $registaDB = new EPersona($registaId, 0, $nome, $cognome, $crewMember['profile_path'] ?? '');
                             $em->persist($registaDB);
-                            $personeInMemoria[$registaId] = $registaDB; 
+                            $personeInMemoria[$registaId] = $registaDB;
                         }
 
                         $partecipazione = new EPartecipazione(0, $registaDB, $film, 'Regista', '');
                         $em->persist($partecipazione);
 
-                        break; 
+                        break;
                     }
                 }
             }
@@ -127,7 +125,7 @@ for ($i = 1; $i <= 3; $i++) {
             $em->flush();
             echo "Salvato Film: " . $film->getTitolo() . "\n";
 
-            
+
             $recensioniEsempio = [
                 ['voto' => 8, 'titolo' => 'Molto bello', 'descrizione' => 'Mi è piaciuto moltissimo, lo consiglio a tutti! Ambientazione superba e cast eccezionale.'],
                 ['voto' => 9, 'titolo' => 'Capolavoro assoluto', 'descrizione' => 'Uno dei migliori film dell\'anno. Regia e fotografia magistrali.'],
@@ -136,7 +134,7 @@ for ($i = 1; $i <= 3; $i++) {
                 ['voto' => 10, 'titolo' => 'Perfetto', 'descrizione' => 'Assolutamente consigliato, merita 10 stelle! Storia originale e interpretazioni da oscar.'],
             ];
 
-            $numRecensioni = rand(1, 2); 
+            $numRecensioni = rand(1, 2);
             for ($r = 0; $r < $numRecensioni; $r++) {
                 $recData = $recensioniEsempio[array_rand($recensioniEsempio)];
                 $utenteRecensione = $utentiRecensioni[array_rand($utentiRecensioni)];
@@ -147,9 +145,9 @@ for ($i = 1; $i <= 3; $i++) {
                     $recData['voto'],
                     $recData['descrizione'],
                     $film,
-                    null, 
+                    null,
                     $utenteRecensione,
-                    new DateTime('-' . rand(1, 30) . ' days') 
+                    new DateTime('-' . rand(1, 30) . ' days')
                 );
                 $em->persist($recensione);
             }
@@ -171,14 +169,14 @@ for ($i = 1; $i <= 3; $i++) {
         } else {
             $ftmdbDetails = FTMDb::fetchSerie($ftmdbId);
 
-            
+
             $title = $ftmdbDetails['name'] ?? '';
             if (!preg_match('/^[\p{Latin}\p{Nd}\p{P}\s]+$/u', $title)) {
                 echo "Serie $title saltata\n";
                 continue;
             }
 
-            
+
             $statoAPI = $ftmdbDetails['status'] ?? '';
             $statoObj = match ($statoAPI) {
                 'Ended' => Stato::conclusa,
@@ -193,40 +191,40 @@ for ($i = 1; $i <= 3; $i++) {
                 $ftmdbDetails['first_air_date'] ?? '',
                 $ftmdbDetails['overview'] ?? '',
                 $ftmdbDetails['vote_average'] ?? 0.0,
-                [], 
+                [],
                 $ftmdbDetails['poster_path'] ?? '',
                 $ftmdbDetails['genres'] ?? [],
                 $ftmdbDetails['videos']['results'] ?? [],
                 $ftmdbDetails['number_of_seasons'] ?? 1,
-                [], 
+                [],
                 $statoObj
             );
             $em->persist($serie);
 
-            
+
             $numeroStagioni = $ftmdbDetails['number_of_seasons'] ?? 1;
             for ($s = 1; $s <= $numeroStagioni; $s++) {
                 $stagioneDetails = FTMDb::fetchSeriesEpisodes($ftmdbId, $s);
                 if (isset($stagioneDetails['episodes'])) {
                     foreach ($stagioneDetails['episodes'] as $epData) {
                         $episodio = new EEpisodio(
-                            $epData['id'],                
-                            0,                            
-                            $serie,                       
-                            $s,                           
-                            $epData['episode_number'],    
+                            $epData['id'],
+                            0,
+                            $serie,
+                            $s,
+                            $epData['episode_number'],
                             $epData['name'] ?? 'Senza Titolo',
-                            $epData['overview'] ?? '',    
-                            $epData['runtime'] ?? 45,     
+                            $epData['overview'] ?? '',
+                            $epData['runtime'] ?? 45,
                             $epData['vote_average'] ?? 0.0
                         );
                         $em->persist($episodio);
-                        $serie->addEpisodio($episodio); 
+                        $serie->addEpisodio($episodio);
                     }
                 }
             }
 
-            
+
             if (isset($ftmdbDetails['credits']['cast'])) {
                 $cast = array_slice($ftmdbDetails['credits']['cast'], 0, 5);
                 foreach ($cast as $attoreData) {
@@ -255,7 +253,7 @@ for ($i = 1; $i <= 3; $i++) {
                 }
             }
 
-            
+
             if (isset($ftmdbDetails['created_by'])) {
                 foreach ($ftmdbDetails['created_by'] as $creator) {
                     $creatoreId = $creator['id'];
@@ -281,14 +279,14 @@ for ($i = 1; $i <= 3; $i++) {
                     $partecipazione = new EPartecipazione(0, $creatoreDB, $serie, 'Regista', '');
                     $em->persist($partecipazione);
 
-                    break; 
+                    break;
                 }
             }
 
             $em->flush();
             echo "Salvata Serie TV: " . $serie->getTitolo() . "\n";
 
-            
+
             $recensioniEsempioSerie = [
                 ['voto' => 8, 'titolo' => 'Serie TV fantastica', 'descrizione' => 'Ti tiene incollato allo schermo fin dal primo episodio! Ottimo cast.'],
                 ['voto' => 9, 'titolo' => 'Coinvolgente e misteriosa', 'descrizione' => 'Una trama complessa e ricca di colpi di scena. Consigliatissima!'],
@@ -307,7 +305,7 @@ for ($i = 1; $i <= 3; $i++) {
                     $recData['voto'],
                     $recData['descrizione'],
                     $serie,
-                    null, 
+                    null,
                     $utenteRecensione,
                     new DateTime('-' . rand(1, 30) . ' days')
                 );
