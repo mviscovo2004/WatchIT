@@ -1,13 +1,23 @@
 
-
-
 let currentWatchlistContentId = null;
 
-
+/**
+ * Mostra o nasconde il modale di watchlist.
+ * 
+ * @param {boolean} show True se mostrare il modale, false altrimenti.
+ */
 function toggleWatchlistModal(show) {
+    /**
+     * Seleziona gli elementi HTML del modale di watchlist.
+     * @type {HTMLElement|null} Il modale di watchlist.
+     * @type {HTMLElement|null} Il container del modale di watchlist.
+     */
     const modal = document.getElementById('addToWatchlistModal');
     if (!modal) return;
 
+    /**
+     * Se la variabile booleana 'show' è vera, mostra il modale di watchlist.
+     */
     if (show) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -21,14 +31,27 @@ function toggleWatchlistModal(show) {
 }
 
 
-
+/** 
+ * Apre il modale di watchlist.
+ * 
+ * @param {number} contentId L'ID del contenuto da aggiungere alla watchlist.
+ */
 function openAddToWatchlistModal(contentId) {
     currentWatchlistContentId = contentId;
+    /**
+     * Seleziona il container del modale di watchlist.
+     * @type {HTMLElement|null} Il container del modale di watchlist.
+     */
     const container = document.getElementById('watchlistOptionsContainer');
     
     if (!container) return;
     
-
+    /**
+     * Inserisce l'HTML del modale di watchlist nel container.
+     * 
+     * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+     * @returns {void}
+     */
     container.innerHTML = `
         <div class="flex items-center justify-center gap-2 py-6 text-xs text-purple-400">
             <svg class="animate-spin h-4 w-4 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -38,10 +61,18 @@ function openAddToWatchlistModal(contentId) {
             <span>Caricamento watchlist...</span>
         </div>
     `;
-
+    
+    /**
+     * Apre il modale di watchlist.
+     */
     toggleWatchlistModal(true);
 
-
+    /**
+     * Recupera le watchlist dell'utente tramite una richiesta asincrona.
+     * 
+     * @param {number} contentId L'ID del contenuto da aggiungere alla watchlist.
+     * @returns {Promise<void>}
+     */
     fetch(`index.php?controller=Watchlist&action=getWatchlistsJSON&idContenuto=${contentId}`)
         .then(response => {
             if (!response.ok) {
@@ -54,8 +85,15 @@ function openAddToWatchlistModal(contentId) {
                 container.innerHTML = `<div class="text-center py-4 text-xs text-red-500">${data.error}</div>`;
                 return;
             }
-
+            
             const watchlists = data.watchlists;
+            
+            /**
+             * Inserisce l'HTML del modale di watchlist nel container.
+             * 
+             * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+             * @returns {void}
+             */
             if (!watchlists || watchlists.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-4 space-y-2">
@@ -68,12 +106,34 @@ function openAddToWatchlistModal(contentId) {
                 return;
             }
 
-        
+            /**
+             * Inserisce l'HTML del modale di watchlist nel container.
+             * 
+             * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+             * @returns {void}
+             */
             container.innerHTML = '';
             watchlists.forEach(w => {
+                /**
+                 * Seleziona gli elementi HTML del modale di watchlist.
+                 * @type {HTMLElement|null} Il modale di watchlist.
+                 * @type {HTMLElement|null} Il container del modale di watchlist.
+                 */
                 const label = document.createElement('label');
+                /**
+                 * Assegna la classe del modale di watchlist.
+                 * 
+                 * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+                 * @returns {void}
+                 */
                 label.className = `flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-purple-500/30 hover:bg-slate-900 cursor-pointer transition-all duration-200 select-none`;
                 
+                /**
+                 * Inserisce l'HTML del modale di watchlist nel container.
+                 * 
+                 * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+                 * @returns {void}
+                 */
                 label.innerHTML = `
                     <span class="text-xs font-semibold text-slate-200 capitalize">${w.nome}</span>
                     <input type="checkbox" ${w.contains ? 'checked' : ''} 
@@ -81,11 +141,28 @@ function openAddToWatchlistModal(contentId) {
                     />
                 `;
 
+                /**
+                 * Seleziona gli elementi HTML del modale di watchlist.
+                 * @type {HTMLElement|null} Il modale di watchlist.
+                 * @type {HTMLElement|null} Il container del modale di watchlist.
+                 */
                 const checkbox = label.querySelector('input');
+                /**
+                 * Aggiunge un event listener al checkbox per il toggle del contenuto nella watchlist.
+                 * 
+                 * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+                 * @returns {void}
+                 */
                 checkbox.addEventListener('change', () => {
                     toggleContentInWatchlist(w.id, checkbox);
                 });
 
+                /**
+                 * Aggiunge il label al container del modale di watchlist.
+                 * 
+                 * @param {string} contentId L'ID del contenuto da aggiungere alla watchlist.
+                 * @returns {void}
+                 */
                 container.appendChild(label);
             });
         })
@@ -95,15 +172,40 @@ function openAddToWatchlistModal(contentId) {
         });
 }
 
-
+/**
+ * Attiva o disattiva il contenuto nella watchlist.
+ * 
+ * @param {number} watchlistId L'ID della watchlist.
+ * @param {HTMLInputElement} checkbox Il checkbox.
+ * @returns {void}
+ */
 function toggleContentInWatchlist(watchlistId, checkbox) {
     if (!currentWatchlistContentId) return;
-
-    
+    /**
+     * Disabilita il checkbox per prevenire click multipli.
+     */
     checkbox.disabled = true;
-
+    /**
+     * Crea un FormData per la richiesta asincrona.
+     * 
+     * @param {number} watchlistId L'ID della watchlist.
+     * @param {HTMLInputElement} checkbox Il checkbox.
+     * @returns {void}
+     */
     const formData = new URLSearchParams();
+    /**
+     * Aggiunge l'ID del contenuto al FormData.
+     * 
+     * @param {number} contentId L'ID del contenuto da aggiungere alla watchlist.
+     * @returns {void}
+     */
     formData.append('idContenuto', currentWatchlistContentId);
+    /**
+     * Aggiunge l'ID della watchlist al FormData.
+     * 
+     * @param {number} watchlistId L'ID della watchlist.
+     * @returns {void}
+     */
     formData.append('idWatchlist', watchlistId);
 
     fetch('index.php?controller=Watchlist&action=toggleContenutoAJAX', {
@@ -138,7 +240,19 @@ function toggleContentInWatchlist(watchlistId, checkbox) {
     });
 }
 
+/**
+ * Gestisce l'evento DOMContentLoaded.
+ * 
+ * @returns {void}
+ */
 document.addEventListener('DOMContentLoaded', () => {
+    /**
+     * Aggiunge un event listener per il click sul documento.
+     * Chiude il modale di watchlist se l'utente clicca fuori da esso.
+     * 
+     * @param {MouseEvent} e L'evento del click.
+     * @returns {void}
+     */
     window.addEventListener('click', function(e) {
         const modal = document.getElementById('addToWatchlistModal');
         if (e.target === modal) {

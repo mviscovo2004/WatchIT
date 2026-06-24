@@ -1,5 +1,18 @@
+/**
+ * Mostra la schermata di caricamento per l'importazione da TMDB.
+ * 
+ * @returns {void}
+ */
 function showImportLoading() {
+    /**
+     * Seleziona il div di caricamento.
+     * @type {HTMLElement|null} Il div di caricamento.
+     */
     const loadingDiv = document.getElementById('importLoading');
+    /**
+     * Seleziona il form di importazione.
+     * @type {HTMLElement|null} Il form di importazione.
+     */
     const form = document.getElementById('formImportaTMDB');
     
     if (loadingDiv) {
