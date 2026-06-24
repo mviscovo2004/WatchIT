@@ -6,7 +6,18 @@ Session::start();
 
 require_once __DIR__ . "/vendor/autoload.php";
 
-
+/**
+ * index.php
+ * Front Controller dell'applicazione WatchIT.
+ *
+ * Questo file funge da punto di ingresso unico (Front Controller) per tutte le richieste HTTP.
+ * Si occupa dell'inizializzazione dell'ambiente (avvio sessione, inclusione dell'autoloader),
+ * della gestione e pulizia dei ban degli utenti, del tracciamento dell'URL precedente per scopi di
+ * reindirizzamento e del routing dinamico delle richieste verso i controller e le azioni corrispondenti.
+ *
+ * @package WatchIT
+ * @author Marco Viscovo
+ */
 if (class_exists('FBan')) {
     FBan::cleanExpiredBans();
     if (Session::isLogged()) {
