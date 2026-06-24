@@ -3,10 +3,24 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../bin/config.php';
 require_once __DIR__ . '/../foundation/FTMDb.php';
 
+/**
+ * Script CLI per il popolamento (seeding) iniziale del database.
+ * 
+ * Genera account utente di test con password criptate,
+ * interroga le API di TMDB per importare automaticamente un catalogo iniziale
+ * di film e serie TV (completo di stagioni, episodi, cast e clip video),
+ * e simula il rilascio di recensioni realistiche da parte degli utenti.
+ * 
+ * @package Bin
+ * @author Marco Viscovo
+ */
 echo "Avvio Seeder TMDb...\n";
 
 $em = FEntityManager::getInstance();
 
+/**
+ * Creazione di utenti fittizi per le recensioni
+ */
 echo "Creazione utenti fittizi per le recensioni...\n";
 $utentiRecensioni = [];
 
@@ -29,6 +43,9 @@ if (!$esisteGiulia) {
 }
 $em->flush();
 
+/**
+ * Download dei film popolari
+ */
 echo "Inizio download film...\n";
 
 for ($i = 1; $i <= 3; $i++) {
@@ -156,6 +173,9 @@ for ($i = 1; $i <= 3; $i++) {
     }
 }
 
+/**
+ * Download delle serie TV popolari
+ */
 echo "Inizio download serie TV...\n";
 
 for ($i = 1; $i <= 3; $i++) {
