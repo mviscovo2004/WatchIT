@@ -1,3 +1,14 @@
+{*
+ * Componente Card Cast
+ * 
+ * Visualizza la card del singolo membro del cast o regista, con l'immagine di profilo,
+ * il nome reale e, se presente, il nome del personaggio interpretato.
+ * 
+ * @package View/Templates/Components/Cards
+ * @author Marco Viscovo
+ * 
+ * @param EPartecipazione $partecipazione La partecipazione dell'attore o regista nel contenuto.
+ *}
 <div
     class="flex flex-col items-center text-center p-4 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-purple-500 transition-all duration-300 group">
 

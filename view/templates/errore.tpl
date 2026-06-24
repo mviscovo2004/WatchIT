@@ -1,3 +1,14 @@
+{*
+ * Template Errore Generico
+ * 
+ * Visualizza una schermata di avviso per un errore generico dell'applicazione (es. ID non valido, risorsa mancante).
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param string $errore Il messaggio di errore dettagliato da mostrare.
+ *}
 {extends file="main.tpl"}
 
 {block name="content"}

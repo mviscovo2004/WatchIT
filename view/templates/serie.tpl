@@ -1,3 +1,18 @@
+{*
+ * Template Dettaglio Serie TV
+ * 
+ * Visualizza la scheda informativa di una serie TV, con locandina, anno, trama,
+ * valutazione media, creatori, cast principale, trailer, stato della serie (in corso/conclusa),
+ * elenco degli episodi suddivisi per stagioni e sezione recensioni.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param ESerie $serie La serie TV da visualizzare.
+ * @param array $watchlistIds Elenco degli ID dei contenuti già inseriti nelle watchlist dell'utente.
+ * @param ERecensione[] $recensioni Le recensioni lasciate dagli utenti per questa serie.
+ *}
 {extends file="main.tpl"}
 {block name="title"}{$serie->getTitolo()} - WatchIT{/block}
 

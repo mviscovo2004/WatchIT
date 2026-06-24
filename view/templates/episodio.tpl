@@ -1,3 +1,18 @@
+{*
+ * Template Dettaglio Episodio
+ * 
+ * Mostra le informazioni dettagliate di un singolo episodio di una serie TV,
+ * tra cui il titolo, la descrizione, il numero di stagione ed episodio, la durata,
+ * la valutazione media, e la sezione per visualizzare e rilasciare recensioni per l'episodio.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EEpisodio $episodio L'episodio da visualizzare.
+ * @param ESerie $serie La serie TV a cui appartiene l'episodio.
+ * @param ERecensione[] $recensioni L'elenco delle recensioni dell'episodio.
+ *}
 {extends file="main.tpl"}
 
 {block name="content"}

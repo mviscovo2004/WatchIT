@@ -1,3 +1,20 @@
+{*
+ * Template Homepage
+ * 
+ * Renderizza la pagina principale pubblica del sito. Mostra un contenuto in evidenza
+ * (Hero) con la valutazione più alta della community, le griglie con le locandine dei film
+ * e delle serie TV più popolari, e una sezione con le ultime recensioni degli utenti.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EFilm[]|EContenuto[] $filmPopolari Lista dei film più popolari.
+ * @param ESerie[]|EContenuto[] $seriePopolari Lista delle serie TV più popolari.
+ * @param array $watchlistIds Elenco degli ID dei contenuti già inseriti nelle watchlist dell'utente loggato.
+ * @param ERecensione[] $recensioni Elenco delle ultime recensioni inserite globalmente.
+ * @param bool $isLogged Stato di autenticazione dell'utente corrente.
+ *}
 {extends file="main.tpl"}
 {block name="content"}
 

@@ -1,3 +1,14 @@
+{*
+ * Componente Lista Contenuti
+ * 
+ * Mostra un elenco a griglia riutilizzabile di contenuti (Film/Serie),
+ * ideale per le pagine delle watchlist o elenchi filtrati.
+ * 
+ * @package View/Templates/Components
+ * @author Marco Viscovo
+ * 
+ * @param EContenuto[] $contenuti Array di contenuti da elencare.
+ *}
 <h1 class="text-white font-bold text-2xl mb-6 text-center">{$titoloPagina}</h1>
 <div class="flex items-center gap-4 mb-4 flex-col md:flex-row">
     <button

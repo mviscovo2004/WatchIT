@@ -1,3 +1,13 @@
+{*
+ * Vista Aggiungi Contenuto
+ * 
+ * Pagina dedicata all'inserimento manuale a tutto schermo di nuovi film o serie TV,
+ * con gestione dettagliata del cast e dei campi specifici.
+ * Estende `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 {block name="content"}

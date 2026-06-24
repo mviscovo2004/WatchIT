@@ -1,3 +1,16 @@
+{*
+ * Vista Gestione Utenti Bannati
+ * 
+ * Mostra l'elenco esclusivo di tutti gli utenti attualmente sotto ban, 
+ * con indicazione della motivazione, dell'amministratore responsabile e della scadenza,
+ * con opzione di revoca anticipata (unban).
+ * Estende `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param EBan[] $bannati Elenco dei ban attivi a sistema.
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 {block name="content"}

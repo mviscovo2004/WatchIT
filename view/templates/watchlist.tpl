@@ -1,3 +1,17 @@
+{*
+ * Template Dettaglio Watchlist
+ * 
+ * Mostra i dettagli di una singola watchlist, inclusi il titolo, la descrizione,
+ * il livello di privacy, il proprietario e la griglia con tutti i contenuti (film/serie)
+ * che l'utente ha salvato al suo interno.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EWatchlist $watchlist La watchlist da visualizzare.
+ * @param EContenuto[] $contenuti I contenuti multimediali salvati nella watchlist.
+ *}
 {extends file="main.tpl"}
 {block name="title"}{$watchlist->getNome()|escape} - WatchIT{/block}
 

@@ -1,3 +1,15 @@
+{*
+ * Componente Card Recensione Semplice
+ * 
+ * Visualizza in modo compatto una recensione all'interno della scheda di dettaglio
+ * di un contenuto, con le opzioni di modifica/eliminazione se l'utente è l'autore.
+ * 
+ * @package View/Templates/Components/Cards
+ * @author Marco Viscovo
+ * 
+ * @param ERecensione $recensione La recensione da mostrare.
+ * @param EUtente|null $currentUser L'utente loggato (per verificare se è l'autore).
+ *}
 <div
     class="flex items-start gap-4 p-5 rounded-xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700/80 transition-all duration-300">
 

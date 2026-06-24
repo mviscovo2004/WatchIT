@@ -1,3 +1,13 @@
+{*
+ * Componente Sidebar Amministratore
+ * 
+ * Mostra la barra laterale di navigazione del pannello amministrativo, 
+ * con collegamenti rapidi a Dashboard, Gestione Utenti, Gestione Contenuti,
+ * Gestione Recensioni, Gestione Ban e Importazione TMDB.
+ * 
+ * @package View/Templates/Components
+ * @author Marco Viscovo
+ *}
 <div class="h-full flex flex-col bg-slate-900/60 backdrop-blur-md border-r border-slate-800/80 text-slate-300">
 
     <div class="p-6 border-b border-slate-800/80 flex items-center gap-3">

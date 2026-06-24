@@ -1,3 +1,16 @@
+{*
+ * Template Reset Password
+ * 
+ * Fornisce l'interfaccia utente per inserire e confermare una nuova password 
+ * dopo aver seguito il link di ripristino ricevuto via email.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param string $token Il token di sicurezza associato alla richiesta di ripristino.
+ * @param string|null $error Messaggio di errore riscontrato o di successo ad operazione completata.
+ *}
 {extends file="main.tpl"}
 {block name="content"}
     <div class="my-16 flex flex-col items-center justify-center">
@@ -9,7 +22,7 @@
                 </h4>
 
 
-            {include file="components/alert.tpl" message=$error type={if $error === "Password reimpostata con successo."}"success"
+                {include file="components/alert.tpl" message=$error type={if $error === "Password reimpostata con successo."}"success"
             {else}"error"
             {/if}}
 

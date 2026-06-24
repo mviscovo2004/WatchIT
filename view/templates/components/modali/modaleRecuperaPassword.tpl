@@ -1,3 +1,14 @@
+{*
+ * Modale Recupero Password (Forgot Password)
+ * 
+ * Visualizza il form popup per richiedere l'invio del link di ripristino password
+ * via email, utile per gli utenti che l'hanno dimenticata.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ * 
+ * @param string|null $forgotPasswordError Messaggio di errore o conferma di invio.
+ *}
 <div id="recuperaPasswordModal"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">

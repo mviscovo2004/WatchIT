@@ -1,3 +1,17 @@
+{*
+ * Template Risultati della Ricerca
+ * 
+ * Mostra i risultati di una ricerca testuale globale eseguita dall'utente.
+ * I risultati sono divisi in tre schede: Film, Serie TV e Utenti trovati.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EFilm[] $film Elenco dei film corrispondenti alla ricerca.
+ * @param ESerie[] $serie Elenco delle serie TV corrispondenti alla ricerca.
+ * @param EUtente[] $utenti Elenco degli utenti corrispondenti alla ricerca.
+ *}
 {extends file="main.tpl"}
 
 {block name="content"}

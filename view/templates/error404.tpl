@@ -1,3 +1,11 @@
+{*
+ * Template Errore 404 (Pagina Non Trovata)
+ * 
+ * Visualizza la pagina di errore standard quando la rotta o la risorsa richiesta non esiste.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ *}
 <!DOCTYPE html>
 <html lang="it">
 

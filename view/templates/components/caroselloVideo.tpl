@@ -1,3 +1,14 @@
+{*
+ * Componente Carosello Video
+ * 
+ * Visualizza un player carosello interattivo contenente clip e trailer ufficiali da YouTube
+ * associati al film o alla serie TV correnti.
+ * 
+ * @package View/Templates/Components
+ * @author Marco Viscovo
+ * 
+ * @param array $video L'array contenente i dettagli dei video (ID YouTube, nome, ecc.).
+ *}
 {if isset($videos) && count($videos) > 0}
     <div class="mt-12 space-y-6">
         <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3">Video</h2>

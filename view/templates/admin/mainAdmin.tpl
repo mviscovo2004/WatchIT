@@ -1,3 +1,15 @@
+{*
+ * Vista Layout Base Amministrazione
+ * 
+ * Fornisce la struttura e lo stile base comune del pannello di controllo admin.
+ * Integra la sidebar amministrativa e il pannello principale di navigazione.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param bool $isLogged Stato di autenticazione dell'utente.
+ * @param string $ruolo Ruolo dell'utente loggato (deve essere ADMIN).
+ *}
 <!DOCTYPE html>
 <html lang="it">
 
@@ -14,7 +26,7 @@
 
     {if $isLogged && $ruolo == 'ADMIN'}
         <aside class="w-64 min-h-screen h-screen sticky top-0 flex-shrink-0">
-            {include file="admin/sidebar.tpl"}
+            {include file="components/sidebar.tpl"}
         </aside>
 
         <main class="flex-grow p-8 overflow-y-auto min-h-screen">

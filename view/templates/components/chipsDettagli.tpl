@@ -1,3 +1,14 @@
+{*
+ * Componente Chips Dettagli
+ * 
+ * Mostra sotto forma di piccoli badge colorati (chips) le informazioni di dettaglio
+ * di un contenuto (es. durata, numero stagioni, stato, anno di rilascio).
+ * 
+ * @package View/Templates/Components
+ * @author Marco Viscovo
+ * 
+ * @param EContenuto $contenuto Il contenuto di cui mostrare i dettagli.
+ *}
 {assign var="isSerie" value=$contenuto instanceof ESerie}
 
 <div class="flex flex-wrap gap-3 items-center text-sm pt-2">

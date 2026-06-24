@@ -1,4 +1,14 @@
-
+{*
+ * Modale Registrazione
+ * 
+ * Visualizza il popup in sovrimpressione per la registrazione di un nuovo account utente.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ * 
+ * @param string|null $registerError Messaggio di errore in caso di fallimento dei controlli.
+ * @param bool|null $showRegister Se impostato a true, forza l'apertura immediata del modale all'avvio.
+ *}
 <div id="registerModal"
     class="fixed inset-0 z-50 {if $showRegister}flex{else}hidden{/if} items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">

@@ -1,4 +1,12 @@
-
+{*
+ * Modale Aggiunta Contenuto (Manuale)
+ * 
+ * Visualizza il form popup che consente all'amministratore di inserire manualmente
+ * un nuovo film o serie TV a catalogo inserendo titolo, anno, trama, generi e locandina.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="modalAggiungiContenuto"
     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-all duration-300">
     <div

@@ -1,3 +1,14 @@
+{*
+ * Componente Alert
+ * 
+ * Visualizza un messaggio di notifica temporaneo o fisso (errore o successo).
+ * 
+ * @package View/Templates/Components
+ * @author Marco Viscovo
+ * 
+ * @param string $type Il tipo di notifica ('success' o 'error') per definire il colore.
+ * @param string $message Il testo del messaggio da visualizzare.
+ *}
 {if isset($message) && $message !== ""}
     {if isset($type) && $type === "success"}
         <div

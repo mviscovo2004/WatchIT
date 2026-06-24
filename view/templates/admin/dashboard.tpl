@@ -1,3 +1,16 @@
+{*
+ * Vista Dashboard Amministratore
+ * 
+ * Mostra la pagina riassuntiva principale del pannello admin con le statistiche
+ * del sito (numero utenti, recensioni e contenuti) e una tabella dei contenuti inseriti di recente.
+ * Estende il layout `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param array $stats Mappa contenente i contatori statistici del sito ('utenti', 'contenuti', 'recensioni').
+ * @param EContenuto[] $contenutiRecenti Elenco degli ultimi contenuti inseriti nel sistema.
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 

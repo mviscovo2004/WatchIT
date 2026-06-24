@@ -1,4 +1,12 @@
-
+{*
+ * Modale Ricerca/Importazione TMDB Rapida
+ * 
+ * Consente all'amministratore di effettuare una ricerca rapida via query testuale
+ * ed importare istantaneamente contenuti da TMDB tramite un popup di overlay.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="modalImporta"
     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-all duration-300">
     <div

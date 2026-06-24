@@ -1,3 +1,14 @@
+{*
+ * Modale Modifica Watchlist
+ * 
+ * Visualizza il popup per consentire a un utente di modificare il nome,
+ * la descrizione e lo stato della privacy di una sua watchlist esistente.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ * 
+ * @param EWatchlist $watchlist La watchlist da modificare.
+ *}
 <div id="editWatchlistModal" style="z-index: 99999;"
     class="fixed inset-0 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
 

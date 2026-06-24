@@ -1,3 +1,18 @@
+{*
+ * Vista Importazione TMDB
+ * 
+ * Mostra il form per la ricerca e l'importazione automatica di Film e Serie TV tramite le API esterne di TMDB,
+ * ed elenca gli ultimi contenuti importati con successo.
+ * Estende il layout `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param EFilm[] $ultimiFilm Elenco degli ultimi film importati.
+ * @param ESerie[] $ultimeSerie Elenco delle ultime serie TV importate.
+ * @param string|null $importError Messaggio di errore in caso di fallimento della chiamata API.
+ * @param string|null $importSuccess Messaggio di successo a importazione avvenuta.
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 {block name="content"}

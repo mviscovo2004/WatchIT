@@ -1,3 +1,12 @@
+{*
+ * Modale Scrittura/Modifica Recensione
+ * 
+ * Visualizza il form in sovrimpressione per l'inserimento o la modifica di una recensione
+ * (voto numerico e testo descrittivo) associata a un film o serie TV.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="reviewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">
 

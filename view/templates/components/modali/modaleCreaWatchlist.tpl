@@ -1,3 +1,12 @@
+{*
+ * Modale Creazione Watchlist
+ * 
+ * Visualizza il modulo popup per consentire a un utente loggato di creare
+ * una nuova watchlist definendone nome, descrizione e livello di privacy.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="createWatchlistModal"
     class="fixed inset-0 z-[9999] hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-6">

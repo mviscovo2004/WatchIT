@@ -1,3 +1,16 @@
+{*
+ * Componente Card Contenuto
+ * 
+ * Mostra la locandina di un film o di una serie TV, con titolo, anno, valutazione
+ * ed effetti di hover premium (come la possibilità asincrona di aggiunta a watchlist).
+ * 
+ * @package View/Templates/Components/Cards
+ * @author Marco Viscovo
+ * 
+ * @param EContenuto $contenuto Il film o la serie TV da rappresentare.
+ * @param array $watchlistIds Elenco degli ID dei contenuti già inseriti nelle watchlist dell'utente.
+ * @param bool $isLogged Indica se l'utente corrente è autenticato.
+ *}
 {assign var="isSerie" value=$contenuto instanceof ESerie}
 {assign var="actionToShow" value="mostraFilm"}
 {if $isSerie}

@@ -1,3 +1,17 @@
+{*
+ * Template Dettaglio Film
+ * 
+ * Visualizza la scheda informativa completa di un singolo film, comprensiva di locandina,
+ * anno, trama, valutazione, regista, attori principali, trailer YouTube e sezione recensioni.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EFilm $film Il film da visualizzare.
+ * @param array $watchlistIds Elenco degli ID dei contenuti già inseriti nelle watchlist dell'utente.
+ * @param ERecensione[] $recensioni Le recensioni lasciate dagli utenti per questo film.
+ *}
 {extends file="main.tpl"}
 {block name="title"}{$film->getTitolo()} - WatchIT{/block}
 

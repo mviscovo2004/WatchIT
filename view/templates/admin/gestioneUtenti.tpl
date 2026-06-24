@@ -1,3 +1,15 @@
+{*
+ * Vista Gestione Utenti
+ * 
+ * Mostra la tabella di tutti gli utenti registrati sul sito, consentendo all'amministratore
+ * di promuoverli ad admin, retrocederli, eliminarli o bannarli a tempo tramite overlay.
+ * Estende il layout `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param EUtente[] $utenti Elenco di tutti gli utenti registrati a sistema.
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 {block name="content"}

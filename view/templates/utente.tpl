@@ -1,3 +1,20 @@
+{*
+ * Template Utente (Profilo Pubblico/Privato)
+ * 
+ * Mostra la pagina del profilo di un utente. Contiene l'avatar, il nome,
+ * le statistiche di follower/following, i bottoni per seguire/smettere di seguire,
+ * la griglia con le sue watchlist e la cronologia delle sue recensioni.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EUtente $utente L'utente di cui visualizzare il profilo.
+ * @param EWatchlist[] $watchlists Le watchlist visibili dell'utente (in base alla privacy).
+ * @param ERecensione[] $recensioni Le recensioni scritte dall'utente.
+ * @param bool $isFollowing Indica se l'utente loggato segue il proprietario del profilo.
+ * @param bool $isAmico Indica se c'è una relazione di amicizia reciproca (follow bilaterale).
+ *}
 {extends file="main.tpl"}
 {block name="title"}Profilo di {$utente->getUsername()|escape} - WatchIT{/block}
 

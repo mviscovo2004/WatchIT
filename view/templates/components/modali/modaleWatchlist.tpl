@@ -1,3 +1,16 @@
+{*
+ * Modale Watchlist (Asincrono)
+ * 
+ * Visualizza l'overlay popup che elenca le watchlist dell'utente loggato,
+ * consentendogli di salvare o rimuovere il contenuto tramite chiamate AJAX.
+ * Include anche lo script JavaScript di gestione del modale.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ * 
+ * @param bool $isLogged Indica se l'utente è autenticato.
+ * @param string $baseUrl L'URL di base dell'applicazione per caricare il file JS.
+ *}
 {if $isLogged}
 
     <div id="addToWatchlistModal" style="z-index: 99999;"

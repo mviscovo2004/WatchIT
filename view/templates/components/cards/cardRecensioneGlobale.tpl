@@ -1,3 +1,15 @@
+{*
+ * Componente Card Recensione Globale
+ * 
+ * Mostra una recensione dettagliata con il titolo del contenuto recensito, l'utente autore,
+ * il voto, il testo e la data di pubblicazione, con link diretti alla risorsa.
+ * 
+ * @package View/Templates/Components/Cards
+ * @author Marco Viscovo
+ * 
+ * @param ERecensione $recensione La recensione da mostrare.
+ * @param string $colorTheme Tema colore della card (es. 'purple' o 'amber').
+ *}
 {assign var="isSerie" value=$recensione->getContenuto() instanceof ESerie}
 {assign var="actionToShow" value="mostraFilm"}
 {if $isSerie}

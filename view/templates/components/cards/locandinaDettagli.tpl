@@ -1,3 +1,16 @@
+{*
+ * Componente Locandina Dettagli
+ * 
+ * Mostra l'immagine di locandina all'interno della pagina di dettaglio del contenuto (Film/Serie),
+ * con il pulsante in overlay per aggiungere o rimuovere il contenuto dalle watchlist in modo asincrono.
+ * 
+ * @package View/Templates/Components/Cards
+ * @author Marco Viscovo
+ * 
+ * @param EContenuto $contenuto Il film o la serie TV corrente.
+ * @param bool $isLogged Indica se l'utente è autenticato.
+ * @param array|null $watchlistIds Array degli ID dei contenuti già salvati nelle watchlist dell'utente.
+ *}
 <div class="md:col-span-1 flex flex-col items-center md:items-start">
     <div
         class="group relative w-64 h-96 sm:w-72 sm:h-[26rem] md:w-full md:h-[28rem] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl transition-all duration-300 hover:shadow-indigo-500/10">

@@ -1,3 +1,15 @@
+{*
+ * Vista Gestione Recensioni (Moderazione)
+ * 
+ * Mostra la lista di tutte le recensioni lasciate dagli utenti, consentendo all'admin
+ * di leggerle, moderarle ed eliminarle se violano le linee guida.
+ * Estende `admin/mainAdmin.tpl`.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ * 
+ * @param ERecensione[] $recensioni Elenco di tutte le recensioni da moderare.
+ *}
 {extends file="admin/mainAdmin.tpl"}
 
 {block name="content"}

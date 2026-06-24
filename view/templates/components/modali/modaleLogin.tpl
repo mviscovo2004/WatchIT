@@ -1,4 +1,14 @@
-
+{*
+ * Modale Login
+ * 
+ * Visualizza il popup in sovrimpressione per l'autenticazione dell'utente standard o admin.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ * 
+ * @param string|null $loginError Messaggio di errore se il login fallisce.
+ * @param bool|null $showLogin Se impostato a true, forza l'apertura immediata del modale all'avvio.
+ *}
 <div id="loginModal"
     class="fixed inset-0 z-50 {if $showLogin}flex{else}hidden{/if} items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-950 border border-slate-800/80 p-8 rounded-2xl max-w-md w-full relative shadow-2xl">

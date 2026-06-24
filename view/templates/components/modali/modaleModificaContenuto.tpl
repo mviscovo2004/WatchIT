@@ -1,4 +1,12 @@
-
+{*
+ * Modale Modifica Contenuto
+ * 
+ * Visualizza il modulo in sovrimpressione precompilato (tramite AJAX)
+ * per la modifica dei metadati di un film o serie TV da parte dell'amministratore.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="modalModificaContenuto"
     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-all duration-300">
     <div

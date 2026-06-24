@@ -1,3 +1,16 @@
+{*
+ * Template Lista Watchlist Personali
+ * 
+ * Visualizza tutte le watchlist create dall'utente loggato, organizzate in una griglia.
+ * Permette anche di aprire il form di creazione per una nuova watchlist e mostra la visibilità (privacy) di ciascuna.
+ * Estende il layout base `main.tpl`.
+ * 
+ * @package View/Templates
+ * @author Marco Viscovo
+ * 
+ * @param EWatchlist[] $watchlist Elenco di tutte le watchlist dell'utente.
+ *}
+
 {extends file="main.tpl"}
 
 {block name="content"}

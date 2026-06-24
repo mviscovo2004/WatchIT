@@ -1,3 +1,12 @@
+{*
+ * Vista Accesso Negato (403 Forbidden)
+ * 
+ * Pagina mostrata quando un utente non amministratore tenta di accedere
+ * a risorse o azioni riservate all'amministratore.
+ * 
+ * @package View/Templates/Admin
+ * @author Marco Viscovo
+ *}
 <!DOCTYPE html>
 <html lang="it">
 

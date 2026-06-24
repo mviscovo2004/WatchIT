@@ -1,3 +1,11 @@
+{*
+ * Modale Revoca Ban (Unban)
+ * 
+ * Mostra una finestra di conferma popup per la revoca anticipata del ban di un utente.
+ * 
+ * @package View/Templates/Components/Modali
+ * @author Marco Viscovo
+ *}
 <div id="unbanModal"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 transition-all duration-300">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all duration-300 scale-95 opacity-0"
