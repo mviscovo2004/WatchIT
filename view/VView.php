@@ -1,10 +1,39 @@
 <?php
 
+/**
+ * Classe VView
+ * 
+ * Classe base per tutte le viste dell'applicazione.
+ * Inizializza l'istanza condivisa di Smarty (Singleton), rileva lo stato di sessione dell'utente,
+ * assegna le variabili di errore comuni e definisce i metodi helper `assign` e `display`.
+ * 
+ * @package View
+ * @author Marco Viscovo
+ */
 class VView
 {
+    /**
+     * Istanza statica condivisa di Smarty (Singleton)
+     * 
+     * @var \Smarty\Smarty|null
+     */
     protected static $smartyInstance;
+
+    /**
+     * Istanza di Smarty per la vista corrente
+     * 
+     * @var \Smarty\Smarty|null
+     */
     protected $smarty;
 
+    /**
+     * Costruttore della classe VView
+     * 
+     * Inizializza l'istanza condivisa di Smarty (Singleton), rileva lo stato di sessione dell'utente,
+     * assegna le variabili di errore comuni e definisce i metodi helper `assign` e `display`.
+     * 
+     * @return void
+     */
     public function __construct()
     {
         if (!self::$smartyInstance) {
@@ -77,16 +106,38 @@ class VView
         }
     }
 
+    /**
+     * Assegna una variabile alla vista
+     * 
+     * @param string $key Chiave della variabile
+     * @param mixed $value Valore della variabile
+     * 
+     * @return void
+     */
     public function assign($key, $value)
     {
         $this->smarty->assign($key, $value);
     }
 
+    /**
+     * Mostra una vista
+     * 
+     * @param string $templateName Nome del template
+     * 
+     * @return void
+     */
     public function display($templateName)
     {
         $this->smarty->display($templateName);
     }
 
+    /**
+     * Mostra un errore
+     * 
+     * @param string $errore Messaggio di errore
+     * 
+     * @return void
+     */
     public function mostraErrore($errore)
     {
         $this->assign('errore', $errore);
