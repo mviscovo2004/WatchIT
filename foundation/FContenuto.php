@@ -1,10 +1,22 @@
 <?php
 
+/**
+ * Classe FContenuto
+ * 
+ * Classe foundation per l'entità EContenuto
+ * Gestisce le operazioni CRUD per l'entità EContenuto
+ * Estende FFoundation per l'instanza di EntityManager.
+ * 
+ * @package Foundation
+ * @author Marco Viscovo
+ */
 class FContenuto extends FFoundation
 {
-
-    
-    
+    /**
+     * Inserisce un contenuto nel database
+     * @param EContenuto $contenuto Contenuto da inserire
+     * @return bool True se l'inserimento è andato a buon fine
+     */
     public static function insert(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
@@ -13,24 +25,24 @@ class FContenuto extends FFoundation
         return ($contenuto->getId() != null) ? true : false;
     }
 
-    
+
     public static function delete(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
 
-        
+
         $participations = $em->getRepository(EPartecipazione::class)->findBy(['contenuto' => $contenuto]);
         foreach ($participations as $p) {
             $em->remove($p);
         }
 
-        
+
         $recensioni = $em->getRepository(ERecensione::class)->findBy(['contenuto' => $contenuto]);
         foreach ($recensioni as $r) {
             $em->remove($r);
         }
 
-        
+
         $watchlists = $em->getRepository(EWatchlist::class)->findAll();
         foreach ($watchlists as $wl) {
             if ($wl->getContenutiSalvati()->contains($contenuto)) {
@@ -38,29 +50,29 @@ class FContenuto extends FFoundation
             }
         }
 
-        
+
         if ($contenuto instanceof ESerie) {
             $episodi = $em->getRepository(EEpisodio::class)->findBy(['serie' => $contenuto]);
             foreach ($episodi as $ep) {
-                
+
                 $recensioniEp = $em->getRepository(ERecensione::class)->findBy(['episodio' => $ep]);
                 foreach ($recensioniEp as $rEp) {
                     $em->remove($rEp);
                 }
 
-                
+
                 $em->remove($ep);
             }
         }
 
-        
+
         $em->remove($contenuto);
         $em->flush();
         return true;
     }
 
 
-    
+
     public static function update(EContenuto $contenuto)
     {
         $em = self::getEntityManager();
@@ -68,7 +80,7 @@ class FContenuto extends FFoundation
         return true;
     }
 
-    
+
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -76,7 +88,7 @@ class FContenuto extends FFoundation
         return $contenuto;
     }
 
-    
+
     public static function findAll()
     {
         $em = self::getEntityManager();
@@ -84,7 +96,7 @@ class FContenuto extends FFoundation
         return $contenuti;
     }
 
-    
+
     public static function findAllFilm()
     {
         $em = self::getEntityManager();
@@ -92,7 +104,7 @@ class FContenuto extends FFoundation
         return $film;
     }
 
-    
+
     public static function findAllSerie()
     {
         $em = self::getEntityManager();
@@ -100,7 +112,7 @@ class FContenuto extends FFoundation
         return $serie;
     }
 
-    
+
     public static function search(string $query)
     {
         $em = self::getEntityManager();
@@ -113,7 +125,7 @@ class FContenuto extends FFoundation
         return $contenuti;
     }
 
-    
+
     public static function searchByGenre(string $query)
     {
         $em = self::getEntityManager();
@@ -125,7 +137,7 @@ class FContenuto extends FFoundation
         return $contenuti;
     }
 
-    
+
     public static function searchByAnno(string $query)
     {
         $em = self::getEntityManager();
@@ -137,7 +149,7 @@ class FContenuto extends FFoundation
         return $contenuti;
     }
 
-    
+
     public static function searchByTipo(string $query)
     {
         $em = self::getEntityManager();

@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\Collection;
  * Rappresenta l'entità Utente registrato nel sistema. 
  * Gestisce l'ereditarietà a singola tabella (Single Table Inheritance) discriminando tra utente standard e admin.
  *
- * @package model
- * @author WatchIT Team
+ * @package Model
+ * @author Marco Viscovo
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'utenti')]

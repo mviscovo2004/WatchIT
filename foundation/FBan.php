@@ -1,9 +1,24 @@
 <?php
 
+/**
+ * Classe FBan
+ * 
+ * Classe foundation per l'entità EBan
+ * Gestisce le operazioni di CRUD e dei privilegi per l'entità EBan.
+ * Estende FFoundation per l'instanza di EntityManager.
+ * 
+ * @package Foundation
+ * @author Marco Viscovo
+ */
 class FBan extends FFoundation
 {
 
-    
+    /**
+     * Inserisce un nuovo ban nel database.
+     *
+     * @param EBan $ban L'oggetto EBan da inserire.
+     * @return bool True se l'inserimento è andato a buon fine.
+     */
     public static function insert(EBan $ban)
     {
         $em = self::getEntityManager();
@@ -12,7 +27,12 @@ class FBan extends FFoundation
         return true;
     }
 
-    
+    /**
+     * Elimina un ban dal database.
+     *
+     * @param EBan $ban L'oggetto EBan da eliminare.
+     * @return bool True se l'eliminazione è andata a buon fine.
+     */
     public static function delete(EBan $ban)
     {
         $em = self::getEntityManager();
@@ -21,6 +41,12 @@ class FBan extends FFoundation
         return true;
     }
 
+    /**
+     * Aggiorna un ban esistente nel database.
+     *
+     * @param EBan $ban L'oggetto EBan da aggiornare.
+     * @return bool True se l'aggiornamento è andato a buon fine.
+     */
     public static function update(EBan $ban)
     {
         $em = self::getEntityManager();
@@ -28,7 +54,11 @@ class FBan extends FFoundation
         return true;
     }
 
-    
+    /**
+     * Restituisce tutti i ban presenti nel database.
+     *
+     * @return array Un array contenente tutti gli oggetti EBan.
+     */
     public static function findAll(): array
     {
         $em = self::getEntityManager();
@@ -36,7 +66,12 @@ class FBan extends FFoundation
         return $bans;
     }
 
-    
+    /**
+     * Restituisce un ban tramite ID.
+     *
+     * @param int $id L'ID del ban da cercare.
+     * @return EBan|null L'oggetto EBan trovato, oppure null se non esiste.
+     */
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -44,6 +79,12 @@ class FBan extends FFoundation
         return $ban;
     }
 
+    /**
+     * Restituisce tutti i ban di un utente.
+     *
+     * @param EUtente $utente L'utente di cui cercare i ban.
+     * @return array Un array contenente tutti gli oggetti EBan dell'utente.
+     */
     public static function findByUtente(EUtente $utente): array
     {
         $em = self::getEntityManager();
@@ -55,6 +96,11 @@ class FBan extends FFoundation
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Restituisce tutti i ban attivi (scadenza futura).
+     *
+     * @return array Un array contenente tutti gli oggetti EBan attivi.
+     */
     public static function findByBannati(): array
     {
         $em = self::getEntityManager();
@@ -66,6 +112,12 @@ class FBan extends FFoundation
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Restituisce i ban filtrati per data di fine.
+     *
+     * @param DateTime $dataFine La data di fine da usare come filtro.
+     * @return array Un array contenente gli oggetti EBan che soddisfano il filtro.
+     */
     public static function findByDataFine(DateTime $dataFine): array
     {
         $em = self::getEntityManager();
@@ -77,6 +129,12 @@ class FBan extends FFoundation
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Verifica se un utente è bannato e restituisce il ban se attivo.
+     *
+     * @param int $idUtente L'ID dell'utente da verificare.
+     * @return EBan|null L'oggetto EBan se l'utente è bannato, oppure null se non lo è.
+     */
     public static function isBanned(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -98,6 +156,9 @@ class FBan extends FFoundation
         return null;
     }
 
+    /**
+     * Pulisce i ban scaduti.
+     */
     public static function cleanExpiredBans()
     {
         $em = self::getEntityManager();
@@ -117,7 +178,15 @@ class FBan extends FFoundation
         }
     }
 
-
+    /**
+     * Crea un nuovo ban.
+     *
+     * @param int $idUtente L'ID dell'utente da bannare.
+     * @param DateTime $dataFine La data di fine del ban.
+     * @param string $motivo Il motivo del ban.
+     * @param int $idAmministratore L'ID dell'amministratore che effettua il ban.
+     * @return bool True se la creazione è andata a buon fine.
+     */
     public static function ban(int $idUtente, DateTime $dataFine, string $motivo, int $idAmministratore)
     {
         $em = self::getEntityManager();
@@ -129,6 +198,12 @@ class FBan extends FFoundation
         return true;
     }
 
+    /**
+     * Rimuove il ban da un utente.
+     *
+     * @param int $idUtente L'ID dell'utente da rimuovere il ban.
+     * @return bool True se la rimozione è andata a buon fine.
+     */
     public static function unban(int $idUtente)
     {
         $em = self::getEntityManager();

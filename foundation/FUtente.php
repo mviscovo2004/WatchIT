@@ -1,11 +1,23 @@
 <?php
 
-
+/**
+ * Classe FUtente
+ * 
+ * Gestisce l'interazione con il database per quanto riguarda gli utenti.
+ * Estende la classe FFoundation che fornisce metodi generici per l'interazione con il database.
+ * 
+ * @package foundation
+ * @author Marco Viscovo
+ */
 class FUtente extends FFoundation
 {
 
-
-
+    /**
+     * Inserisce un utente nel database
+     * 
+     * @param EUtente $utente Utente da inserire
+     * @return bool True se l'utente è stato inserito correttamente, false altrimenti
+     */
     public static function insert(EUtente $utente)
     {
         $em = self::getEntityManager();
@@ -15,12 +27,15 @@ class FUtente extends FFoundation
     }
 
 
+    /**
+     * Elimina un utente dal database
+     * 
+     * @param EUtente $utente Utente da eliminare
+     * @return bool True se l'utente è stato eliminato correttamente, false altrimenti
+     */
     public static function delete(EUtente $utente)
     {
         $em = self::getEntityManager();
-
-
-
         $recensioni = $em->getRepository(ERecensione::class)->findBy(['utente' => $utente]);
         foreach ($recensioni as $recensione) {
             $em->remove($recensione);
@@ -46,15 +61,17 @@ class FUtente extends FFoundation
             }
         }
 
-
         $em->remove($utente);
-
         $em->flush();
         return true;
     }
 
-
-
+    /**
+     * Aggiorna un utente nel database
+     * 
+     * @param EUtente $utente Utente da aggiornare
+     * @return bool True se l'utente è stato aggiornato correttamente, false altrimenti
+     */
     public static function update(EUtente $utente)
     {
         $em = self::getEntityManager();
@@ -63,6 +80,12 @@ class FUtente extends FFoundation
     }
 
 
+    /**
+     * Trova un utente tramite ID
+     * 
+     * @param int $id ID dell'utente
+     * @return EUtente Utente trovato
+     */
     public static function findById(int $id)
     {
         $em = self::getEntityManager();
@@ -70,7 +93,12 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-
+    /**
+     * Trova un utente tramite username
+     * 
+     * @param string $username Username dell'utente
+     * @return EUtente Utente trovato
+     */
     public static function findByUsername(string $username)
     {
         $em = self::getEntityManager();
@@ -78,7 +106,12 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-
+    /**
+     * Trova un utente tramite email
+     * 
+     * @param string $email Email dell'utente
+     * @return EUtente Utente trovato
+     */
     public static function findByEmail(string $email)
     {
         $em = self::getEntityManager();
@@ -86,7 +119,11 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-
+    /**
+     * Trova tutti gli utenti
+     * 
+     * @return array Array di utenti
+     */
     public static function findAll()
     {
         $em = self::getEntityManager();
@@ -94,7 +131,12 @@ class FUtente extends FFoundation
         return $utenti;
     }
 
-
+    /**
+     * Cerca utenti tramite una query
+     * 
+     * @param string $query Query da cercare
+     * @return array Array di utenti trovati
+     */
     public static function search(string $query)
     {
         $em = self::getEntityManager();
@@ -106,8 +148,13 @@ class FUtente extends FFoundation
         return $utenti;
     }
 
-
-
+    /**
+     * Segue un utente
+     * 
+     * @param int $idUtente ID dell'utente che segue
+     * @param int $idUtenteSeguito ID dell'utente seguito
+     * @return bool True se l'utente è stato seguito correttamente, false altrimenti
+     */
     public static function follow(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -118,7 +165,13 @@ class FUtente extends FFoundation
         return true;
     }
 
-
+    /**
+     * Smette di seguire un utente
+     * 
+     * @param int $idUtente ID dell'utente che smette di seguire
+     * @param int $idUtenteSeguito ID dell'utente smesso di seguire
+     * @return bool True se l'utente è stato smesso di seguire correttamente, false altrimenti
+     */
     public static function unfollow(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -129,7 +182,13 @@ class FUtente extends FFoundation
         return true;
     }
 
-
+    /**
+     * Verifica se un utente segue un altro utente
+     * 
+     * @param int $idUtente ID dell'utente che segue
+     * @param int $idUtenteSeguito ID dell'utente seguito
+     * @return bool True se l'utente segue l'altro utente, false altrimenti
+     */
     public static function isFollowing(int $idUtente, int $idUtenteSeguito)
     {
         $em = self::getEntityManager();
@@ -138,7 +197,12 @@ class FUtente extends FFoundation
         return $utente->isFollowing($utenteSeguito);
     }
 
-
+    /**
+     * Ottiene i seguaci di un utente
+     * 
+     * @param int $idUtente ID dell'utente
+     * @return array Array di utenti seguaci
+     */
     public static function getFollowers(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -146,7 +210,12 @@ class FUtente extends FFoundation
         return $utente->getSeguaci();
     }
 
-
+    /**
+     * Ottiene gli utenti seguiti da un utente
+     * 
+     * @param int $idUtente ID dell'utente
+     * @return array Array di utenti seguiti
+     */
     public static function getFollowing(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -154,7 +223,13 @@ class FUtente extends FFoundation
         return $utente->getSeguiti();
     }
 
-
+    /**
+     * Esegue il login di un utente
+     * 
+     * @param string $identificativo Email o username dell'utente
+     * @param string $password Password dell'utente
+     * @return EUtente Utente loggato
+     */
     public static function login(string $identificativo, string $password)
     {
         $em = self::getEntityManager();
@@ -168,7 +243,17 @@ class FUtente extends FFoundation
         return null;
     }
 
-
+    /**
+     * Registra un nuovo utente
+     * 
+     * @param string $nome Nome dell'utente
+     * @param string $cognome Cognome dell'utente
+     * @param string $foto Foto dell'utente
+     * @param string $username Username dell'utente
+     * @param string $email Email dell'utente
+     * @param string $password Password dell'utente
+     * @return EUtente Utente registrato
+     */
     public static function register(string $nome, string $cognome, string $foto, string $username, string $email, string $password)
     {
         $em = self::getEntityManager();
@@ -179,7 +264,12 @@ class FUtente extends FFoundation
         return $utente;
     }
 
-
+    /**
+     * Promuove un utente ad amministratore
+     * 
+     * @param int $idUtente ID dell'utente
+     * @return bool True se l'utente è stato promosso correttamente, false altrimenti
+     */
     public static function promuoviAdAdmin(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -188,7 +278,12 @@ class FUtente extends FFoundation
         return true;
     }
 
-
+    /**
+     * Retrocede un utente ad admin
+     * 
+     * @param int $idUtente ID dell'utente
+     * @return bool True se l'utente è stato retrocesso correttamente, false altrimenti
+     */
     public static function retrocediAdUtente(int $idUtente)
     {
         $em = self::getEntityManager();
@@ -197,8 +292,12 @@ class FUtente extends FFoundation
         return true;
     }
 
-
-
+    /**
+     * Manda email per recupero password
+     * 
+     * @param string $email Email dell'utente
+     * @return bool True se la password è stata recuperata correttamente, false altrimenti
+     */
     public static function forgotPassword(string $email)
     {
         $em = self::getEntityManager();
@@ -211,19 +310,12 @@ class FUtente extends FFoundation
 
             $utente->setTokenRecupero($token);
             $utente->setDataScadenzaToken($dataScadenza);
-
-
             $host = Session::getServer('HTTP_HOST', 'localhost');
             $scriptName = Session::getServer('SCRIPT_NAME', '');
             $dir = dirname($scriptName);
             $baseDir = ($dir === DIRECTORY_SEPARATOR || $dir === '/' || $dir === '\\') ? '' : $dir;
-
             $link = 'http://' . $host . $baseDir . '/index.php?controller=Utente&action=resetPassword&token=' . $token;
-
-
             $mailSent = false;
-
-
             if (function_exists('mail')) {
 
                 $mailSent = @mail(
@@ -247,7 +339,13 @@ class FUtente extends FFoundation
         return false;
     }
 
-
+    /**
+     * Cambia la password di un utente
+     * 
+     * @param string $token Token di recupero
+     * @param string $password Nuova password
+     * @return bool True se la password è stata resettata correttamente, false altrimenti
+     */
     public static function resetPassword(string $token, string $password)
     {
         $em = self::getEntityManager();
